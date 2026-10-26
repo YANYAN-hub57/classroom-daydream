@@ -1,244 +1,599 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Classroom Daydream</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-  <!-- Load CSS -->
-  <link rel="stylesheet" href="style.css">
+  <meta
+    name="description"
+    content="Classroom Daydream V2.0 - An interactive guinea pig classroom game featuring Red Light Green Light and collectible objects."
+  >
 
-  <!-- Load JavaScript -->
-  <script src="script.js" defer></script>
+  <meta
+    name="theme-color"
+    content="#e8dad7"
+  >
+
+  <title>
+    Classroom Daydream V2.0
+  </title>
+
+  <!-- GAME STYLES -->
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+  <!-- GAME LOGIC -->
+  <script
+    src="script.js"
+    defer
+  ></script>
+
 </head>
 
 <body>
 
+  <!-- ======================================
+       MAIN GAME CONTAINER
+       ====================================== -->
+
   <main class="game">
 
-<!-- 1. GAME TITLE -->
-<header class="header">
-  <p class="subtitle">
-    SD5913 · INTERACTIVE EXPERIENCE
-  </p>
+    <!-- ====================================
+         1. GAME HEADER
+         ==================================== -->
 
-  <h1>CLASSROOM DAYDREAM</h1>
+    <header class="header">
 
-  <p>教室开小差 · A Tiny Classroom Game</p>
-</header>
+      <p class="eyebrow">
+        SD5913 · INTERACTIVE EXPERIENCE
+      </p>
 
+      <h1>
+        CLASSROOM<br>
+        DAYDREAM
+      </h1>
 
-<!-- 2. GAME INSTRUCTIONS -->
-<section class="intro">
-  <p>
-    上课时间到了！
-    偷偷涂鸦、吃零食，还是认真听讲？
-  </p>
+      <p class="subtitle">
+        🐹 豚鼠的课堂开小差
+      </p>
 
-  <p>
-    在老师发现你之前，让自己的心情变好吧！
-  </p>
-
-  <p class="hint">
-    至少进行 4 次行动，心情达到 80 即可获胜。
-    被发现风险达到 100 就会失败。
-  </p>
-</section>
+    </header>
 
 
-<!-- 3. GAME STATUS -->
-<section class="stats" aria-label="游戏状态">
+    <!-- ====================================
+         2. GAME INSTRUCTIONS
+         ==================================== -->
 
-  <!-- Mood -->
-  <div class="stat">
-    <div class="stat-label">
-      <span>💖 心情 Mood</span>
-      <strong id="mood-value">35</strong>
-    </div>
+    <section
+      class="instructions"
+      aria-label="游戏规则"
+    >
+
+      <h2>
+        HOW TO PLAY
+      </h2>
+
+      <p>
+        欢迎来到小豚鼠的教室！
+        老师背对你时，偷偷收集桌面出现的零食和涂鸦。
+      </p>
+
+      <p>
+        🟢 绿色：安全，可以收集道具。
+      </p>
+
+      <p>
+        🟡 黄色：老师准备转身，请停止行动。
+      </p>
+
+      <p>
+        🔴 红色：老师正在观察，点击道具会被发现！
+      </p>
+
+      <p>
+        在 60 秒内获得至少 8 分，
+        并且被老师发现少于 3 次，
+        坚持到下课即可获胜！
+      </p>
+
+    </section>
+
+
+    <!-- ====================================
+         3. GAME HUD
+         ==================================== -->
+
+    <section
+      class="hud"
+      aria-label="游戏实时状态"
+    >
+
+      <!-- TIME -->
+
+      <div class="hud-item">
+
+        <span>
+          ⏱ TIME
+        </span>
+
+        <strong
+          id="time-value"
+          aria-label="剩余时间"
+        >
+          60
+        </strong>
+
+      </div>
+
+
+      <!-- SCORE -->
+
+      <div class="hud-item">
+
+        <span>
+          ⭐ SCORE
+        </span>
+
+        <strong
+          id="score-value"
+          aria-label="当前分数"
+        >
+          0
+        </strong>
+
+      </div>
+
+
+      <!-- CAUGHT COUNTER -->
+
+      <div class="hud-item">
+
+        <span>
+          👀 CAUGHT
+        </span>
+
+        <strong
+          id="caught-value"
+          aria-label="被老师发现的次数"
+        >
+          0 / 3
+        </strong>
+
+      </div>
+
+    </section>
+
+
+    <!-- ====================================
+         4. TEACHER STATUS INDICATOR
+         ==================================== -->
 
     <div
-      class="track"
-      id="mood-track"
-      role="progressbar"
-      aria-label="心情值"
-      aria-valuemin="0"
-      aria-valuemax="100"
-      aria-valuenow="35"
+      id="teacher-status"
+      class="teacher-status safe"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
     >
-      <div
-        id="mood-fill"
-        class="fill mood-fill"
-      ></div>
-    </div>
-  </div>
 
-  <!-- Risk -->
-  <div class="stat">
-    <div class="stat-label">
-      <span>👀 被发现风险 Risk</span>
-      <strong id="risk-value">10</strong>
+      🟢 SAFE！老师正在写黑板，可以偷偷行动！
+
     </div>
+
+
+    <!-- ====================================
+         5. CLASSROOM GAME SCENE
+         ==================================== -->
+
+    <section
+      id="scene"
+      class="scene"
+      aria-label="小豚鼠教室交互游戏场景"
+    >
+
+      <!-- ================================
+           CLASSROOM WALL
+           ================================ -->
+
+      <div
+        class="wall-decoration"
+        aria-hidden="true"
+      ></div>
+
+
+      <!-- ================================
+           CLASSROOM FLOOR
+           ================================ -->
+
+      <div
+        class="floor"
+        aria-hidden="true"
+      ></div>
+
+
+      <!-- ================================
+           CLASSROOM WINDOW
+           ================================ -->
+
+      <div
+        class="window"
+        aria-hidden="true"
+      ></div>
+
+
+      <!-- ================================
+           BLACKBOARD
+           ================================ -->
+
+      <div
+        class="board"
+        aria-hidden="true"
+      >
+
+        <span>
+          MONDAY
+        </span>
+
+        <span>
+          2 + 2 = ?
+        </span>
+
+        <small>
+          STAY FOCUSED!
+        </small>
+
+      </div>
+
+
+      <!-- =================================
+           6. TEACHER CHARACTER
+           ================================= -->
+
+      <div
+        id="teacher"
+        class="teacher facing-away"
+        aria-hidden="true"
+      >
+
+        <!-- LEFT EAR -->
+
+        <div
+          class="teacher-ear left"
+        ></div>
+
+
+        <!-- RIGHT EAR -->
+
+        <div
+          class="teacher-ear right"
+        ></div>
+
+
+        <!-- HEAD -->
+
+        <div class="teacher-head">
+
+          <!-- FACE -->
+
+          <div class="teacher-face">
+
+            <!-- EYES -->
+
+            <span
+              class="teacher-eyes"
+            ></span>
+
+            <!-- NOSE -->
+
+            <span
+              class="teacher-nose"
+            ></span>
+
+          </div>
+
+        </div>
+
+
+        <!-- BODY -->
+
+        <div
+          class="teacher-body"
+        ></div>
+
+
+        <!-- FEET -->
+
+        <div
+          class="teacher-feet"
+        ></div>
+
+      </div>
+
+
+      <!-- =================================
+           7. GUINEA PIG STUDENT
+           ================================= -->
+
+      <div
+        id="student"
+        class="student"
+        aria-hidden="true"
+      >
+
+        <!-- LEFT EAR -->
+
+        <div
+          class="gp-ear left"
+        ></div>
+
+
+        <!-- RIGHT EAR -->
+
+        <div
+          class="gp-ear right"
+        ></div>
+
+
+        <!-- BODY -->
+
+        <div
+          class="gp-body"
+        ></div>
+
+
+        <!-- HEAD -->
+
+        <div class="gp-head">
+
+          <!-- BROWN FUR PATCH -->
+
+          <div
+            class="gp-patch"
+          ></div>
+
+
+          <!-- LEFT EYE -->
+
+          <div
+            class="gp-eye left"
+          ></div>
+
+
+          <!-- RIGHT EYE -->
+
+          <div
+            class="gp-eye right"
+          ></div>
+
+
+          <!-- NOSE -->
+
+          <div
+            class="gp-nose"
+          ></div>
+
+
+          <!-- LEFT CHEEK -->
+
+          <div
+            class="gp-cheek left"
+          ></div>
+
+
+          <!-- RIGHT CHEEK -->
+
+          <div
+            class="gp-cheek right"
+          ></div>
+
+        </div>
+
+
+        <!-- FRONT PAWS -->
+
+        <div
+          class="gp-paws"
+        ></div>
+
+      </div>
+
+
+      <!-- =================================
+           8. CLASSROOM DESK
+           ================================= -->
+
+      <div
+        class="desk"
+        aria-hidden="true"
+      >
+
+        <div
+          class="desk-shine"
+        ></div>
+
+      </div>
+
+
+      <!-- =================================
+           9. RANDOM COLLECTIBLE OBJECT
+           ================================= -->
+
+      <button
+        id="collectible"
+        class="collectible"
+        type="button"
+        aria-label="收集桌面道具"
+        title="点击收集道具"
+        hidden
+        disabled
+      >
+
+        <span
+          id="collectible-icon"
+          aria-hidden="true"
+        >
+          🥕
+        </span>
+
+      </button>
+
+
+      <!-- =================================
+           10. VISUAL FEEDBACK EFFECT
+           ================================= -->
+
+      <div
+        id="effect"
+        class="effect"
+        aria-hidden="true"
+      ></div>
+
+
+      <!-- =================================
+           11. GAME OVERLAY
+           START / PAUSE / GAME OVER
+           ================================= -->
+
+      <div
+        id="overlay"
+        class="overlay"
+      >
+
+        <div class="overlay-card">
+
+          <!-- OVERLAY TITLE -->
+
+          <h2
+            id="overlay-title"
+          >
+            READY TO PLAY?
+          </h2>
+
+
+          <!-- OVERLAY MESSAGE -->
+
+          <p
+            id="overlay-message"
+          >
+            收集零食，躲避老师的目光！
+          </p>
+
+
+          <!-- START / RESUME / REPLAY -->
+
+          <button
+            id="start-button"
+            class="primary-button"
+            type="button"
+          >
+
+            ▶ 开始游戏
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ====================================
+         12. GAME FEEDBACK
+         ==================================== -->
 
     <div
-      class="track"
-      id="risk-track"
-      role="progressbar"
-      aria-label="被发现风险"
-      aria-valuemin="0"
-      aria-valuemax="100"
-      aria-valuenow="10"
+      id="feedback"
+      class="feedback"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
     >
-      <div
-        id="risk-fill"
-        class="fill risk-fill"
-      ></div>
+
+      🐹 小豚鼠准备好了！
+      点击开始游戏，老师背对时收集桌面道具！
+
     </div>
-  </div>
-
-</section>
 
 
-<!-- 4. CLASSROOM SCENE -->
-<section
-  class="scene"
-  id="scene"
-  aria-label="像素教室场景"
->
+    <!-- ====================================
+         13. GAME CONTROL BUTTONS
+         ==================================== -->
 
-  <!-- Classroom Floor -->
-  <div class="floor"></div>
-
-  <!-- Classroom Window -->
-  <div class="window" aria-hidden="true"></div>
-
-  <!-- Blackboard -->
-  <div class="board" aria-hidden="true">
-    <span>MONDAY</span>
-    <span>2 + 2 = ?</span>
-    <small>BE QUIET!</small>
-  </div>
-
-  <!-- Teacher -->
-  <div
-    class="teacher"
-    id="teacher"
-    aria-hidden="true"
-  >
-    👩‍🏫
-  </div>
-
-  <!-- Student -->
-  <div class="student" aria-hidden="true">
-    <div class="student-head"></div>
-    <div class="student-body"></div>
-  </div>
-
-  <!-- Student Desk -->
-  <div class="desk" aria-hidden="true"></div>
-
-  <!-- Interactive Notebook -->
-  <button
-    class="scene-item notebook"
-    type="button"
-    data-action="doodle"
-    aria-label="点击涂鸦本"
-  >
-    📒
-  </button>
-
-  <!-- Interactive Snack -->
-  <button
-    class="scene-item snack"
-    type="button"
-    data-action="snack"
-    aria-label="点击零食"
-  >
-    🍪
-  </button>
-
-  <!-- Interaction Animation -->
-  <div
-    class="effect"
-    id="effect"
-    aria-hidden="true"
-  ></div>
-
-</section>
-
-
-<!-- 5. PLAYER ACTION BUTTONS -->
-<section class="controls" aria-label="游戏操作">
-
-  <button
-    type="button"
-    class="action"
-    data-action="doodle"
-  >
-    ✏️ 偷偷涂鸦
-  </button>
-
-  <button
-    type="button"
-    class="action"
-    data-action="snack"
-  >
-    🍪 偷吃零食
-  </button>
-
-  <button
-    type="button"
-    class="action"
-    data-action="study"
-  >
-    📖 认真听讲
-  </button>
-
-</section>
-
-
-<!-- 6. GAME FEEDBACK -->
-<div
-  class="feedback"
-  id="feedback"
-  role="status"
-  aria-live="polite"
->
-  点击课桌上的物品或下方按钮，
-  开始你的课堂冒险！
-</div>
-
-
-<!-- 7. GAME FOOTER -->
-<footer class="footer">
-
-  <!-- Action Counter -->
-  <span id="turn-count">
-    已进行 0 次行动
-  </span>
-
-  <div class="footer-buttons">
-
-    <!-- Sound Control -->
-    <button
-      type="button"
-      id="sound-button"
+    <section
+      class="controls"
+      aria-label="游戏控制"
     >
-      🔊 音效开启
-    </button>
 
-    <!-- Restart Button -->
-    <button
-      type="button"
-      id="reset-button"
-    >
-      ↻ 重新开始
-    </button>
+      <!-- PAUSE / RESUME -->
 
-  </div>
+      <button
+        id="pause-button"
+        type="button"
+        aria-label="暂停或继续游戏"
+        disabled
+      >
 
-</footer>
+        ⏸ 暂停
+
+      </button>
+
+
+      <!-- SOUND ON / OFF -->
+
+      <button
+        id="sound-button"
+        type="button"
+        aria-label="开启或关闭游戏音效"
+        aria-pressed="true"
+      >
+
+        🔊 音效开启
+
+      </button>
+
+
+      <!-- RESTART -->
+
+      <button
+        id="reset-button"
+        type="button"
+        aria-label="重新开始游戏"
+      >
+
+        ↻ 重新开始
+
+      </button>
+
+    </section>
+
+
+    <!-- ====================================
+         14. GAME FOOTER
+         ==================================== -->
+
+    <footer>
+
+      <p>
+        CLASSROOM DAYDREAM · VERSION 2.0
+      </p>
+
+      <p>
+        SD5913 · Programming for Art & Design
+      </p>
+
+    </footer>
+
   </main>
 
 </body>
+
 </html>

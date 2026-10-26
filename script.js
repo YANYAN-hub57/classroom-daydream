@@ -1,198 +1,269 @@
+
 "use strict";
 
 /*
- CLASSROOM DAYDREAM
- SD5913 - Assignment 3
- Interactive Classroom Game
-*/
+ * CLASSROOM DAYDREAM V2.0
+ * SD5913 - Assignment 3
+ *
+ * Guinea Pig Classroom Game
+ *
+ * Game mechanics:
+ * - Red Light, Green Light
+ * - Random collectible objects
+ * - Teacher observation system
+ * - 60-second challenge
+ * - Score and caught detection
+ * - Pause / Resume / Restart
+ * - Sound effects
+ * - Error and interruption handling
+ *
+ * No external JavaScript libraries required.
+ */
 
-// ========================================
-// 1. INITIAL GAME STATE
-// ========================================
+// ==========================================
+// 1. GAME CONFIGURATION
+// ==========================================
+
+const CONFIG = {
+  duration: 60,
+  targetScore: 8,
+  maxCaught: 3,
+  tickRate: 50,
+
+  itemLifetime: 1900,
+  itemSpawnMin: 250,
+  itemSpawnMax: 650,
+
+  safeMin: 2800,
+  safeMax: 4600,
+
+  warningMin: 900,
+  warningMax: 1400,
+
+  watchingMin: 1400,
+  watchingMax: 2200
+};
+
+// ==========================================
+// 2. COLLECTIBLE ITEMS
+// ==========================================
+
+const ITEMS = [
+  {
+    id: "carrot",
+    name: "胡萝卜",
+    icon: "🥕",
+    points: 1,
+    sound: 650
+  },
+  {
+    id: "cookie",
+    name: "饼干",
+    icon: "🍪",
+    points: 1,
+    sound: 550
+  },
+  {
+    id: "doodle",
+    name: "涂鸦",
+    icon: "🎨",
+    points: 1,
+    sound: 750
+  },
+  {
+    id: "star",
+    name: "幸运星",
+    icon: "⭐",
+    points: 1,
+    sound: 880
+  }
+];
+
+// ==========================================
+// 3. INITIAL GAME STATE
+// ==========================================
 
 function createInitialState() {
   return {
-    mood: 35,
-    risk: 10,
-    moves: 0,
-    ended: false
+    mode: "ready",
+
+    timeLeft: CONFIG.duration * 1000,
+
+    score: 0,
+    caught: 0,
+
+    teacherState: "safe",
+    teacherTimeLeft: 3500,
+
+    activeItem: null,
+    itemTimeLeft: 0,
+    nextItemTime: 0,
+
+    collectedCount: 0,
+    missedCount: 0,
+
+    lastCollectedItem: null
   };
 }
 
 let gameState = createInitialState();
 
+let timerId = null;
+let lastTick = 0;
+
 let soundEnabled = true;
 let audioContext = null;
-let lastActionTime = 0;
 
+// ==========================================
+// 4. HTML ELEMENT REFERENCES
+// ==========================================
 
-// ========================================
-// 2. GAME ACTIONS
-// ========================================
+const elements = {
+  time: document.getElementById("time-value"),
 
-const actions = {
+  score: document.getElementById("score-value"),
 
-  doodle: {
-    moodChange: 22,
-    riskChange: 27,
-    message: "✏️ 你偷偷画了一张可爱的涂鸦！心情提升了！",
-    symbol: "✨",
-    sound: 660
-  },
+  caught: document.getElementById("caught-value"),
 
-  snack: {
-    moodChange: 15,
-    riskChange: 18,
-    message: "🍪 咔嚓！你偷偷吃了一块饼干，好满足！",
-    symbol: "🍪",
-    sound: 520
-  },
+  status: document.getElementById("teacher-status"),
 
-  study: {
-    moodChange: -7,
-    riskChange: -26,
-    message: "📖 你开始认真听讲，老师的怀疑减少了。",
-    symbol: "📚",
-    sound: 400
-  }
+  teacher: document.getElementById("teacher"),
 
+  student: document.getElementById("student"),
+
+  collectible: document.getElementById("collectible"),
+
+  itemIcon: document.getElementById("collectible-icon"),
+
+  effect: document.getElementById("effect"),
+
+  feedback: document.getElementById("feedback"),
+
+  overlay: document.getElementById("overlay"),
+
+  overlayTitle: document.getElementById("overlay-title"),
+
+  overlayMessage: document.getElementById("overlay-message"),
+
+  startButton: document.getElementById("start-button"),
+
+  pauseButton: document.getElementById("pause-button"),
+
+  resetButton: document.getElementById("reset-button"),
+
+  soundButton: document.getElementById("sound-button")
 };
 
+// ==========================================
+// 5. CHECK REQUIRED HTML ELEMENTS
+// ==========================================
 
-// ========================================
-// 3. HTML ELEMENTS
-// ========================================
+function validateElements() {
+  const missing = Object.entries(elements)
+    .filter(function(entry) {
+      return entry[1] === null;
+    })
+    .map(function(entry) {
+      return entry[0];
+    });
 
-const moodValue = document.getElementById("mood-value");
+  if (missing.length > 0) {
+    console.error(
+      "Missing HTML elements:",
+      missing.join(", ")
+    );
 
-const riskValue = document.getElementById("risk-value");
-
-const moodFill = document.getElementById("mood-fill");
-
-const riskFill = document.getElementById("risk-fill");
-
-const moodTrack = document.getElementById("mood-track");
-
-const riskTrack = document.getElementById("risk-track");
-
-const feedback = document.getElementById("feedback");
-
-const teacher = document.getElementById("teacher");
-
-const effect = document.getElementById("effect");
-
-const turnCount = document.getElementById("turn-count");
-
-const resetButton = document.getElementById("reset-button");
-
-const soundButton = document.getElementById("sound-button");
-
-const actionButtons = document.querySelectorAll("[data-action]");
-
-
-// ========================================
-// 4. KEEP VALUES BETWEEN 0 AND 100
-// ========================================
-
-function clamp(value) {
-  return Math.max(0, Math.min(100, value));
+    throw new Error(
+      "Game initialization failed. Missing: " +
+      missing.join(", ")
+    );
+  }
 }
 
+validateElements();
 
-// ========================================
-// 5. UPDATE GAME DISPLAY
-// ========================================
+// ==========================================
+// 6. HELPER FUNCTIONS
+// ==========================================
 
-function updateDisplay() {
+function randomBetween(min, max) {
+  return min + Math.random() * (max - min);
+}
 
-  // Update numbers
-  moodValue.textContent = gameState.mood;
-  riskValue.textContent = gameState.risk;
+function randomInt(min, max) {
+  return Math.floor(
+    Math.random() * (max - min + 1)
+  ) + min;
+}
 
-  // Update progress bars
-  moodFill.style.width = gameState.mood + "%";
-  riskFill.style.width = gameState.risk + "%";
+function showFeedback(message) {
+  elements.feedback.textContent = message;
+}
 
-  // Update accessible progress values
-  moodTrack.setAttribute(
-    "aria-valuenow",
-    gameState.mood
+function isPlaying() {
+  return gameState.mode === "playing";
+}
+
+// ==========================================
+// 7. UPDATE GAME HUD
+// ==========================================
+
+function updateHUD() {
+  const seconds = Math.ceil(
+    gameState.timeLeft / 1000
   );
 
-  riskTrack.setAttribute(
-    "aria-valuenow",
-    gameState.risk
-  );
+  elements.time.textContent = seconds;
 
-  // Update action count
-  turnCount.textContent =
-    "已进行 " + gameState.moves + " 次行动";
+  elements.score.textContent = gameState.score;
 
-  // Teacher becomes alert when risk is high
-  if (gameState.risk >= 70) {
-    teacher.classList.add("alert");
+  elements.caught.textContent =
+    gameState.caught +
+    " / " +
+    CONFIG.maxCaught;
+
+  // Time warning
+  if (seconds <= 10) {
+    elements.time.style.color = "#d56b78";
   } else {
-    teacher.classList.remove("alert");
+    elements.time.style.color = "";
   }
 
-  // Disable actions after game ends
-  actionButtons.forEach(function(button) {
-    button.disabled = gameState.ended;
-  });
+  // Caught warning
+  if (gameState.caught >= 2) {
+    elements.caught.style.color = "#d56b78";
+  } else {
+    elements.caught.style.color = "";
+  }
 
+  // Score achieved
+  if (gameState.score >= CONFIG.targetScore) {
+    elements.score.style.color = "#559c72";
+  } else {
+    elements.score.style.color = "";
+  }
 }
 
+// ==========================================
+// 8. SOUND ENGINE
+// ==========================================
 
-// ========================================
-// 6. TEXT FEEDBACK
-// ========================================
-
-function showMessage(message) {
-  feedback.textContent = message;
-}
-
-
-// ========================================
-// 7. VISUAL EFFECT
-// ========================================
-
-function showEffect(symbol) {
-
-  effect.textContent = symbol;
-
-  effect.classList.remove("pop");
-
-  // Restart the CSS animation
-  void effect.offsetWidth;
-
-  effect.classList.add("pop");
-
-}
-
-
-// ========================================
-// 8. SOUND EFFECTS
-// ========================================
-
-function playSound(frequency) {
-
+function playSound(frequency, duration = 0.13) {
   if (!soundEnabled) {
     return;
   }
 
   try {
-
-    const AudioContextClass =
+    const AudioClass =
       window.AudioContext ||
       window.webkitAudioContext;
 
-    // Audio not supported
-    if (!AudioContextClass) {
+    if (!AudioClass) {
       return;
     }
 
     if (!audioContext) {
-      audioContext = new AudioContextClass();
+      audioContext = new AudioClass();
     }
 
     if (audioContext.state === "suspended") {
@@ -205,230 +276,916 @@ function playSound(frequency) {
     const gain =
       audioContext.createGain();
 
-    oscillator.type = "square";
+    const now = audioContext.currentTime;
 
+    oscillator.type = "square";
     oscillator.frequency.value = frequency;
 
     gain.gain.setValueAtTime(
-      0.035,
-      audioContext.currentTime
+      0.025,
+      now
     );
 
     gain.gain.exponentialRampToValueAtTime(
       0.001,
-      audioContext.currentTime + 0.15
+      now + duration
     );
 
     oscillator.connect(gain);
-
     gain.connect(audioContext.destination);
 
-    oscillator.start();
-
-    oscillator.stop(
-      audioContext.currentTime + 0.15
-    );
+    oscillator.start(now);
+    oscillator.stop(now + duration);
 
   } catch (error) {
-
-    // The game continues without sound
-    console.warn("Sound unavailable:", error);
-
+    // Audio is optional.
+    // The game continues even without sound.
+    console.warn(
+      "Audio is unavailable:",
+      error
+    );
   }
-
 }
 
+// ==========================================
+// 9. VISUAL EFFECTS
+// ==========================================
 
-// ========================================
-// 9. MAIN INTERACTION FUNCTION
-// ========================================
+function showEffect(symbol) {
+  elements.effect.textContent = symbol;
 
-function takeAction(actionName) {
+  elements.effect.classList.remove("pop");
 
-  // Handle actions after game ends
-  if (gameState.ended) {
-    showMessage(
-      "本局已经结束，请点击重新开始！"
-    );
-    return;
-  }
+  // Force animation restart
+  void elements.effect.offsetWidth;
 
-  // Prevent accidental rapid repeated clicks
-  const currentTime = Date.now();
+  elements.effect.classList.add("pop");
+}
 
-  if (currentTime - lastActionTime < 350) {
-    showMessage(
-      "操作太快啦！请稍等一下再行动。"
-    );
-    return;
-  }
-
-  // Find selected action
-  const selectedAction = actions[actionName];
-
-  if (!selectedAction) {
-    return;
-  }
-
-  lastActionTime = currentTime;
-
-  // ====================================
-  // RESPONSE: CHANGE GAME STATE
-  // ====================================
-
-  gameState.mood = clamp(
-    gameState.mood + selectedAction.moodChange
+function animateStudent(animationType) {
+  elements.student.classList.remove(
+    "happy",
+    "scared"
   );
 
-  gameState.risk = clamp(
-    gameState.risk + selectedAction.riskChange
+  void elements.student.offsetWidth;
+
+  elements.student.classList.add(
+    animationType
+  );
+}
+
+// ==========================================
+// 10. TEACHER VISUAL STATE
+// ==========================================
+
+function updateTeacherAppearance() {
+  const teacherState = gameState.teacherState;
+
+  elements.teacher.classList.remove(
+    "facing-away",
+    "warning",
+    "watching"
   );
 
-  gameState.moves += 1;
+  elements.status.classList.remove(
+    "safe",
+    "warning",
+    "danger"
+  );
 
-  let message = selectedAction.message;
+  if (teacherState === "safe") {
+    elements.teacher.classList.add(
+      "facing-away"
+    );
 
+    elements.status.classList.add(
+      "safe"
+    );
 
-  // ====================================
-  // CHECK WIN OR LOSE
-  // ====================================
+    elements.status.textContent =
+      "🟢 SAFE！老师正在写黑板，可以偷偷行动！";
+  }
 
-  if (gameState.risk >= 100) {
+  else if (teacherState === "warning") {
+    elements.teacher.classList.add(
+      "warning"
+    );
 
-    gameState.ended = true;
+    elements.status.classList.add(
+      "warning"
+    );
 
-    message =
-      "🚨 糟糕！你被老师发现了！游戏失败！点击重新开始再挑战！";
+    elements.status.textContent =
+      "🟡 WARNING！老师准备回头了！";
+  }
 
-    showEffect("🚨");
+  else if (teacherState === "watching") {
+    elements.teacher.classList.add(
+      "watching"
+    );
 
-    playSound(180);
+    elements.status.classList.add(
+      "danger"
+    );
 
-  } else if (
-    gameState.moves >= 4 &&
-    gameState.mood >= 80
+    elements.status.textContent =
+      "🔴 STOP！老师正在看你！不要点击！";
+  }
+}
+
+// ==========================================
+// 11. TEACHER STATE TRANSITIONS
+// ==========================================
+
+function advanceTeacherState() {
+  if (gameState.teacherState === "safe") {
+    gameState.teacherState = "warning";
+
+    gameState.teacherTimeLeft =
+      randomBetween(
+        CONFIG.warningMin,
+        CONFIG.warningMax
+      );
+
+    showFeedback(
+      "⚠️ 老师停下了粉笔！马上停止收集！"
+    );
+
+    playSound(350, 0.12);
+  }
+
+  else if (
+    gameState.teacherState === "warning"
   ) {
+    gameState.teacherState = "watching";
 
-    gameState.ended = true;
+    gameState.teacherTimeLeft =
+      randomBetween(
+        CONFIG.watchingMin,
+        CONFIG.watchingMax
+      );
 
-    message =
-      "🎉 恭喜你！成功度过了快乐的课堂！你赢了！";
+    showFeedback(
+      "👀 老师回头了！现在不能点击桌面道具！"
+    );
 
-    showEffect("🎉");
+    playSound(240, 0.2);
+  }
 
-    playSound(880);
+  else {
+    gameState.teacherState = "safe";
 
-  } else {
+    gameState.teacherTimeLeft =
+      randomBetween(
+        CONFIG.safeMin,
+        CONFIG.safeMax
+      );
 
-    // Normal action feedback
-    showEffect(selectedAction.symbol);
+    showFeedback(
+      "🌿 老师转回黑板了！现在可以继续收集！"
+    );
+  }
 
-    playSound(selectedAction.sound);
+  updateTeacherAppearance();
+}
 
-    // Teacher warning
-    if (gameState.risk >= 70) {
+// ==========================================
+// 12. UPDATE TEACHER TIMER
+// ==========================================
 
-      message +=
-        " 👀 小心！老师正在看你！";
+function updateTeacher(delta) {
+  gameState.teacherTimeLeft -= delta;
 
-    } else if (gameState.moves >= 4) {
+  // Preserve overshoot so teacher transitions
+  // remain consistent even with timer drift.
+  while (gameState.teacherTimeLeft <= 0) {
+    const overshoot =
+      -gameState.teacherTimeLeft;
 
-      message +=
-        " 再提升心情就有机会获胜！";
+    advanceTeacherState();
 
+    gameState.teacherTimeLeft -= overshoot;
+  }
+}
+
+// ==========================================
+// 13. HIDE COLLECTIBLE
+// ==========================================
+
+function hideItem() {
+  gameState.activeItem = null;
+  gameState.itemTimeLeft = 0;
+
+  elements.collectible.hidden = true;
+  elements.collectible.disabled = true;
+}
+
+// ==========================================
+// 14. SCHEDULE NEXT ITEM
+// ==========================================
+
+function scheduleNextItem() {
+  gameState.nextItemTime =
+    randomBetween(
+      CONFIG.itemSpawnMin,
+      CONFIG.itemSpawnMax
+    );
+}
+
+// ==========================================
+// 15. SPAWN RANDOM ITEM
+// ==========================================
+
+function spawnItem() {
+  if (!isPlaying()) {
+    return;
+  }
+
+  if (gameState.activeItem !== null) {
+    return;
+  }
+
+  const index = randomInt(
+    0,
+    ITEMS.length - 1
+  );
+
+  const item = ITEMS[index];
+
+  gameState.activeItem = item;
+
+  gameState.itemTimeLeft =
+    CONFIG.itemLifetime;
+
+  gameState.nextItemTime = 0;
+
+  elements.itemIcon.textContent = item.icon;
+
+  // Positions within classroom desk area
+  const positions = [
+    { left: 27, bottom: 31 },
+    { left: 39, bottom: 35 },
+    { left: 51, bottom: 31 },
+    { left: 63, bottom: 35 }
+  ];
+
+  const position = positions[
+    randomInt(0, positions.length - 1)
+  ];
+
+  elements.collectible.style.left =
+    position.left + "%";
+
+  elements.collectible.style.bottom =
+    position.bottom + "%";
+
+  elements.collectible.setAttribute(
+    "aria-label",
+    "收集" + item.name
+  );
+
+  elements.collectible.hidden = false;
+  elements.collectible.disabled = false;
+}
+
+// ==========================================
+// 16. UPDATE RANDOM ITEMS
+// ==========================================
+
+function updateItems(delta) {
+  if (gameState.activeItem !== null) {
+    gameState.itemTimeLeft -= delta;
+
+    if (gameState.itemTimeLeft <= 0) {
+      gameState.missedCount += 1;
+
+      hideItem();
+      scheduleNextItem();
+    }
+  }
+
+  else {
+    gameState.nextItemTime -= delta;
+
+    if (gameState.nextItemTime <= 0) {
+      spawnItem();
+    }
+  }
+}
+
+// ==========================================
+// 17. COLLECT ITEM
+// ==========================================
+
+function collectItem() {
+  // Do nothing if paused, ready, or finished
+  if (!isPlaying()) {
+    return;
+  }
+
+  // Prevent repeated clicks on a collected item
+  if (gameState.activeItem === null) {
+    return;
+  }
+
+  const item = gameState.activeItem;
+
+  // Remove item immediately before scoring
+  hideItem();
+  scheduleNextItem();
+
+  // ======================================
+  // RED LIGHT: TEACHER WATCHING
+  // ======================================
+
+  if (gameState.teacherState === "watching") {
+    gameState.caught += 1;
+
+    showEffect("💥");
+    animateStudent("scared");
+
+    playSound(170, 0.25);
+
+    showFeedback(
+      "🚨 被老师抓到了！" +
+      " 已被发现 " +
+      gameState.caught +
+      " / " +
+      CONFIG.maxCaught +
+      " 次。"
+    );
+
+    updateHUD();
+
+    if (
+      gameState.caught >= CONFIG.maxCaught
+    ) {
+      finishGame(
+        false,
+        "你被老师发现了 3 次！"
+      );
     }
 
+    return;
   }
 
+  // ======================================
+  // YELLOW LIGHT: WARNING
+  // ======================================
 
-  // ====================================
-  // FEEDBACK: UPDATE USER INTERFACE
-  // ====================================
+  if (gameState.teacherState === "warning") {
+    showEffect("⚠️");
+    animateStudent("scared");
 
-  updateDisplay();
+    playSound(300);
 
-  showMessage(message);
+    showFeedback(
+      "⚠️ 老师正要转身！" +
+      "这次没有获得分数。" +
+      "请等待绿色安全状态！"
+    );
 
+    return;
+  }
+
+  // ======================================
+  // GREEN LIGHT: SAFE COLLECTION
+  // ======================================
+
+  gameState.score += item.points;
+
+  gameState.collectedCount += 1;
+
+  gameState.lastCollectedItem = item.id;
+
+  updateHUD();
+
+  showEffect(
+    "+" + item.points + "⭐"
+  );
+
+  animateStudent("happy");
+
+  playSound(item.sound);
+
+  if (
+    gameState.score >= CONFIG.targetScore
+  ) {
+    showFeedback(
+      "🎉 你已经获得 " +
+      gameState.score +
+      " 分！" +
+      "继续躲避老师，" +
+      "坚持到倒计时结束才能获胜！"
+    );
+  }
+
+  else {
+    const remaining =
+      CONFIG.targetScore -
+      gameState.score;
+
+    showFeedback(
+      "🐹 成功收集 " +
+      item.name +
+      "！当前 " +
+      gameState.score +
+      " 分。" +
+      "还差 " +
+      remaining +
+      " 分达到目标。"
+    );
+  }
 }
 
+// ==========================================
+// 18. STOP GAME TIMER
+// ==========================================
 
-// ========================================
-// 10. CONNECT BUTTONS TO ACTIONS
-// ========================================
+function stopTimer() {
+  if (timerId !== null) {
+    clearInterval(timerId);
+    timerId = null;
+  }
+}
 
-actionButtons.forEach(function(button) {
+// ==========================================
+// 19. GAME LOOP
+// ==========================================
 
-  button.addEventListener("click", function() {
+function gameTick() {
+  if (!isPlaying()) {
+    return;
+  }
 
-    const actionName = button.dataset.action;
+  const now = performance.now();
 
-    takeAction(actionName);
+  const delta = Math.max(
+    0,
+    now - lastTick
+  );
 
-  });
+  lastTick = now;
 
-});
+  // Update remaining time
+  gameState.timeLeft = Math.max(
+    0,
+    gameState.timeLeft - delta
+  );
 
+  // ======================================
+  // END WHEN TIME REACHES ZERO
+  // ======================================
 
-// ========================================
-// 11. RESET GAME
-// ========================================
+  if (gameState.timeLeft <= 0) {
+    gameState.timeLeft = 0;
 
-resetButton.addEventListener("click", function() {
+    updateHUD();
+
+    const won =
+      gameState.score >= CONFIG.targetScore &&
+      gameState.caught < CONFIG.maxCaught;
+
+    if (won) {
+      finishGame(
+        true,
+        "你成功坚持到了下课！"
+      );
+    }
+
+    else {
+      finishGame(
+        false,
+        "下课了，但你的快乐分数还不够！"
+      );
+    }
+
+    return;
+  }
+
+  // Update teacher and objects
+  updateTeacher(delta);
+  updateItems(delta);
+
+  updateHUD();
+}
+
+// ==========================================
+// 20. START GAME TIMER
+// ==========================================
+
+function startTimer() {
+  // Never allow duplicate timers
+  stopTimer();
+
+  lastTick = performance.now();
+
+  timerId = setInterval(
+    gameTick,
+    CONFIG.tickRate
+  );
+}
+
+// ==========================================
+// 21. SHOW GAME OVERLAY
+// ==========================================
+
+function showOverlay(
+  title,
+  message,
+  buttonText
+) {
+  elements.overlayTitle.textContent = title;
+
+  elements.overlayMessage.textContent =
+    message;
+
+  elements.startButton.textContent =
+    buttonText;
+
+  elements.overlay.hidden = false;
+}
+
+// ==========================================
+// 22. HIDE GAME OVERLAY
+// ==========================================
+
+function hideOverlay() {
+  elements.overlay.hidden = true;
+}
+
+// ==========================================
+// 23. START GAME
+// ==========================================
+
+function startGame() {
+  if (gameState.mode === "playing") {
+    return;
+  }
+
+  // Start fresh after a finished game
+  if (gameState.mode === "finished") {
+    resetGame();
+  }
+
+  // Resume existing paused game
+  if (gameState.mode === "paused") {
+    resumeGame();
+    return;
+  }
+
+  gameState.mode = "playing";
+
+  hideOverlay();
+
+  elements.pauseButton.disabled = false;
+  elements.pauseButton.textContent =
+    "⏸ 暂停";
+
+  gameState.teacherState = "safe";
+
+  gameState.teacherTimeLeft = 3500;
+
+  updateTeacherAppearance();
+
+  // Spawn the first collectible
+  scheduleNextItem();
+
+  startTimer();
+
+  showFeedback(
+    "🎮 游戏开始！" +
+    "观察老师的方向，" +
+    "安全时点击桌面道具！"
+  );
+
+  playSound(700);
+}
+
+// ==========================================
+// 24. PAUSE GAME
+// ==========================================
+
+function pauseGame() {
+  if (gameState.mode !== "playing") {
+    return;
+  }
+
+  gameState.mode = "paused";
+
+  stopTimer();
+
+  // Keep current item state frozen,
+  // but hide the clickable item while paused.
+  elements.collectible.hidden = true;
+  elements.collectible.disabled = true;
+
+  elements.pauseButton.textContent =
+    "▶ 继续";
+
+  showOverlay(
+    "PAUSED",
+    "游戏已经暂停。" +
+    "点击继续恢复游戏。",
+    "▶ 继续游戏"
+  );
+
+  showFeedback(
+    "⏸ 游戏已暂停。"
+  );
+}
+
+// ==========================================
+// 25. RESUME GAME
+// ==========================================
+
+function resumeGame() {
+  if (gameState.mode !== "paused") {
+    return;
+  }
+
+  gameState.mode = "playing";
+
+  hideOverlay();
+
+  elements.pauseButton.textContent =
+    "⏸ 暂停";
+
+  // Restore the previously active item.
+  if (gameState.activeItem !== null) {
+    elements.collectible.hidden = false;
+    elements.collectible.disabled = false;
+  }
+
+  startTimer();
+
+  updateTeacherAppearance();
+
+  showFeedback(
+    "▶ 游戏继续！小心老师！"
+  );
+}
+
+// ==========================================
+// 26. FINISH GAME
+// ==========================================
+
+function finishGame(won, reason) {
+  if (gameState.mode === "finished") {
+    return;
+  }
+
+  gameState.mode = "finished";
+
+  stopTimer();
+  hideItem();
+
+  elements.pauseButton.disabled = true;
+  elements.pauseButton.textContent =
+    "⏸ 暂停";
+
+  const summary =
+    reason +
+    "\n最终分数：" +
+    gameState.score +
+    " 分。" +
+    "\n成功收集：" +
+    gameState.collectedCount +
+    " 个道具。" +
+    "\n被老师发现：" +
+    gameState.caught +
+    " 次。";
+
+  if (won) {
+    showEffect("🏆");
+    animateStudent("happy");
+
+    playSound(950, 0.3);
+
+    showOverlay(
+      "YOU WIN! 🏆",
+      summary,
+      "↻ 再玩一次"
+    );
+
+    showFeedback(
+      "🎉 恭喜！" +
+      "小豚鼠成功度过了快乐的课堂！"
+    );
+  }
+
+  else {
+    showEffect("💔");
+    animateStudent("scared");
+
+    playSound(180, 0.3);
+
+    showOverlay(
+      "GAME OVER",
+      summary,
+      "↻ 再试一次"
+    );
+
+    showFeedback(
+      "💔 挑战失败！" +
+      "观察老师回头的时机，" +
+      "再试一次吧！"
+    );
+  }
+
+  updateHUD();
+}
+
+// ==========================================
+// 27. RESET GAME
+// ==========================================
+
+function resetGame() {
+  stopTimer();
 
   gameState = createInitialState();
 
-  lastActionTime = 0;
+  hideItem();
 
-  effect.classList.remove("pop");
-
-  effect.textContent = "";
-
-  updateDisplay();
-
-  showMessage(
-    "🌸 新的一堂课开始了！这次你准备怎么开小差？"
+  elements.student.classList.remove(
+    "happy",
+    "scared"
   );
 
-});
+  elements.effect.classList.remove("pop");
+  elements.effect.textContent = "";
 
+  elements.pauseButton.disabled = true;
+  elements.pauseButton.textContent =
+    "⏸ 暂停";
 
-// ========================================
-// 12. SOUND ON / OFF
-// ========================================
+  updateHUD();
+  updateTeacherAppearance();
 
-soundButton.addEventListener("click", function() {
+  showOverlay(
+    "READY TO PLAY?",
+    "60 秒内获得至少 8 分，" +
+    "最多只能被老师发现 2 次！" +
+    "点击道具时要注意老师的方向。",
+    "▶ 开始游戏"
+  );
 
-  soundEnabled = !soundEnabled;
+  showFeedback(
+    "🐹 小豚鼠准备好了！" +
+    "点击开始游戏，" +
+    "老师背对时收集桌面道具！"
+  );
+}
 
-  if (soundEnabled) {
+// ==========================================
+// 28. START BUTTON
+// ==========================================
 
-    soundButton.textContent =
-      "🔊 音效开启";
+elements.startButton.addEventListener(
+  "click",
+  function() {
+    if (gameState.mode === "paused") {
+      resumeGame();
+    }
 
-    showMessage(
-      "🔊 音效已经开启！"
-    );
-
-  } else {
-
-    soundButton.textContent =
-      "🔇 音效关闭";
-
-    showMessage(
-      "🔇 音效已经关闭！"
-    );
-
+    else {
+      startGame();
+    }
   }
-
-});
-
-
-// ========================================
-// 13. INITIALIZE GAME
-// ========================================
-
-updateDisplay();
-
-showMessage(
-  "🌸 点击课桌物品或下方按钮，开始你的课堂冒险！"
 );
+
+// ==========================================
+// 29. COLLECTIBLE BUTTON
+// ==========================================
+
+elements.collectible.addEventListener(
+  "click",
+  collectItem
+);
+
+// ==========================================
+// 30. PAUSE BUTTON
+// ==========================================
+
+elements.pauseButton.addEventListener(
+  "click",
+  function() {
+    if (gameState.mode === "playing") {
+      pauseGame();
+    }
+
+    else if (gameState.mode === "paused") {
+      resumeGame();
+    }
+  }
+);
+
+// ==========================================
+// 31. RESET BUTTON
+// ==========================================
+
+elements.resetButton.addEventListener(
+  "click",
+  resetGame
+);
+
+// ==========================================
+// 32. SOUND CONTROL
+// ==========================================
+
+elements.soundButton.addEventListener(
+  "click",
+  function() {
+    soundEnabled = !soundEnabled;
+
+    elements.soundButton.textContent =
+      soundEnabled
+        ? "🔊 音效开启"
+        : "🔇 音效关闭";
+
+    elements.soundButton.setAttribute(
+      "aria-pressed",
+      String(soundEnabled)
+    );
+
+    if (soundEnabled) {
+      showFeedback(
+        "🔊 音效已经开启！"
+      );
+
+      playSound(700);
+    }
+
+    else {
+      showFeedback(
+        "🔇 音效已经关闭！"
+      );
+    }
+  }
+);
+
+// ==========================================
+// 33. KEYBOARD CONTROLS
+// ==========================================
+
+// Space: pause or resume
+// Enter: activate the focused button
+
+document.addEventListener(
+  "keydown",
+  function(event) {
+    if (
+      event.code === "Space" &&
+      event.target === document.body
+    ) {
+      if (gameState.mode === "playing") {
+        event.preventDefault();
+        pauseGame();
+      }
+
+      else if (gameState.mode === "paused") {
+        event.preventDefault();
+        resumeGame();
+      }
+    }
+  }
+);
+
+// ==========================================
+// 34. HANDLE TAB INTERRUPTIONS
+// ==========================================
+
+// Automatically pause when the player
+// switches to another browser tab.
+
+document.addEventListener(
+  "visibilitychange",
+  function() {
+    if (
+      document.hidden &&
+      gameState.mode === "playing"
+    ) {
+      pauseGame();
+    }
+  }
+);
+
+// ==========================================
+// 35. HANDLE WINDOW INTERRUPTIONS
+// ==========================================
+
+window.addEventListener(
+  "blur",
+  function() {
+    if (gameState.mode === "playing") {
+      pauseGame();
+    }
+  }
+);
+
+// ==========================================
+// 36. INITIALIZE THE GAME
+// ==========================================
+
+resetGame();

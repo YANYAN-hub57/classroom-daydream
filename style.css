@@ -1,30 +1,52 @@
 
-/* =========================================
-   CLASSROOM DAYDREAM
+/* ==========================================
+   CLASSROOM DAYDREAM V2.0
    SD5913 - Assignment 3
-   Pixel Classroom Interactive Game
-   ========================================= */
+   Guinea Pig Classroom Pixel Game
+   ========================================== */
 
-/* 1. GLOBAL SETTINGS */
+/* ==========================================
+   1. GLOBAL VARIABLES
+   ========================================== */
 
 :root {
-  --background: #e9dfd6;
-  --paper: #fff9ed;
-  --dark: #574856;
-  --text: #4b3b45;
-  --pink: #ed93ae;
-  --pink-light: #f4d6cf;
-  --purple: #b2b0d9;
-  --wood: #c58f6e;
-  --green: #719086;
-  --yellow: #e8ae71;
+  --ink: #51424d;
+  --ink-light: #76616c;
+
+  --cream: #fff9ed;
+  --background: #e8dad7;
+
+  --pink: #eaa5af;
+  --pink-light: #f6dbe0;
+  --rose: #ad718c;
+
+  --peach: #f3c7a9;
+  --yellow: #efd089;
+
+  --wood: #b98262;
+  --wood-dark: #815d57;
+
+  --green: #739789;
+  --mint: #c8e0c7;
+
+  --danger: #d56b78;
+  --warning: #e7bd62;
+  --success: #79b68c;
+
+  --shadow: #baa3a8;
 
   font-family: "Courier New", monospace;
-  color: var(--text);
+  color: var(--ink);
   background: var(--background);
 }
 
-* {
+/* ==========================================
+   2. RESET
+   ========================================== */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -34,269 +56,351 @@ html {
 
 body {
   margin: 0;
-  padding: 24px;
+  padding: 24px 12px;
   min-height: 100vh;
+
   background:
     radial-gradient(
-      circle at 20% 20%,
-      #f5e7dc,
+      circle at 20% 15%,
+      #f5e8df 0%,
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      #e1cfda 0%,
       transparent 40%
     ),
-    #e9dfd6;
+    var(--background);
+
+  color: var(--ink);
+  font-family: "Courier New", monospace;
 }
 
 button {
   font: inherit;
   cursor: pointer;
+  touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
 
 button:focus-visible {
-  outline: 3px solid #5279bf;
-  outline-offset: 4px;
+  outline: 4px solid #557bbe;
+  outline-offset: 3px;
 }
 
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
-/* 2. MAIN GAME CONTAINER */
+/* ==========================================
+   3. MAIN GAME CONTAINER
+   ========================================== */
 
 .game {
-  width: min(100%, 850px);
+  width: min(100%, 860px);
   margin: 0 auto;
   padding: 24px;
 
-  background: var(--paper);
+  background: var(--cream);
 
-  border: 4px solid var(--dark);
-  box-shadow: 8px 8px 0 #bdacaf;
+  border: 5px solid var(--ink);
+
+  box-shadow:
+    9px 9px 0 var(--shadow);
 }
 
-
-/* 3. HEADER */
+/* ==========================================
+   4. HEADER
+   ========================================== */
 
 .header {
   text-align: center;
-  margin-bottom: 24px;
+  padding: 8px 0 14px;
 }
 
-.subtitle {
-  font-size: 12px;
+.eyebrow {
+  margin: 0 0 12px;
+
+  color: var(--rose);
+
+  font-size: 11px;
   font-weight: bold;
   letter-spacing: 2px;
-  color: #a77a91;
 }
 
 .header h1 {
   margin: 12px 0;
 
-  font-size: clamp(24px, 5vw, 40px);
+  color: var(--rose);
+
+  font-size: clamp(28px, 6vw, 48px);
+  line-height: 1.08;
   font-weight: 900;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
 
-  color: #9b607c;
-  text-shadow: 3px 3px 0 #efd3d7;
+  text-shadow:
+    4px 4px 0 #efd9dc;
 }
 
-.header p:last-child {
-  font-size: 14px;
-  color: #886f79;
-}
+.subtitle {
+  margin-top: 16px;
 
+  color: #9e7287;
 
-/* 4. GAME INTRODUCTION */
-
-.intro {
-  text-align: center;
-  line-height: 1.8;
-  margin-bottom: 24px;
-}
-
-.intro p {
-  margin: 8px 0;
-  font-size: 14px;
-}
-
-.hint {
-  color: #936d82;
-  font-size: 12px !important;
+  font-size: 15px;
   font-weight: bold;
+  letter-spacing: 1px;
 }
 
+/* ==========================================
+   5. GAME INSTRUCTIONS
+   ========================================== */
 
-/* 5. STATUS BARS */
+.instructions {
+  margin: 20px 0;
+  padding: 16px;
 
-.stats {
+  background: #f6e9dc;
+
+  border: 3px dashed #cdaaa4;
+
+  text-align: center;
+}
+
+.instructions h2 {
+  margin: 0 0 12px;
+
+  color: var(--rose);
+
+  font-size: 15px;
+  letter-spacing: 2px;
+}
+
+.instructions p {
+  margin: 8px 0;
+
+  font-size: 12px;
+  line-height: 1.85;
+}
+
+/* ==========================================
+   6. HUD - GAME STATUS
+   ========================================== */
+
+.hud {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  grid-template-columns: repeat(3, 1fr);
 
-  margin: 24px 0;
+  gap: 12px;
+  margin: 20px 0;
 }
 
-.stat {
-  padding: 12px;
-  background: #f9ece5;
-  border: 3px solid #d1afb0;
-}
-
-.stat-label {
+.hud-item {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
 
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 10px;
 
+  padding: 14px 8px;
+
+  background: #f6e8e2;
+
+  border: 3px solid #cdaeb5;
+
+  box-shadow:
+    3px 3px 0 #e7d3d5;
+}
+
+.hud-item span {
+  color: var(--ink-light);
+
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.hud-item strong {
+  color: var(--rose);
+
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 900;
+
+  transition: color 0.2s ease;
+}
+
+/* ==========================================
+   7. TEACHER STATUS BAR
+   ========================================== */
+
+.teacher-status {
+  min-height: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 14px;
+  padding: 12px 16px;
+
+  border: 3px solid var(--ink);
+
+  text-align: center;
   font-size: 13px;
   font-weight: bold;
+  line-height: 1.6;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
-.stat-label strong {
-  font-size: 17px;
-  color: #9b607c;
+.teacher-status.safe {
+  background: #d6ead3;
+  color: #456c4e;
 }
 
-.track {
-  width: 100%;
-  height: 22px;
+.teacher-status.warning {
+  background: #f6e2a3;
+  color: #94641d;
 
-  overflow: hidden;
-  background: #e4d5d2;
-  border: 3px solid var(--dark);
+  animation:
+    status-pulse 0.6s infinite alternate;
 }
 
-.fill {
-  height: 100%;
-  transition: width 0.35s ease;
+.teacher-status.danger {
+  background: #efb5b5;
+  color: #9c3441;
+
+  animation:
+    status-pulse 0.35s infinite alternate;
 }
 
-.mood-fill {
-  width: 35%;
-  background: repeating-linear-gradient(
-    90deg,
-    #ed93ae 0px,
-    #ed93ae 16px,
-    #e17f9e 16px,
-    #e17f9e 19px
-  );
+@keyframes status-pulse {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0.72;
+  }
 }
 
-.risk-fill {
-  width: 10%;
-  background: repeating-linear-gradient(
-    90deg,
-    #e8ae71 0px,
-    #e8ae71 16px,
-    #d99562 16px,
-    #d99562 19px
-  );
-}
-
-
-/* =========================================
-   6. PIXEL CLASSROOM SCENE
-   ========================================= */
+/* ==========================================
+   8. CLASSROOM SCENE
+   ========================================== */
 
 .scene {
   position: relative;
 
   width: 100%;
-  height: 370px;
+  height: 390px;
 
   overflow: hidden;
+  isolation: isolate;
+
+  background: #efdcba;
+
+  border: 5px solid var(--ink);
+
+  image-rendering: pixelated;
+}
+
+/* Wall texture */
+
+.wall-decoration {
+  position: absolute;
+  inset: 0 0 28%;
 
   background:
     repeating-linear-gradient(
       90deg,
-      transparent 0px,
-      transparent 79px,
-      rgba(255, 255, 255, 0.12) 80px
-    ),
-    linear-gradient(
-      to bottom,
-      #f3e4c9 0%,
-      #e9d6b5 71%,
-      #b99578 71%,
-      #b99578 100%
+      transparent 0 78px,
+      rgba(255, 255, 255, 0.14) 78px 80px
     );
-
-  border: 5px solid var(--dark);
-  image-rendering: pixelated;
 }
 
-
-/* 7. CLASSROOM FLOOR */
+/* ==========================================
+   9. CLASSROOM FLOOR
+   ========================================== */
 
 .floor {
   position: absolute;
+
   bottom: 0;
   left: 0;
 
   width: 100%;
   height: 29%;
 
-  background: repeating-linear-gradient(
-    90deg,
-    #cba683 0px,
-    #cba683 55px,
-    #b98e70 55px,
-    #b98e70 60px
-  );
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #cda789 0 55px,
+      #ad846f 55px 60px
+    );
 
-  border-top: 7px solid #8d7468;
+  border-top: 8px solid #906e62;
 }
 
-
-/* 8. CLASSROOM WINDOW */
+/* ==========================================
+   10. CLASSROOM WINDOW
+   ========================================== */
 
 .window {
   position: absolute;
 
-  top: 11%;
-  left: 8%;
+  top: 10%;
+  left: 7%;
 
   width: 24%;
   height: 39%;
 
-  background: linear-gradient(
-    to bottom,
-    #9bcede,
-    #d0edf0
-  );
+  background:
+    linear-gradient(
+      to bottom,
+      #9dcddd,
+      #d1ebef
+    );
 
-  border: 10px solid #a78078;
+  border: 10px solid #a67d72;
+
   box-shadow:
-    5px 5px 0 #d1b39b,
-    inset 0 0 0 4px #e8bfa6;
+    6px 6px 0 #d5bca1,
+    inset 0 0 0 3px #e2c9ae;
 }
 
-.window::before {
+.window::before,
+.window::after {
   content: "";
 
   position: absolute;
+
+  background: #a67d72;
+}
+
+.window::before {
   left: 46%;
   top: 0;
 
   width: 9px;
   height: 100%;
-
-  background: #a78078;
 }
 
 .window::after {
-  content: "";
-
-  position: absolute;
-  top: 45%;
+  top: 46%;
   left: 0;
 
   width: 100%;
   height: 9px;
-
-  background: #a78078;
 }
 
-
-/* 9. BLACKBOARD */
+/* ==========================================
+   11. BLACKBOARD
+   ========================================== */
 
 .board {
   position: absolute;
@@ -304,43 +408,47 @@ button:focus-visible {
   top: 10%;
   right: 8%;
 
-  width: 43%;
-  height: 36%;
+  width: 41%;
+  height: 35%;
 
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 
-  gap: 12px;
+  gap: 11px;
 
-  background: #719086;
-  color: #eff5dd;
+  background: var(--green);
 
-  border: 10px solid #a78067;
+  border: 10px solid #a87f65;
 
   box-shadow:
-    5px 5px 0 #d0b8a0,
-    inset 0 0 0 3px #5d7a72;
+    5px 5px 0 #c7ae91,
+    inset 0 0 0 3px #658476;
 
-  font-size: 16px;
+  color: #eff6e6;
+
+  font-size: 15px;
   font-weight: bold;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   text-align: center;
 }
 
 .board span {
-  text-shadow: 2px 2px 0 #54766d;
+  text-shadow:
+    2px 2px 0 #5a7e70;
 }
 
 .board small {
-  font-size: 11px;
+  color: #f7e3b8;
+
+  font-size: 10px;
   letter-spacing: 1px;
-  color: #e9d9b1;
 }
 
-
-/* 10. TEACHER */
+/* ==========================================
+   12. TEACHER CHARACTER
+   ========================================== */
 
 .teacher {
   position: absolute;
@@ -350,11 +458,8 @@ button:focus-visible {
 
   z-index: 3;
 
-  font-size: 72px;
-
-  filter: drop-shadow(
-    4px 5px 0 rgba(70, 50, 55, 0.22)
-  );
+  width: 94px;
+  height: 131px;
 
   transform-origin: bottom center;
 
@@ -363,277 +468,686 @@ button:focus-visible {
     filter 0.25s ease;
 }
 
-/* Teacher warning state */
+/* Teacher ears */
 
-.teacher.alert {
-  transform:
-    translateY(-10px)
-    scale(1.15);
+.teacher-ear {
+  position: absolute;
 
-  filter:
-    drop-shadow(0 0 10px #ef8585)
-    drop-shadow(0 4px 0 #8c6969);
+  top: 2px;
 
-  animation: teacher-warning 0.55s infinite alternate;
+  width: 29px;
+  height: 35px;
+
+  background: #d9b18f;
+
+  border: 5px solid var(--ink);
+  border-radius: 9px;
 }
 
-@keyframes teacher-warning {
+.teacher-ear.left {
+  left: 9px;
+}
+
+.teacher-ear.right {
+  right: 9px;
+}
+
+/* Teacher head */
+
+.teacher-head {
+  position: absolute;
+
+  top: 13px;
+  left: 15px;
+
+  z-index: 2;
+
+  width: 65px;
+  height: 65px;
+
+  background: #ddba91;
+
+  border: 6px solid var(--ink);
+  border-radius: 16px 16px 20px 20px;
+}
+
+/* Teacher face */
+
+.teacher-face {
+  position: absolute;
+  inset: 0;
+
+  opacity: 0;
+
+  transition: opacity 0.15s;
+}
+
+.teacher-eyes::before,
+.teacher-eyes::after {
+  content: "";
+
+  position: absolute;
+
+  top: 25px;
+
+  width: 7px;
+  height: 9px;
+
+  background: var(--ink);
+}
+
+.teacher-eyes::before {
+  left: 13px;
+}
+
+.teacher-eyes::after {
+  right: 13px;
+}
+
+.teacher-nose {
+  position: absolute;
+
+  top: 36px;
+  left: 23px;
+
+  width: 9px;
+  height: 7px;
+
+  background: #9b6267;
+
+  border-radius: 2px;
+}
+
+/* Teacher body */
+
+.teacher-body {
+  position: absolute;
+
+  left: 8px;
+  bottom: 5px;
+
+  width: 80px;
+  height: 65px;
+
+  background: #8ba8a1;
+
+  border: 6px solid var(--ink);
+  border-radius: 14px 14px 4px 4px;
+
+  box-shadow:
+    inset 0 -10px 0 #75958e;
+}
+
+/* Teacher feet */
+
+.teacher-feet {
+  position: absolute;
+
+  bottom: 0;
+  left: 20px;
+
+  width: 20px;
+  height: 12px;
+
+  background: var(--ink);
+
+  box-shadow:
+    36px 0 var(--ink);
+}
+
+/* ==========================================
+   13. TEACHER INTERACTION STATES
+   ========================================== */
+
+/* Safe - facing the blackboard */
+
+.teacher.facing-away .teacher-head {
+  background: #a67a61;
+}
+
+.teacher.facing-away .teacher-face {
+  opacity: 0;
+}
+
+/* Warning - about to turn */
+
+.teacher.warning {
+  animation:
+    teacher-shake 0.25s infinite alternate;
+}
+
+.teacher.warning .teacher-head {
+  background: #c69a78;
+}
+
+/* Danger - watching the player */
+
+.teacher.watching {
+  transform:
+    translateX(-12px)
+    scale(1.07);
+
+  filter:
+    drop-shadow(0 0 10px #e97c79);
+}
+
+.teacher.watching .teacher-face {
+  opacity: 1;
+}
+
+.teacher.watching .teacher-head {
+  background: #ddba91;
+}
+
+@keyframes teacher-shake {
   from {
-    transform: translateY(-8px) rotate(-3deg);
+    transform: rotate(-3deg);
   }
 
   to {
-    transform: translateY(-12px) rotate(3deg);
+    transform: rotate(3deg);
   }
 }
 
-
-/* =========================================
-   11. PIXEL STUDENT CHARACTER
-   ========================================= */
+/* ==========================================
+   14. STUDENT GUINEA PIG
+   ========================================== */
 
 .student {
   position: absolute;
 
-  left: 40%;
-  bottom: 27%;
+  left: 39%;
+  bottom: 24%;
+
+  z-index: 4;
+
+  width: 120px;
+  height: 122px;
+
+  transform-origin: bottom center;
+
+  transition: transform 0.2s ease;
+}
+
+/* Guinea pig body */
+
+.gp-body {
+  position: absolute;
+
+  bottom: 1px;
+  left: 8px;
+
+  width: 105px;
+  height: 72px;
+
+  background: #f0d2a8;
+
+  border: 6px solid var(--ink);
+  border-radius: 33px 33px 22px 22px;
+
+  box-shadow:
+    inset 0 -12px 0 #ddba90;
+}
+
+/* Guinea pig ears */
+
+.gp-ear {
+  position: absolute;
+
+  top: 0;
+
+  z-index: 1;
+
+  width: 31px;
+  height: 38px;
+
+  background: #d99f9c;
+
+  border: 6px solid var(--ink);
+  border-radius: 12px;
+}
+
+.gp-ear.left {
+  left: 12px;
+}
+
+.gp-ear.right {
+  right: 12px;
+}
+
+/* Guinea pig head */
+
+.gp-head {
+  position: absolute;
+
+  top: 11px;
+  left: 12px;
+
+  z-index: 2;
+
+  width: 96px;
+  height: 85px;
+
+  background: #f7ddba;
+
+  border: 6px solid var(--ink);
+  border-radius: 35px 35px 30px 30px;
+
+  overflow: hidden;
+}
+
+/* Brown fur patch */
+
+.gp-patch {
+  position: absolute;
+
+  top: -1px;
+  right: 0;
+
+  width: 43px;
+  height: 38px;
+
+  background: #bf8a6b;
+
+  border-radius: 0 24px 4px 24px;
+}
+
+/* Guinea pig eyes */
+
+.gp-eye {
+  position: absolute;
+
+  top: 35px;
+
+  width: 8px;
+  height: 10px;
+
+  background: var(--ink);
+
+  border-radius: 2px;
+}
+
+.gp-eye.left {
+  left: 19px;
+}
+
+.gp-eye.right {
+  right: 19px;
+}
+
+/* Guinea pig nose */
+
+.gp-nose {
+  position: absolute;
+
+  top: 48px;
+  left: 39px;
+
+  width: 9px;
+  height: 7px;
+
+  background: #bb777d;
+
+  border-radius: 2px;
+}
+
+/* Guinea pig cheeks */
+
+.gp-cheek {
+  position: absolute;
+
+  top: 52px;
+
+  width: 16px;
+  height: 8px;
+
+  background: #efa8ad;
+
+  border-radius: 5px;
+}
+
+.gp-cheek.left {
+  left: 8px;
+}
+
+.gp-cheek.right {
+  right: 8px;
+}
+
+/* Guinea pig paws */
+
+.gp-paws {
+  position: absolute;
+
+  bottom: 0;
+  left: 25px;
 
   z-index: 3;
 
-  width: 80px;
-  height: 115px;
+  width: 22px;
+  height: 13px;
 
-  filter: drop-shadow(
-    4px 4px 0 rgba(70, 50, 55, 0.18)
-  );
-}
+  background: #cfab89;
 
-/* Student's head */
-
-.student-head {
-  position: relative;
-
-  width: 58px;
-  height: 60px;
-
-  margin: 0 auto;
-
-  background: #f2c5a8;
-
-  border: 6px solid #614c52;
-  border-top: 17px solid #614c52;
-
-  border-radius: 8px 8px 6px 6px;
-}
-
-/* Student's eyes */
-
-.student-head::before {
-  content: "";
-
-  position: absolute;
-
-  top: 14px;
-  left: 10px;
-
-  width: 5px;
-  height: 6px;
-
-  background: #614c52;
-
-  box-shadow: 19px 0 0 #614c52;
-}
-
-/* Student's blush */
-
-.student-head::after {
-  content: "";
-
-  position: absolute;
-
-  top: 26px;
-  left: 5px;
-
-  width: 11px;
-  height: 5px;
-
-  background: #e9a0a3;
-
-  box-shadow: 24px 0 0 #e9a0a3;
-}
-
-/* Student's body */
-
-.student-body {
-  width: 80px;
-  height: 58px;
-
-  background: #b2b0d9;
-
-  border: 6px solid #614c52;
-  border-radius: 9px 9px 0 0;
+  border: 4px solid var(--ink);
 
   box-shadow:
-    inset 0 -12px 0 #9999c5;
+    46px 0 0 -1px #cfab89,
+    46px 0 0 2px var(--ink);
 }
 
+/* ==========================================
+   15. GUINEA PIG ANIMATIONS
+   ========================================== */
 
-/* 12. WOODEN DESK */
+/* Happy jump */
+
+.student.happy {
+  animation:
+    guinea-pig-jump 0.35s ease;
+}
+
+@keyframes guinea-pig-jump {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-17px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Scared shake */
+
+.student.scared {
+  animation:
+    guinea-pig-shake 0.3s ease;
+}
+
+@keyframes guinea-pig-shake {
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-8px);
+  }
+
+  50% {
+    transform: translateX(8px);
+  }
+
+  75% {
+    transform: translateX(-5px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* ==========================================
+   16. CLASSROOM DESK
+   ========================================== */
 
 .desk {
   position: absolute;
 
-  left: 25%;
-  bottom: 15%;
+  bottom: 11%;
+  left: 22%;
 
-  z-index: 4;
+  z-index: 5;
 
-  width: 50%;
-  height: 65px;
+  width: 56%;
+  height: 80px;
 
-  background: #c58f6e;
+  background: #c48f70;
 
-  border: 7px solid #825d58;
+  border: 8px solid var(--wood-dark);
 
   box-shadow:
-    0 14px 0 #a57862,
+    0 14px 0 #a47360,
     0 19px 0 #805d56;
 }
 
-
-/* =========================================
-   13. INTERACTIVE SCENE ITEMS
-   ========================================= */
-
-.scene-item {
+.desk-shine {
   position: absolute;
 
-  z-index: 6;
+  top: 12px;
+  left: 10px;
+  right: 10px;
 
-  padding: 5px 9px;
+  height: 5px;
 
-  border: 3px solid transparent;
-  background: transparent;
+  background:
+    rgba(255, 235, 196, 0.35);
+}
 
-  font-size: 38px;
-  line-height: 1.2;
+/* ==========================================
+   17. RANDOM COLLECTIBLE ITEMS
+   ========================================== */
+
+.collectible {
+  position: absolute;
+
+  z-index: 9;
+
+  width: 65px;
+  height: 65px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 5px;
+
+  border: 4px solid var(--ink);
+  border-radius: 8px;
+
+  background: #fff0c9;
+
+  box-shadow:
+    4px 4px 0 #9e786b;
+
+  font-size: 34px;
+
+  animation:
+    collectible-pop 0.22s ease-out;
 
   transition:
-    transform 0.15s ease,
-    filter 0.15s ease;
+    background 0.15s ease,
+    transform 0.15s ease;
 }
 
-.scene-item:hover {
-  transform:
-    translateY(-6px)
-    scale(1.2)
-    rotate(-8deg);
-
-  filter: drop-shadow(
-    0 0 6px rgba(255, 255, 255, 0.9)
-  );
+.collectible span {
+  pointer-events: none;
 }
 
-.scene-item:active {
-  transform: translateY(2px) scale(0.95);
+.collectible[hidden] {
+  display: none !important;
 }
 
-/* Doodle notebook */
-
-.notebook {
-  left: 35%;
-  bottom: 29%;
+.collectible:not(:disabled):hover {
+  transform: scale(1.1);
+  background: #fff9db;
 }
 
-/* Snack */
-
-.snack {
-  left: 60%;
-  bottom: 29%;
+.collectible:not(:disabled):active {
+  transform: scale(0.95);
 }
 
+@keyframes collectible-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
 
-/* =========================================
-   14. CLICK EFFECT ANIMATION
-   ========================================= */
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ==========================================
+   18. VISUAL FEEDBACK EFFECTS
+   ========================================== */
 
 .effect {
   position: absolute;
 
+  z-index: 15;
+
   left: 50%;
-  top: 32%;
+  top: 45%;
 
-  z-index: 10;
+  font-size: 54px;
+  font-weight: bold;
 
-  font-size: 64px;
+  pointer-events: none;
 
   opacity: 0;
-  pointer-events: none;
 
   transform: translate(-50%, 0);
 }
 
 .effect.pop {
-  animation: effect-pop 0.5s ease-out;
+  animation:
+    effect-pop 0.55s ease-out;
 }
 
 @keyframes effect-pop {
-
   0% {
     opacity: 0;
+
     transform:
-      translate(-50%, 20px)
+      translate(-50%, 12px)
       scale(0.5);
   }
 
-  35% {
+  40% {
     opacity: 1;
+
     transform:
-      translate(-50%, -12px)
-      scale(1.35);
+      translate(-50%, -15px)
+      scale(1.2);
   }
 
-  70% {
+  75% {
     opacity: 1;
+
     transform:
       translate(-50%, -30px)
-      scale(1.15);
+      scale(1.1);
   }
 
   100% {
     opacity: 0;
+
     transform:
       translate(-50%, -50px)
       scale(1);
   }
-
 }
 
+/* ==========================================
+   19. GAME OVERLAY
+   ========================================== */
 
-/* =========================================
-   15. ACTION BUTTONS
-   ========================================= */
+.overlay {
+  position: absolute;
+  inset: 0;
 
-.controls {
-  display: grid;
+  z-index: 25;
 
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-
-  margin-top: 22px;
-}
-
-.action {
-  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   padding: 12px;
 
-  background: #e7c3c3;
-  color: #4b3b45;
+  background:
+    rgba(50, 39, 45, 0.68);
+}
 
-  border: 3px solid #574856;
+.overlay[hidden] {
+  display: none !important;
+}
 
-  box-shadow: 4px 4px 0 #9c8087;
+/* ==========================================
+   20. OVERLAY CARD
+   ========================================== */
+
+.overlay-card {
+  width: min(100%, 370px);
+
+  padding: 26px 18px;
+
+  background: var(--cream);
+
+  border: 5px solid var(--ink);
+
+  box-shadow:
+    6px 6px 0 #c39ba3;
+
+  text-align: center;
+
+  animation:
+    overlay-appear 0.25s ease-out;
+}
+
+.overlay-card h2 {
+  margin: 0 0 15px;
+
+  color: var(--rose);
+
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.overlay-card p {
+  margin: 12px 0;
+
+  font-size: 13px;
+  line-height: 1.8;
+
+  white-space: pre-line;
+}
+
+@keyframes overlay-appear {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================
+   21. START BUTTON
+   ========================================== */
+
+.primary-button {
+  min-width: 160px;
+  min-height: 52px;
+
+  margin-top: 12px;
+  padding: 13px 24px;
+
+  background: #efb5bd;
+  color: var(--ink);
+
+  border: 4px solid var(--ink);
+
+  box-shadow:
+    4px 4px 0 #9e7988;
 
   font-size: 14px;
   font-weight: bold;
@@ -644,203 +1158,425 @@ button:focus-visible {
     box-shadow 0.15s ease;
 }
 
-.action:hover {
-  background: #f4d6cf;
+.primary-button:hover {
+  background: #f8cad0;
 
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 
-  box-shadow: 4px 7px 0 #9c8087;
+  box-shadow:
+    4px 6px 0 #9e7988;
 }
 
-.action:active {
+.primary-button:active {
   transform: translate(4px, 4px);
   box-shadow: none;
 }
 
-.action:disabled,
-.scene-item:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-  transform: none;
-}
-
-
-/* 16. FEEDBACK MESSAGE */
+/* ==========================================
+   22. FEEDBACK MESSAGE
+   ========================================== */
 
 .feedback {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 
-  min-height: 86px;
+  min-height: 78px;
 
-  margin-top: 24px;
+  margin-top: 18px;
   padding: 18px;
 
-  background: #f6e4d0;
+  background: #f6e5d3;
 
-  border: 3px dashed #b48f83;
+  border: 3px dashed #b79190;
 
-  color: #725662;
+  color: #745b66;
 
-  font-size: 14px;
+  text-align: center;
+  font-size: 13px;
   font-weight: bold;
   line-height: 1.8;
-  text-align: center;
 }
 
+/* ==========================================
+   23. GAME CONTROL BUTTONS
+   ========================================== */
 
-/* =========================================
-   17. GAME FOOTER
-   ========================================= */
-
-.footer {
+.controls {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  gap: 16px;
-  margin-top: 20px;
-
-  font-size: 12px;
-}
-
-#turn-count {
-  font-weight: bold;
-  color: #8c7081;
-}
-
-.footer-buttons {
-  display: flex;
+  justify-content: center;
   flex-wrap: wrap;
+
   gap: 12px;
+  margin-top: 18px;
 }
 
-.footer button {
-  min-height: 42px;
+.controls button {
+  min-width: 140px;
+  min-height: 48px;
 
-  padding: 10px 14px;
+  padding: 11px 15px;
 
-  background: #d8ddea;
-  color: #574856;
+  background: #d7dce9;
+  color: var(--ink);
 
-  border: 3px solid #574856;
+  border: 3px solid var(--ink);
 
-  box-shadow: 3px 3px 0 #a1a0b7;
+  box-shadow:
+    3px 3px 0 #a9a0ae;
 
-  font-size: 12px;
+  font-size: 13px;
   font-weight: bold;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-.footer button:hover {
-  background: #e8e9f5;
+.controls button:not(:disabled):hover {
+  background: #e6e8f3;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    3px 5px 0 #a9a0ae;
 }
 
-.footer button:active {
+.controls button:not(:disabled):active {
   transform: translate(3px, 3px);
   box-shadow: none;
 }
 
+.controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
-/* =========================================
-   18. SMALL SCREEN RESPONSIVENESS
-   ========================================= */
+/* ==========================================
+   24. FOOTER
+   ========================================== */
 
-@media (max-width: 650px) {
+footer {
+  margin-top: 26px;
+  padding-top: 12px;
 
+  border-top: 2px dashed #e0c9cc;
+
+  text-align: center;
+
+  color: #aa8596;
+
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: 1px;
+}
+
+footer p {
+  margin: 6px 0;
+}
+
+/* ==========================================
+   25. TABLET RESPONSIVENESS
+   ========================================== */
+
+@media (max-width: 800px) {
+  .game {
+    padding: 18px;
+  }
+
+  .scene {
+    height: 350px;
+  }
+
+  .teacher {
+    right: 11%;
+  }
+
+  .student {
+    left: 37%;
+  }
+
+  .board {
+    font-size: 13px;
+  }
+}
+
+/* ==========================================
+   26. MOBILE RESPONSIVENESS
+   ========================================== */
+
+@media (max-width: 600px) {
   body {
     padding: 10px;
   }
 
   .game {
-    padding: 14px;
-    box-shadow: 4px 4px 0 #bdacaf;
+    padding: 12px;
+
+    border-width: 4px;
+
+    box-shadow:
+      4px 4px 0 var(--shadow);
+  }
+
+  .header {
+    padding: 6px 0 10px;
   }
 
   .header h1 {
-    font-size: 25px;
+    font-size: 29px;
     letter-spacing: 1px;
   }
 
-  .subtitle {
+  .eyebrow {
     font-size: 10px;
   }
 
-  .intro p {
+  .subtitle {
     font-size: 12px;
   }
 
-  .stats {
-    grid-template-columns: 1fr;
-    gap: 12px;
+  .instructions {
+    padding: 12px 9px;
+  }
+
+  .instructions h2 {
+    font-size: 13px;
+  }
+
+  .instructions p {
+    font-size: 11px;
+  }
+
+  .hud {
+    gap: 6px;
+    margin: 15px 0;
+  }
+
+  .hud-item {
+    padding: 9px 3px;
+    gap: 7px;
+  }
+
+  .hud-item span {
+    font-size: 10px;
+    letter-spacing: 0;
+  }
+
+  .hud-item strong {
+    font-size: 22px;
+  }
+
+  .teacher-status {
+    padding: 10px 8px;
+    font-size: 11px;
   }
 
   .scene {
     height: 300px;
   }
 
+  .window {
+    border-width: 6px;
+  }
+
+  .window::before {
+    width: 6px;
+  }
+
+  .window::after {
+    height: 6px;
+  }
+
   .board {
-    font-size: 12px;
-    letter-spacing: 0;
+    font-size: 11px;
+    gap: 7px;
+    border-width: 6px;
   }
 
   .board small {
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .teacher {
-    font-size: 52px;
-  }
+    right: 7%;
 
-  .student {
-    transform: scale(0.78);
+    transform:
+      scale(0.72);
+
     transform-origin: bottom center;
   }
 
-  .scene-item {
-    font-size: 28px;
-    padding: 4px;
+  .teacher.watching {
+    transform:
+      translateX(-8px)
+      scale(0.77);
   }
 
-  .controls {
-    grid-template-columns: 1fr;
-    gap: 10px;
+  .student {
+    left: 34%;
+
+    transform:
+      scale(0.72);
+
+    transform-origin: bottom center;
   }
 
-  .action {
-    min-height: 52px;
+  .student.happy {
+    animation:
+      mobile-guinea-pig-jump 0.35s ease;
+  }
+
+  .student.scared {
+    animation:
+      mobile-guinea-pig-shake 0.3s ease;
+  }
+
+  .desk {
+    height: 61px;
+    border-width: 6px;
+  }
+
+  .collectible {
+    width: 54px;
+    height: 54px;
+
+    padding: 3px;
+
+    font-size: 27px;
+  }
+
+  .effect {
+    font-size: 40px;
+  }
+
+  .overlay-card {
+    padding: 18px 12px;
+  }
+
+  .overlay-card h2 {
+    font-size: 20px;
+  }
+
+  .overlay-card p {
+    font-size: 11px;
+  }
+
+  .primary-button {
+    min-width: 130px;
+    min-height: 46px;
+
+    font-size: 12px;
   }
 
   .feedback {
+    min-height: 72px;
+    padding: 12px;
+
     font-size: 12px;
-    min-height: 80px;
   }
 
-  .footer {
-    flex-direction: column;
-    align-items: stretch;
+  .controls {
+    gap: 8px;
   }
 
-  .footer-buttons {
-    display: flex;
-  }
-
-  .footer-buttons button {
+  .controls button {
     flex: 1;
+
+    min-width: 90px;
+    min-height: 46px;
+
+    padding: 8px 5px;
+
+    font-size: 11px;
   }
 
+  footer {
+    font-size: 9px;
+  }
 }
 
+/* ==========================================
+   27. MOBILE CHARACTER ANIMATIONS
+   ========================================== */
 
-/* 19. ACCESSIBILITY */
+@keyframes mobile-guinea-pig-jump {
+  0% {
+    transform: scale(0.72) translateY(0);
+  }
+
+  50% {
+    transform: scale(0.72) translateY(-20px);
+  }
+
+  100% {
+    transform: scale(0.72) translateY(0);
+  }
+}
+
+@keyframes mobile-guinea-pig-shake {
+  0% {
+    transform: scale(0.72) translateX(0);
+  }
+
+  25% {
+    transform: scale(0.72) translateX(-8px);
+  }
+
+  75% {
+    transform: scale(0.72) translateX(8px);
+  }
+
+  100% {
+    transform: scale(0.72) translateX(0);
+  }
+}
+
+/* ==========================================
+   28. VERY SMALL SCREENS
+   ========================================== */
+
+@media (max-width: 380px) {
+  .header h1 {
+    font-size: 24px;
+  }
+
+  .scene {
+    height: 270px;
+  }
+
+  .board {
+    font-size: 9px;
+  }
+
+  .board small {
+    font-size: 7px;
+  }
+
+  .hud-item strong {
+    font-size: 19px;
+  }
+
+  .collectible {
+    width: 48px;
+    height: 48px;
+
+    font-size: 24px;
+  }
+}
+
+/* ==========================================
+   29. ACCESSIBILITY
+   ========================================== */
 
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-
 }
