@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Classroom Daydream</title>
+
+  <!-- Load CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Load JavaScript -->
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+
+  <main class="game">
+
+<!-- 1. GAME TITLE -->
+<header class="header">
+  <p class="subtitle">
+    SD5913 · INTERACTIVE EXPERIENCE
+  </p>
+
+  <h1>CLASSROOM DAYDREAM</h1>
+
+  <p>教室开小差 · A Tiny Classroom Game</p>
+</header>
+
+
+<!-- 2. GAME INSTRUCTIONS -->
+<section class="intro">
+  <p>
+    上课时间到了！
+    偷偷涂鸦、吃零食，还是认真听讲？
+  </p>
+
+  <p>
+    在老师发现你之前，让自己的心情变好吧！
+  </p>
+
+  <p class="hint">
+    至少进行 4 次行动，心情达到 80 即可获胜。
+    被发现风险达到 100 就会失败。
+  </p>
+</section>
+
+
+<!-- 3. GAME STATUS -->
+<section class="stats" aria-label="游戏状态">
+
+  <!-- Mood -->
+  <div class="stat">
+    <div class="stat-label">
+      <span>💖 心情 Mood</span>
+      <strong id="mood-value">35</strong>
+    </div>
+
+    <div
+      class="track"
+      id="mood-track"
+      role="progressbar"
+      aria-label="心情值"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="35"
+    >
+      <div
+        id="mood-fill"
+        class="fill mood-fill"
+      ></div>
+    </div>
+  </div>
+
+  <!-- Risk -->
+  <div class="stat">
+    <div class="stat-label">
+      <span>👀 被发现风险 Risk</span>
+      <strong id="risk-value">10</strong>
+    </div>
+
+    <div
+      class="track"
+      id="risk-track"
+      role="progressbar"
+      aria-label="被发现风险"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="10"
+    >
+      <div
+        id="risk-fill"
+        class="fill risk-fill"
+      ></div>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- 4. CLASSROOM SCENE -->
+<section
+  class="scene"
+  id="scene"
+  aria-label="像素教室场景"
+>
+
+  <!-- Classroom Floor -->
+  <div class="floor"></div>
+
+  <!-- Classroom Window -->
+  <div class="window" aria-hidden="true"></div>
+
+  <!-- Blackboard -->
+  <div class="board" aria-hidden="true">
+    <span>MONDAY</span>
+    <span>2 + 2 = ?</span>
+    <small>BE QUIET!</small>
+  </div>
+
+  <!-- Teacher -->
+  <div
+    class="teacher"
+    id="teacher"
+    aria-hidden="true"
+  >
+    👩‍🏫
+  </div>
+
+  <!-- Student -->
+  <div class="student" aria-hidden="true">
+    <div class="student-head"></div>
+    <div class="student-body"></div>
+  </div>
+
+  <!-- Student Desk -->
+  <div class="desk" aria-hidden="true"></div>
+
+  <!-- Interactive Notebook -->
+  <button
+    class="scene-item notebook"
+    type="button"
+    data-action="doodle"
+    aria-label="点击涂鸦本"
+  >
+    📒
+  </button>
+
+  <!-- Interactive Snack -->
+  <button
+    class="scene-item snack"
+    type="button"
+    data-action="snack"
+    aria-label="点击零食"
+  >
+    🍪
+  </button>
+
+  <!-- Interaction Animation -->
+  <div
+    class="effect"
+    id="effect"
+    aria-hidden="true"
+  ></div>
+
+</section>
+
+
+<!-- 5. PLAYER ACTION BUTTONS -->
+<section class="controls" aria-label="游戏操作">
+
+  <button
+    type="button"
+    class="action"
+    data-action="doodle"
+  >
+    ✏️ 偷偷涂鸦
+  </button>
+
+  <button
+    type="button"
+    class="action"
+    data-action="snack"
+  >
+    🍪 偷吃零食
+  </button>
+
+  <button
+    type="button"
+    class="action"
+    data-action="study"
+  >
+    📖 认真听讲
+  </button>
+
+</section>
+
+
+<!-- 6. GAME FEEDBACK -->
+<div
+  class="feedback"
+  id="feedback"
+  role="status"
+  aria-live="polite"
+>
+  点击课桌上的物品或下方按钮，
+  开始你的课堂冒险！
+</div>
+
+
+<!-- 7. GAME FOOTER -->
+<footer class="footer">
+
+  <!-- Action Counter -->
+  <span id="turn-count">
+    已进行 0 次行动
+  </span>
+
+  <div class="footer-buttons">
+
+    <!-- Sound Control -->
+    <button
+      type="button"
+      id="sound-button"
+    >
+      🔊 音效开启
+    </button>
+
+    <!-- Restart Button -->
+    <button
+      type="button"
+      id="reset-button"
+    >
+      ↻ 重新开始
+    </button>
+
+  </div>
+
+</footer>
+  </main>
+
+</body>
+</html>

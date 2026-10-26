@@ -1,0 +1,846 @@
+
+/* =========================================
+   CLASSROOM DAYDREAM
+   SD5913 - Assignment 3
+   Pixel Classroom Interactive Game
+   ========================================= */
+
+/* 1. GLOBAL SETTINGS */
+
+:root {
+  --background: #e9dfd6;
+  --paper: #fff9ed;
+  --dark: #574856;
+  --text: #4b3b45;
+  --pink: #ed93ae;
+  --pink-light: #f4d6cf;
+  --purple: #b2b0d9;
+  --wood: #c58f6e;
+  --green: #719086;
+  --yellow: #e8ae71;
+
+  font-family: "Courier New", monospace;
+  color: var(--text);
+  background: var(--background);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 24px;
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      #f5e7dc,
+      transparent 40%
+    ),
+    #e9dfd6;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible {
+  outline: 3px solid #5279bf;
+  outline-offset: 4px;
+}
+
+
+/* 2. MAIN GAME CONTAINER */
+
+.game {
+  width: min(100%, 850px);
+  margin: 0 auto;
+  padding: 24px;
+
+  background: var(--paper);
+
+  border: 4px solid var(--dark);
+  box-shadow: 8px 8px 0 #bdacaf;
+}
+
+
+/* 3. HEADER */
+
+.header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.subtitle {
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #a77a91;
+}
+
+.header h1 {
+  margin: 12px 0;
+
+  font-size: clamp(24px, 5vw, 40px);
+  font-weight: 900;
+  letter-spacing: 2px;
+
+  color: #9b607c;
+  text-shadow: 3px 3px 0 #efd3d7;
+}
+
+.header p:last-child {
+  font-size: 14px;
+  color: #886f79;
+}
+
+
+/* 4. GAME INTRODUCTION */
+
+.intro {
+  text-align: center;
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+
+.intro p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.hint {
+  color: #936d82;
+  font-size: 12px !important;
+  font-weight: bold;
+}
+
+
+/* 5. STATUS BARS */
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+
+  margin: 24px 0;
+}
+
+.stat {
+  padding: 12px;
+  background: #f9ece5;
+  border: 3px solid #d1afb0;
+}
+
+.stat-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 8px;
+  margin-bottom: 10px;
+
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.stat-label strong {
+  font-size: 17px;
+  color: #9b607c;
+}
+
+.track {
+  width: 100%;
+  height: 22px;
+
+  overflow: hidden;
+  background: #e4d5d2;
+  border: 3px solid var(--dark);
+}
+
+.fill {
+  height: 100%;
+  transition: width 0.35s ease;
+}
+
+.mood-fill {
+  width: 35%;
+  background: repeating-linear-gradient(
+    90deg,
+    #ed93ae 0px,
+    #ed93ae 16px,
+    #e17f9e 16px,
+    #e17f9e 19px
+  );
+}
+
+.risk-fill {
+  width: 10%;
+  background: repeating-linear-gradient(
+    90deg,
+    #e8ae71 0px,
+    #e8ae71 16px,
+    #d99562 16px,
+    #d99562 19px
+  );
+}
+
+
+/* =========================================
+   6. PIXEL CLASSROOM SCENE
+   ========================================= */
+
+.scene {
+  position: relative;
+
+  width: 100%;
+  height: 370px;
+
+  overflow: hidden;
+
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 79px,
+      rgba(255, 255, 255, 0.12) 80px
+    ),
+    linear-gradient(
+      to bottom,
+      #f3e4c9 0%,
+      #e9d6b5 71%,
+      #b99578 71%,
+      #b99578 100%
+    );
+
+  border: 5px solid var(--dark);
+  image-rendering: pixelated;
+}
+
+
+/* 7. CLASSROOM FLOOR */
+
+.floor {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+
+  width: 100%;
+  height: 29%;
+
+  background: repeating-linear-gradient(
+    90deg,
+    #cba683 0px,
+    #cba683 55px,
+    #b98e70 55px,
+    #b98e70 60px
+  );
+
+  border-top: 7px solid #8d7468;
+}
+
+
+/* 8. CLASSROOM WINDOW */
+
+.window {
+  position: absolute;
+
+  top: 11%;
+  left: 8%;
+
+  width: 24%;
+  height: 39%;
+
+  background: linear-gradient(
+    to bottom,
+    #9bcede,
+    #d0edf0
+  );
+
+  border: 10px solid #a78078;
+  box-shadow:
+    5px 5px 0 #d1b39b,
+    inset 0 0 0 4px #e8bfa6;
+}
+
+.window::before {
+  content: "";
+
+  position: absolute;
+  left: 46%;
+  top: 0;
+
+  width: 9px;
+  height: 100%;
+
+  background: #a78078;
+}
+
+.window::after {
+  content: "";
+
+  position: absolute;
+  top: 45%;
+  left: 0;
+
+  width: 100%;
+  height: 9px;
+
+  background: #a78078;
+}
+
+
+/* 9. BLACKBOARD */
+
+.board {
+  position: absolute;
+
+  top: 10%;
+  right: 8%;
+
+  width: 43%;
+  height: 36%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 12px;
+
+  background: #719086;
+  color: #eff5dd;
+
+  border: 10px solid #a78067;
+
+  box-shadow:
+    5px 5px 0 #d0b8a0,
+    inset 0 0 0 3px #5d7a72;
+
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.board span {
+  text-shadow: 2px 2px 0 #54766d;
+}
+
+.board small {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #e9d9b1;
+}
+
+
+/* 10. TEACHER */
+
+.teacher {
+  position: absolute;
+
+  right: 14%;
+  bottom: 24%;
+
+  z-index: 3;
+
+  font-size: 72px;
+
+  filter: drop-shadow(
+    4px 5px 0 rgba(70, 50, 55, 0.22)
+  );
+
+  transform-origin: bottom center;
+
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
+}
+
+/* Teacher warning state */
+
+.teacher.alert {
+  transform:
+    translateY(-10px)
+    scale(1.15);
+
+  filter:
+    drop-shadow(0 0 10px #ef8585)
+    drop-shadow(0 4px 0 #8c6969);
+
+  animation: teacher-warning 0.55s infinite alternate;
+}
+
+@keyframes teacher-warning {
+  from {
+    transform: translateY(-8px) rotate(-3deg);
+  }
+
+  to {
+    transform: translateY(-12px) rotate(3deg);
+  }
+}
+
+
+/* =========================================
+   11. PIXEL STUDENT CHARACTER
+   ========================================= */
+
+.student {
+  position: absolute;
+
+  left: 40%;
+  bottom: 27%;
+
+  z-index: 3;
+
+  width: 80px;
+  height: 115px;
+
+  filter: drop-shadow(
+    4px 4px 0 rgba(70, 50, 55, 0.18)
+  );
+}
+
+/* Student's head */
+
+.student-head {
+  position: relative;
+
+  width: 58px;
+  height: 60px;
+
+  margin: 0 auto;
+
+  background: #f2c5a8;
+
+  border: 6px solid #614c52;
+  border-top: 17px solid #614c52;
+
+  border-radius: 8px 8px 6px 6px;
+}
+
+/* Student's eyes */
+
+.student-head::before {
+  content: "";
+
+  position: absolute;
+
+  top: 14px;
+  left: 10px;
+
+  width: 5px;
+  height: 6px;
+
+  background: #614c52;
+
+  box-shadow: 19px 0 0 #614c52;
+}
+
+/* Student's blush */
+
+.student-head::after {
+  content: "";
+
+  position: absolute;
+
+  top: 26px;
+  left: 5px;
+
+  width: 11px;
+  height: 5px;
+
+  background: #e9a0a3;
+
+  box-shadow: 24px 0 0 #e9a0a3;
+}
+
+/* Student's body */
+
+.student-body {
+  width: 80px;
+  height: 58px;
+
+  background: #b2b0d9;
+
+  border: 6px solid #614c52;
+  border-radius: 9px 9px 0 0;
+
+  box-shadow:
+    inset 0 -12px 0 #9999c5;
+}
+
+
+/* 12. WOODEN DESK */
+
+.desk {
+  position: absolute;
+
+  left: 25%;
+  bottom: 15%;
+
+  z-index: 4;
+
+  width: 50%;
+  height: 65px;
+
+  background: #c58f6e;
+
+  border: 7px solid #825d58;
+
+  box-shadow:
+    0 14px 0 #a57862,
+    0 19px 0 #805d56;
+}
+
+
+/* =========================================
+   13. INTERACTIVE SCENE ITEMS
+   ========================================= */
+
+.scene-item {
+  position: absolute;
+
+  z-index: 6;
+
+  padding: 5px 9px;
+
+  border: 3px solid transparent;
+  background: transparent;
+
+  font-size: 38px;
+  line-height: 1.2;
+
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease;
+}
+
+.scene-item:hover {
+  transform:
+    translateY(-6px)
+    scale(1.2)
+    rotate(-8deg);
+
+  filter: drop-shadow(
+    0 0 6px rgba(255, 255, 255, 0.9)
+  );
+}
+
+.scene-item:active {
+  transform: translateY(2px) scale(0.95);
+}
+
+/* Doodle notebook */
+
+.notebook {
+  left: 35%;
+  bottom: 29%;
+}
+
+/* Snack */
+
+.snack {
+  left: 60%;
+  bottom: 29%;
+}
+
+
+/* =========================================
+   14. CLICK EFFECT ANIMATION
+   ========================================= */
+
+.effect {
+  position: absolute;
+
+  left: 50%;
+  top: 32%;
+
+  z-index: 10;
+
+  font-size: 64px;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transform: translate(-50%, 0);
+}
+
+.effect.pop {
+  animation: effect-pop 0.5s ease-out;
+}
+
+@keyframes effect-pop {
+
+  0% {
+    opacity: 0;
+    transform:
+      translate(-50%, 20px)
+      scale(0.5);
+  }
+
+  35% {
+    opacity: 1;
+    transform:
+      translate(-50%, -12px)
+      scale(1.35);
+  }
+
+  70% {
+    opacity: 1;
+    transform:
+      translate(-50%, -30px)
+      scale(1.15);
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      translate(-50%, -50px)
+      scale(1);
+  }
+
+}
+
+
+/* =========================================
+   15. ACTION BUTTONS
+   ========================================= */
+
+.controls {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+
+  margin-top: 22px;
+}
+
+.action {
+  min-height: 58px;
+
+  padding: 12px;
+
+  background: #e7c3c3;
+  color: #4b3b45;
+
+  border: 3px solid #574856;
+
+  box-shadow: 4px 4px 0 #9c8087;
+
+  font-size: 14px;
+  font-weight: bold;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.action:hover {
+  background: #f4d6cf;
+
+  transform: translateY(-3px);
+
+  box-shadow: 4px 7px 0 #9c8087;
+}
+
+.action:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+.action:disabled,
+.scene-item:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
+
+/* 16. FEEDBACK MESSAGE */
+
+.feedback {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 86px;
+
+  margin-top: 24px;
+  padding: 18px;
+
+  background: #f6e4d0;
+
+  border: 3px dashed #b48f83;
+
+  color: #725662;
+
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.8;
+  text-align: center;
+}
+
+
+/* =========================================
+   17. GAME FOOTER
+   ========================================= */
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 16px;
+  margin-top: 20px;
+
+  font-size: 12px;
+}
+
+#turn-count {
+  font-weight: bold;
+  color: #8c7081;
+}
+
+.footer-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer button {
+  min-height: 42px;
+
+  padding: 10px 14px;
+
+  background: #d8ddea;
+  color: #574856;
+
+  border: 3px solid #574856;
+
+  box-shadow: 3px 3px 0 #a1a0b7;
+
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.footer button:hover {
+  background: #e8e9f5;
+}
+
+.footer button:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+
+/* =========================================
+   18. SMALL SCREEN RESPONSIVENESS
+   ========================================= */
+
+@media (max-width: 650px) {
+
+  body {
+    padding: 10px;
+  }
+
+  .game {
+    padding: 14px;
+    box-shadow: 4px 4px 0 #bdacaf;
+  }
+
+  .header h1 {
+    font-size: 25px;
+    letter-spacing: 1px;
+  }
+
+  .subtitle {
+    font-size: 10px;
+  }
+
+  .intro p {
+    font-size: 12px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .scene {
+    height: 300px;
+  }
+
+  .board {
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+
+  .board small {
+    font-size: 9px;
+  }
+
+  .teacher {
+    font-size: 52px;
+  }
+
+  .student {
+    transform: scale(0.78);
+    transform-origin: bottom center;
+  }
+
+  .scene-item {
+    font-size: 28px;
+    padding: 4px;
+  }
+
+  .controls {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .action {
+    min-height: 52px;
+  }
+
+  .feedback {
+    font-size: 12px;
+    min-height: 80px;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .footer-buttons {
+    display: flex;
+  }
+
+  .footer-buttons button {
+    flex: 1;
+  }
+
+}
+
+
+/* 19. ACCESSIBILITY */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+}
