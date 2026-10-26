@@ -1,13 +1,23 @@
 
-/* ==========================================
-   CLASSROOM DAYDREAM V2.0
-   SD5913 - Assignment 3
-   Guinea Pig Classroom Pixel Game
-   ========================================== */
+/* ==================================================
+   CLASSROOM DAYDREAM V2.1
+   SD5913 - ASSIGNMENT 3
+   EXPRESSIVE GUINEA PIG EDITION
 
-/* ==========================================
-   1. GLOBAL VARIABLES
-   ========================================== */
+   Complete CSS:
+   - Pixel-inspired classroom
+   - Guinea pig student
+   - Teacher observation states
+   - Collectible objects
+   - Four unique character reactions
+   - Game feedback and overlays
+   - Responsive layout
+   ================================================== */
+
+
+/* ==================================================
+   1. DESIGN TOKENS
+   ================================================== */
 
 :root {
   --ink: #51424d;
@@ -35,14 +45,13 @@
 
   --shadow: #baa3a8;
 
-  font-family: "Courier New", monospace;
-  color: var(--ink);
-  background: var(--background);
+  color-scheme: light;
 }
 
-/* ==========================================
-   2. RESET
-   ========================================== */
+
+/* ==================================================
+   2. GLOBAL RESET
+   ================================================== */
 
 *,
 *::before,
@@ -93,9 +102,10 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* ==========================================
+
+/* ==================================================
    3. MAIN GAME CONTAINER
-   ========================================== */
+   ================================================== */
 
 .game {
   width: min(100%, 860px);
@@ -103,16 +113,15 @@ button:disabled {
   padding: 24px;
 
   background: var(--cream);
-
   border: 5px solid var(--ink);
 
-  box-shadow:
-    9px 9px 0 var(--shadow);
+  box-shadow: 9px 9px 0 var(--shadow);
 }
 
-/* ==========================================
+
+/* ==================================================
    4. HEADER
-   ========================================== */
+   ================================================== */
 
 .header {
   text-align: center;
@@ -123,7 +132,6 @@ button:disabled {
   margin: 0 0 12px;
 
   color: var(--rose);
-
   font-size: 11px;
   font-weight: bold;
   letter-spacing: 2px;
@@ -133,36 +141,33 @@ button:disabled {
   margin: 12px 0;
 
   color: var(--rose);
-
   font-size: clamp(28px, 6vw, 48px);
   line-height: 1.08;
   font-weight: 900;
   letter-spacing: 3px;
 
-  text-shadow:
-    4px 4px 0 #efd9dc;
+  text-shadow: 4px 4px 0 #efd9dc;
 }
 
 .subtitle {
   margin-top: 16px;
 
   color: #9e7287;
-
   font-size: 15px;
   font-weight: bold;
   letter-spacing: 1px;
 }
 
-/* ==========================================
+
+/* ==================================================
    5. GAME INSTRUCTIONS
-   ========================================== */
+   ================================================== */
 
 .instructions {
   margin: 20px 0;
   padding: 16px;
 
   background: #f6e9dc;
-
   border: 3px dashed #cdaaa4;
 
   text-align: center;
@@ -172,7 +177,6 @@ button:disabled {
   margin: 0 0 12px;
 
   color: var(--rose);
-
   font-size: 15px;
   letter-spacing: 2px;
 }
@@ -184,9 +188,10 @@ button:disabled {
   line-height: 1.85;
 }
 
-/* ==========================================
-   6. HUD - GAME STATUS
-   ========================================== */
+
+/* ==================================================
+   6. GAME HUD
+   ================================================== */
 
 .hud {
   display: grid;
@@ -203,20 +208,16 @@ button:disabled {
   justify-content: center;
 
   gap: 10px;
-
   padding: 14px 8px;
 
   background: #f6e8e2;
-
   border: 3px solid #cdaeb5;
 
-  box-shadow:
-    3px 3px 0 #e7d3d5;
+  box-shadow: 3px 3px 0 #e7d3d5;
 }
 
 .hud-item span {
   color: var(--ink-light);
-
   font-size: 12px;
   font-weight: bold;
   letter-spacing: 1px;
@@ -224,7 +225,6 @@ button:disabled {
 
 .hud-item strong {
   color: var(--rose);
-
   font-size: 30px;
   line-height: 1;
   font-weight: 900;
@@ -232,9 +232,10 @@ button:disabled {
   transition: color 0.2s ease;
 }
 
-/* ==========================================
-   7. TEACHER STATUS BAR
-   ========================================== */
+
+/* ==================================================
+   7. TEACHER STATUS
+   ================================================== */
 
 .teacher-status {
   min-height: 50px;
@@ -267,16 +268,14 @@ button:disabled {
   background: #f6e2a3;
   color: #94641d;
 
-  animation:
-    status-pulse 0.6s infinite alternate;
+  animation: status-pulse 0.6s infinite alternate;
 }
 
 .teacher-status.danger {
   background: #efb5b5;
   color: #9c3441;
 
-  animation:
-    status-pulse 0.35s infinite alternate;
+  animation: status-pulse 0.35s infinite alternate;
 }
 
 @keyframes status-pulse {
@@ -289,9 +288,10 @@ button:disabled {
   }
 }
 
-/* ==========================================
+
+/* ==================================================
    8. CLASSROOM SCENE
-   ========================================== */
+   ================================================== */
 
 .scene {
   position: relative;
@@ -303,13 +303,10 @@ button:disabled {
   isolation: isolate;
 
   background: #efdcba;
-
   border: 5px solid var(--ink);
 
   image-rendering: pixelated;
 }
-
-/* Wall texture */
 
 .wall-decoration {
   position: absolute;
@@ -323,9 +320,10 @@ button:disabled {
     );
 }
 
-/* ==========================================
+
+/* ==================================================
    9. CLASSROOM FLOOR
-   ========================================== */
+   ================================================== */
 
 .floor {
   position: absolute;
@@ -346,9 +344,10 @@ button:disabled {
   border-top: 8px solid #906e62;
 }
 
-/* ==========================================
-   10. CLASSROOM WINDOW
-   ========================================== */
+
+/* ==================================================
+   10. WINDOW
+   ================================================== */
 
 .window {
   position: absolute;
@@ -376,16 +375,13 @@ button:disabled {
 .window::before,
 .window::after {
   content: "";
-
   position: absolute;
-
   background: #a67d72;
 }
 
 .window::before {
   left: 46%;
   top: 0;
-
   width: 9px;
   height: 100%;
 }
@@ -393,14 +389,14 @@ button:disabled {
 .window::after {
   top: 46%;
   left: 0;
-
   width: 100%;
   height: 9px;
 }
 
-/* ==========================================
+
+/* ==================================================
    11. BLACKBOARD
-   ========================================== */
+   ================================================== */
 
 .board {
   position: absolute;
@@ -419,7 +415,6 @@ button:disabled {
   gap: 11px;
 
   background: var(--green);
-
   border: 10px solid #a87f65;
 
   box-shadow:
@@ -427,7 +422,6 @@ button:disabled {
     inset 0 0 0 3px #658476;
 
   color: #eff6e6;
-
   font-size: 15px;
   font-weight: bold;
   letter-spacing: 1px;
@@ -435,20 +429,19 @@ button:disabled {
 }
 
 .board span {
-  text-shadow:
-    2px 2px 0 #5a7e70;
+  text-shadow: 2px 2px 0 #5a7e70;
 }
 
 .board small {
   color: #f7e3b8;
-
   font-size: 10px;
   letter-spacing: 1px;
 }
 
-/* ==========================================
+
+/* ==================================================
    12. TEACHER CHARACTER
-   ========================================== */
+   ================================================== */
 
 .teacher {
   position: absolute;
@@ -468,8 +461,6 @@ button:disabled {
     filter 0.25s ease;
 }
 
-/* Teacher ears */
-
 .teacher-ear {
   position: absolute;
 
@@ -479,7 +470,6 @@ button:disabled {
   height: 35px;
 
   background: #d9b18f;
-
   border: 5px solid var(--ink);
   border-radius: 9px;
 }
@@ -491,8 +481,6 @@ button:disabled {
 .teacher-ear.right {
   right: 9px;
 }
-
-/* Teacher head */
 
 .teacher-head {
   position: absolute;
@@ -506,19 +494,15 @@ button:disabled {
   height: 65px;
 
   background: #ddba91;
-
   border: 6px solid var(--ink);
   border-radius: 16px 16px 20px 20px;
 }
-
-/* Teacher face */
 
 .teacher-face {
   position: absolute;
   inset: 0;
 
   opacity: 0;
-
   transition: opacity 0.15s;
 }
 
@@ -554,11 +538,8 @@ button:disabled {
   height: 7px;
 
   background: #9b6267;
-
   border-radius: 2px;
 }
-
-/* Teacher body */
 
 .teacher-body {
   position: absolute;
@@ -574,11 +555,8 @@ button:disabled {
   border: 6px solid var(--ink);
   border-radius: 14px 14px 4px 4px;
 
-  box-shadow:
-    inset 0 -10px 0 #75958e;
+  box-shadow: inset 0 -10px 0 #75958e;
 }
-
-/* Teacher feet */
 
 .teacher-feet {
   position: absolute;
@@ -590,16 +568,13 @@ button:disabled {
   height: 12px;
 
   background: var(--ink);
-
-  box-shadow:
-    36px 0 var(--ink);
+  box-shadow: 36px 0 var(--ink);
 }
 
-/* ==========================================
-   13. TEACHER INTERACTION STATES
-   ========================================== */
 
-/* Safe - facing the blackboard */
+/* ==================================================
+   13. TEACHER STATES
+   ================================================== */
 
 .teacher.facing-away .teacher-head {
   background: #a67a61;
@@ -609,26 +584,18 @@ button:disabled {
   opacity: 0;
 }
 
-/* Warning - about to turn */
-
 .teacher.warning {
-  animation:
-    teacher-shake 0.25s infinite alternate;
+  animation: teacher-shake 0.25s infinite alternate;
 }
 
 .teacher.warning .teacher-head {
   background: #c69a78;
 }
 
-/* Danger - watching the player */
-
 .teacher.watching {
-  transform:
-    translateX(-12px)
-    scale(1.07);
+  transform: translateX(-12px) scale(1.07);
 
-  filter:
-    drop-shadow(0 0 10px #e97c79);
+  filter: drop-shadow(0 0 10px #e97c79);
 }
 
 .teacher.watching .teacher-face {
@@ -649,11 +616,14 @@ button:disabled {
   }
 }
 
-/* ==========================================
-   14. STUDENT GUINEA PIG
-   ========================================== */
+
+/* ==================================================
+   14. GUINEA PIG STUDENT
+   ================================================== */
 
 .student {
+  --gp-scale: 1;
+
   position: absolute;
 
   left: 39%;
@@ -669,8 +639,6 @@ button:disabled {
   transition: transform 0.2s ease;
 }
 
-/* Guinea pig body */
-
 .gp-body {
   position: absolute;
 
@@ -685,24 +653,19 @@ button:disabled {
   border: 6px solid var(--ink);
   border-radius: 33px 33px 22px 22px;
 
-  box-shadow:
-    inset 0 -12px 0 #ddba90;
+  box-shadow: inset 0 -12px 0 #ddba90;
 }
-
-/* Guinea pig ears */
 
 .gp-ear {
   position: absolute;
 
   top: 0;
-
   z-index: 1;
 
   width: 31px;
   height: 38px;
 
   background: #d99f9c;
-
   border: 6px solid var(--ink);
   border-radius: 12px;
 }
@@ -714,8 +677,6 @@ button:disabled {
 .gp-ear.right {
   right: 12px;
 }
-
-/* Guinea pig head */
 
 .gp-head {
   position: absolute;
@@ -736,8 +697,6 @@ button:disabled {
   overflow: hidden;
 }
 
-/* Brown fur patch */
-
 .gp-patch {
   position: absolute;
 
@@ -752,8 +711,6 @@ button:disabled {
   border-radius: 0 24px 4px 24px;
 }
 
-/* Guinea pig eyes */
-
 .gp-eye {
   position: absolute;
 
@@ -763,7 +720,6 @@ button:disabled {
   height: 10px;
 
   background: var(--ink);
-
   border-radius: 2px;
 }
 
@@ -775,8 +731,6 @@ button:disabled {
   right: 19px;
 }
 
-/* Guinea pig nose */
-
 .gp-nose {
   position: absolute;
 
@@ -787,11 +741,8 @@ button:disabled {
   height: 7px;
 
   background: #bb777d;
-
   border-radius: 2px;
 }
-
-/* Guinea pig cheeks */
 
 .gp-cheek {
   position: absolute;
@@ -802,8 +753,11 @@ button:disabled {
   height: 8px;
 
   background: #efa8ad;
-
   border-radius: 5px;
+
+  transition:
+    transform 0.12s ease,
+    background-color 0.12s ease;
 }
 
 .gp-cheek.left {
@@ -813,8 +767,6 @@ button:disabled {
 .gp-cheek.right {
   right: 8px;
 }
-
-/* Guinea pig paws */
 
 .gp-paws {
   position: absolute;
@@ -836,63 +788,85 @@ button:disabled {
     46px 0 0 2px var(--ink);
 }
 
-/* ==========================================
-   15. GUINEA PIG ANIMATIONS
-   ========================================== */
 
-/* Happy jump */
+/* ==================================================
+   15. BASIC STUDENT ANIMATIONS
+   ================================================== */
 
 .student.happy {
-  animation:
-    guinea-pig-jump 0.35s ease;
+  animation: guinea-pig-jump 0.35s ease;
+}
+
+.student.scared {
+  animation: gp-shock 0.38s ease-in-out 2;
 }
 
 @keyframes guinea-pig-jump {
-  0% {
-    transform: translateY(0);
+  0%, 100% {
+    transform:
+      scale(var(--gp-scale))
+      translateY(0);
   }
 
   50% {
-    transform: translateY(-17px);
-  }
-
-  100% {
-    transform: translateY(0);
+    transform:
+      scale(var(--gp-scale))
+      translateY(-17px);
   }
 }
 
-/* Scared shake */
-
-.student.scared {
-  animation:
-    guinea-pig-shake 0.3s ease;
+.student.scared .gp-eye {
+  width: 11px;
+  height: 16px;
+  top: 29px;
 }
 
-@keyframes guinea-pig-shake {
-  0% {
-    transform: translateX(0);
+.student.scared .gp-cheek {
+  background: #f18c95;
+}
+
+.student.scared::after {
+  content: "!";
+
+  position: absolute;
+
+  right: -17px;
+  top: -20px;
+
+  z-index: 16;
+
+  font-size: 42px;
+  font-weight: bold;
+
+  color: #d95f6d;
+}
+
+@keyframes gp-shock {
+  0%, 100% {
+    transform:
+      scale(var(--gp-scale))
+      translateX(0);
   }
 
   25% {
-    transform: translateX(-8px);
-  }
-
-  50% {
-    transform: translateX(8px);
+    transform:
+      scale(var(--gp-scale))
+      translateX(-10px)
+      rotate(-7deg);
   }
 
   75% {
-    transform: translateX(-5px);
-  }
-
-  100% {
-    transform: translateX(0);
+    transform:
+      scale(var(--gp-scale))
+      translateX(10px)
+      rotate(7deg);
   }
 }
 
-/* ==========================================
+
+/* ==================================================
    16. CLASSROOM DESK
-   ========================================== */
+   ================================================== */
 
 .desk {
   position: absolute;
@@ -923,13 +897,13 @@ button:disabled {
 
   height: 5px;
 
-  background:
-    rgba(255, 235, 196, 0.35);
+  background: rgba(255, 235, 196, 0.35);
 }
 
-/* ==========================================
-   17. RANDOM COLLECTIBLE ITEMS
-   ========================================== */
+
+/* ==================================================
+   17. COLLECTIBLE ITEMS
+   ================================================== */
 
 .collectible {
   position: absolute;
@@ -950,13 +924,11 @@ button:disabled {
 
   background: #fff0c9;
 
-  box-shadow:
-    4px 4px 0 #9e786b;
+  box-shadow: 4px 4px 0 #9e786b;
 
   font-size: 34px;
 
-  animation:
-    collectible-pop 0.22s ease-out;
+  animation: collectible-pop 0.22s ease-out;
 
   transition:
     background 0.15s ease,
@@ -992,9 +964,481 @@ button:disabled {
   }
 }
 
-/* ==========================================
-   18. VISUAL FEEDBACK EFFECTS
-   ========================================== */
+
+/* ==================================================
+   18. SHARED ITEM REACTION ELEMENTS
+   ================================================== */
+
+.reaction-prop,
+.reaction-decoration {
+  position: absolute;
+
+  z-index: 15;
+
+  display: block;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+.reaction-prop {
+  top: 35%;
+  right: -4%;
+
+  font-size: 32px;
+  line-height: 1;
+
+  transform-origin: center;
+}
+
+.reaction-decoration {
+  top: -24%;
+  right: -20%;
+
+  font-size: 28px;
+  line-height: 1;
+
+  filter: drop-shadow(2px 2px 0 #fff1e4);
+}
+
+
+/* ==================================================
+   19. CARROT REACTION
+   Guinea pig eating carrot
+   ================================================== */
+
+.student.gp-eat-carrot {
+  animation: gp-carrot-bounce 0.3s ease-in-out 5;
+}
+
+.student.gp-eat-carrot .gp-cheek {
+  transform: scale(1.8);
+  background: #f18f9f;
+}
+
+.student.gp-eat-carrot .gp-nose {
+  animation: gp-nose-chew 0.18s alternate infinite;
+}
+
+.student.gp-eat-carrot .reaction-prop {
+  animation: gp-food-to-mouth 0.6s ease-in forwards;
+}
+
+.student.gp-eat-carrot .reaction-decoration {
+  animation: gp-heart-float 1.3s ease-out forwards;
+}
+
+@keyframes gp-carrot-bounce {
+  0%, 100% {
+    transform:
+      scale(var(--gp-scale))
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      scale(var(--gp-scale))
+      translateY(-7px);
+  }
+}
+
+@keyframes gp-nose-chew {
+  from {
+    transform: translateX(-3px);
+  }
+
+  to {
+    transform: translateX(3px);
+  }
+}
+
+@keyframes gp-food-to-mouth {
+  0% {
+    opacity: 1;
+
+    transform:
+      translate(30px, -25px)
+      rotate(30deg);
+  }
+
+  75% {
+    opacity: 1;
+
+    transform:
+      translate(-35px, 12px)
+      scale(0.8);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translate(-38px, 13px)
+      scale(0.2);
+  }
+}
+
+@keyframes gp-heart-float {
+  0% {
+    opacity: 0;
+
+    transform:
+      translateY(15px)
+      scale(0.5);
+  }
+
+  40% {
+    opacity: 1;
+
+    transform:
+      translateY(-10px)
+      scale(1.2);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translateY(-35px)
+      scale(1);
+  }
+}
+
+
+/* ==================================================
+   20. COOKIE REACTION
+   Guinea pig chewing cookie
+   ================================================== */
+
+.student.gp-eat-cookie {
+  animation: gp-cookie-wiggle 0.22s ease-in-out 6;
+}
+
+.student.gp-eat-cookie .gp-cheek {
+  transform: scale(2);
+  background: #f1a2a3;
+}
+
+.student.gp-eat-cookie .gp-head {
+  box-shadow: inset 0 -8px 0 #e8c49d;
+}
+
+.student.gp-eat-cookie .reaction-prop {
+  animation: gp-cookie-bite 0.65s ease-in forwards;
+}
+
+.student.gp-eat-cookie .reaction-decoration {
+  color: #e4ae58;
+
+  animation: gp-cookie-crumbs 1.3s ease-out forwards;
+}
+
+@keyframes gp-cookie-wiggle {
+  0%, 100% {
+    transform:
+      scale(var(--gp-scale))
+      rotate(-4deg);
+  }
+
+  50% {
+    transform:
+      scale(var(--gp-scale))
+      rotate(4deg);
+  }
+}
+
+@keyframes gp-cookie-bite {
+  0% {
+    opacity: 1;
+
+    transform:
+      translate(24px, -15px)
+      scale(1);
+  }
+
+  70% {
+    opacity: 1;
+
+    transform:
+      translate(-30px, 12px)
+      scale(0.7);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translate(-32px, 12px)
+      scale(0.2);
+  }
+}
+
+@keyframes gp-cookie-crumbs {
+  0% {
+    opacity: 0;
+
+    transform: translate(0, 0);
+  }
+
+  35% {
+    opacity: 1;
+
+    transform: translate(-24px, 10px);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translate(-35px, 75px)
+      rotate(90deg);
+  }
+}
+
+
+/* ==================================================
+   21. DOODLE REACTION
+   Guinea pig drawing
+   ================================================== */
+
+.student.gp-draw {
+  animation: gp-drawing-body 0.4s ease-in-out 4;
+}
+
+.student.gp-draw .gp-paws {
+  animation: gp-pencil-paw 0.18s alternate infinite;
+}
+
+.student.gp-draw .reaction-prop {
+  right: 2%;
+  top: 47%;
+
+  animation: gp-pencil-move 0.25s alternate infinite;
+}
+
+.student.gp-draw .reaction-decoration {
+  top: 60%;
+  right: -30%;
+
+  animation: gp-doodle-appear 1.4s ease-out forwards;
+}
+
+@keyframes gp-drawing-body {
+  0%, 100% {
+    transform:
+      scale(var(--gp-scale))
+      rotate(-3deg);
+  }
+
+  50% {
+    transform:
+      scale(var(--gp-scale))
+      rotate(3deg);
+  }
+}
+
+@keyframes gp-pencil-paw {
+  from {
+    transform: translateY(-5px);
+  }
+
+  to {
+    transform: translateY(5px);
+  }
+}
+
+@keyframes gp-pencil-move {
+  from {
+    transform:
+      rotate(-32deg)
+      translateY(-7px);
+  }
+
+  to {
+    transform:
+      rotate(20deg)
+      translateY(5px);
+  }
+}
+
+@keyframes gp-doodle-appear {
+  0% {
+    opacity: 0;
+
+    transform:
+      scale(0.2)
+      rotate(-25deg);
+  }
+
+  45% {
+    opacity: 1;
+
+    transform:
+      scale(1.4)
+      rotate(10deg);
+  }
+
+  85% {
+    opacity: 1;
+
+    transform: scale(1.1);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform: scale(1);
+  }
+}
+
+
+/* ==================================================
+   22. STAR REACTION
+   Guinea pig celebration
+   ================================================== */
+
+.student.gp-star {
+  animation: gp-star-jump 0.45s ease-in-out 3;
+}
+
+.student.gp-star .reaction-prop {
+  top: -35%;
+  right: -5%;
+
+  font-size: 40px;
+
+  animation: gp-star-spin 1.2s ease-out forwards;
+}
+
+.student.gp-star .reaction-decoration {
+  left: -25%;
+  right: auto;
+  top: -28%;
+
+  font-size: 36px;
+
+  animation: gp-star-sparkle 0.45s alternate 3;
+}
+
+@keyframes gp-star-jump {
+  0%, 100% {
+    transform:
+      scale(var(--gp-scale))
+      translateY(0);
+  }
+
+  45% {
+    transform:
+      scale(var(--gp-scale))
+      translateY(-28px);
+  }
+}
+
+@keyframes gp-star-spin {
+  0% {
+    opacity: 0;
+
+    transform:
+      rotate(0deg)
+      scale(0.3);
+  }
+
+  35% {
+    opacity: 1;
+
+    transform:
+      rotate(150deg)
+      scale(1.35);
+  }
+
+  85% {
+    opacity: 1;
+
+    transform:
+      rotate(320deg)
+      scale(1);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      rotate(360deg)
+      scale(0.5);
+  }
+}
+
+@keyframes gp-star-sparkle {
+  from {
+    opacity: 0.2;
+    transform: scale(0.6);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+}
+
+
+/* ==================================================
+   23. TEACHER WARNING / HIDING REACTION
+   ================================================== */
+
+.student.gp-hide {
+  animation: gp-hide-action 0.4s ease-in-out;
+}
+
+.student.gp-hide .gp-eye {
+  height: 4px;
+  top: 40px;
+}
+
+@keyframes gp-hide-action {
+  0%, 100% {
+    transform:
+      scale(var(--gp-scale))
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      scale(var(--gp-scale))
+      translateY(14px);
+  }
+}
+
+
+/* ==================================================
+   24. CAUGHT REACTION
+   ================================================== */
+
+@keyframes gp-shock {
+  0%, 100% {
+    transform:
+      scale(var(--gp-scale))
+      translateX(0);
+  }
+
+  25% {
+    transform:
+      scale(var(--gp-scale))
+      translateX(-10px)
+      rotate(-7deg);
+  }
+
+  75% {
+    transform:
+      scale(var(--gp-scale))
+      translateX(10px)
+      rotate(7deg);
+  }
+}
+
+
+/* ==================================================
+   25. FLOATING VISUAL EFFECT
+   ================================================== */
 
 .effect {
   position: absolute;
@@ -1008,15 +1452,13 @@ button:disabled {
   font-weight: bold;
 
   pointer-events: none;
-
   opacity: 0;
 
   transform: translate(-50%, 0);
 }
 
 .effect.pop {
-  animation:
-    effect-pop 0.55s ease-out;
+  animation: effect-pop 0.55s ease-out;
 }
 
 @keyframes effect-pop {
@@ -1053,9 +1495,10 @@ button:disabled {
   }
 }
 
-/* ==========================================
-   19. GAME OVERLAY
-   ========================================== */
+
+/* ==================================================
+   26. GAME OVERLAY
+   ================================================== */
 
 .overlay {
   position: absolute;
@@ -1069,17 +1512,12 @@ button:disabled {
 
   padding: 12px;
 
-  background:
-    rgba(50, 39, 45, 0.68);
+  background: rgba(50, 39, 45, 0.68);
 }
 
 .overlay[hidden] {
   display: none !important;
 }
-
-/* ==========================================
-   20. OVERLAY CARD
-   ========================================== */
 
 .overlay-card {
   width: min(100%, 370px);
@@ -1090,13 +1528,11 @@ button:disabled {
 
   border: 5px solid var(--ink);
 
-  box-shadow:
-    6px 6px 0 #c39ba3;
+  box-shadow: 6px 6px 0 #c39ba3;
 
   text-align: center;
 
-  animation:
-    overlay-appear 0.25s ease-out;
+  animation: overlay-appear 0.25s ease-out;
 }
 
 .overlay-card h2 {
@@ -1121,18 +1557,25 @@ button:disabled {
 @keyframes overlay-appear {
   from {
     opacity: 0;
-    transform: translateY(18px) scale(0.95);
+
+    transform:
+      translateY(18px)
+      scale(0.95);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+
+    transform:
+      translateY(0)
+      scale(1);
   }
 }
 
-/* ==========================================
-   21. START BUTTON
-   ========================================== */
+
+/* ==================================================
+   27. PRIMARY BUTTON
+   ================================================== */
 
 .primary-button {
   min-width: 160px;
@@ -1146,8 +1589,7 @@ button:disabled {
 
   border: 4px solid var(--ink);
 
-  box-shadow:
-    4px 4px 0 #9e7988;
+  box-shadow: 4px 4px 0 #9e7988;
 
   font-size: 14px;
   font-weight: bold;
@@ -1163,8 +1605,7 @@ button:disabled {
 
   transform: translateY(-2px);
 
-  box-shadow:
-    4px 6px 0 #9e7988;
+  box-shadow: 4px 6px 0 #9e7988;
 }
 
 .primary-button:active {
@@ -1172,9 +1613,10 @@ button:disabled {
   box-shadow: none;
 }
 
-/* ==========================================
-   22. FEEDBACK MESSAGE
-   ========================================== */
+
+/* ==================================================
+   28. FEEDBACK MESSAGE
+   ================================================== */
 
 .feedback {
   display: flex;
@@ -1198,9 +1640,10 @@ button:disabled {
   line-height: 1.8;
 }
 
-/* ==========================================
-   23. GAME CONTROL BUTTONS
-   ========================================== */
+
+/* ==================================================
+   29. GAME CONTROLS
+   ================================================== */
 
 .controls {
   display: flex;
@@ -1222,8 +1665,7 @@ button:disabled {
 
   border: 3px solid var(--ink);
 
-  box-shadow:
-    3px 3px 0 #a9a0ae;
+  box-shadow: 3px 3px 0 #a9a0ae;
 
   font-size: 13px;
   font-weight: bold;
@@ -1239,8 +1681,7 @@ button:disabled {
 
   transform: translateY(-2px);
 
-  box-shadow:
-    3px 5px 0 #a9a0ae;
+  box-shadow: 3px 5px 0 #a9a0ae;
 }
 
 .controls button:not(:disabled):active {
@@ -1248,14 +1689,10 @@ button:disabled {
   box-shadow: none;
 }
 
-.controls button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
 
-/* ==========================================
-   24. FOOTER
-   ========================================== */
+/* ==================================================
+   30. FOOTER
+   ================================================== */
 
 footer {
   margin-top: 26px;
@@ -1276,9 +1713,10 @@ footer p {
   margin: 6px 0;
 }
 
-/* ==========================================
-   25. TABLET RESPONSIVENESS
-   ========================================== */
+
+/* ==================================================
+   31. TABLET RESPONSIVENESS
+   ================================================== */
 
 @media (max-width: 800px) {
   .game {
@@ -1302,9 +1740,10 @@ footer p {
   }
 }
 
-/* ==========================================
-   26. MOBILE RESPONSIVENESS
-   ========================================== */
+
+/* ==================================================
+   32. MOBILE RESPONSIVENESS
+   ================================================== */
 
 @media (max-width: 600px) {
   body {
@@ -1313,15 +1752,9 @@ footer p {
 
   .game {
     padding: 12px;
-
     border-width: 4px;
 
-    box-shadow:
-      4px 4px 0 var(--shadow);
-  }
-
-  .header {
-    padding: 6px 0 10px;
+    box-shadow: 4px 4px 0 var(--shadow);
   }
 
   .header h1 {
@@ -1402,9 +1835,7 @@ footer p {
   .teacher {
     right: 7%;
 
-    transform:
-      scale(0.72);
-
+    transform: scale(0.72);
     transform-origin: bottom center;
   }
 
@@ -1415,22 +1846,28 @@ footer p {
   }
 
   .student {
+    --gp-scale: 0.72;
+
     left: 34%;
 
-    transform:
-      scale(0.72);
-
+    transform: scale(0.72);
     transform-origin: bottom center;
   }
 
   .student.happy {
-    animation:
-      mobile-guinea-pig-jump 0.35s ease;
+    animation: guinea-pig-jump 0.35s ease;
   }
 
   .student.scared {
-    animation:
-      mobile-guinea-pig-shake 0.3s ease;
+    animation: gp-shock 0.38s ease-in-out 2;
+  }
+
+  .reaction-prop {
+    font-size: 28px;
+  }
+
+  .reaction-decoration {
+    font-size: 25px;
   }
 
   .desk {
@@ -1497,45 +1934,10 @@ footer p {
   }
 }
 
-/* ==========================================
-   27. MOBILE CHARACTER ANIMATIONS
-   ========================================== */
 
-@keyframes mobile-guinea-pig-jump {
-  0% {
-    transform: scale(0.72) translateY(0);
-  }
-
-  50% {
-    transform: scale(0.72) translateY(-20px);
-  }
-
-  100% {
-    transform: scale(0.72) translateY(0);
-  }
-}
-
-@keyframes mobile-guinea-pig-shake {
-  0% {
-    transform: scale(0.72) translateX(0);
-  }
-
-  25% {
-    transform: scale(0.72) translateX(-8px);
-  }
-
-  75% {
-    transform: scale(0.72) translateX(8px);
-  }
-
-  100% {
-    transform: scale(0.72) translateX(0);
-  }
-}
-
-/* ==========================================
-   28. VERY SMALL SCREENS
-   ========================================== */
+/* ==================================================
+   33. VERY SMALL SCREENS
+   ================================================== */
 
 @media (max-width: 380px) {
   .header h1 {
@@ -1566,9 +1968,10 @@ footer p {
   }
 }
 
-/* ==========================================
-   29. ACCESSIBILITY
-   ========================================== */
+
+/* ==================================================
+   34. ACCESSIBILITY
+   ================================================== */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -1578,5 +1981,332 @@ footer p {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================
+   CLASSROOM DAYDREAM V2.2
+   PIXEL GUINEA PIG CHARACTER REDESIGN
+   ========================================== */
+
+.student {
+  --pixel-outline: #382631;
+  --pixel-fur: #dc914f;
+  --pixel-light: #f7c078;
+  --pixel-shadow: #aa6749;
+  --pixel-cheek: #ef9196;
+  --pixel-eye: #241c29;
+
+  image-rendering: pixelated;
+  filter: drop-shadow(5px 6px 0 #8b665b55);
+}
+
+/* Replace rounded body with compact pixel shape */
+
+.student .gp-body {
+  left: 12px;
+  bottom: 0;
+  width: 98px;
+  height: 74px;
+
+  background: var(--pixel-shadow);
+  border: 6px solid var(--pixel-outline);
+  border-radius: 0;
+  box-shadow: inset 0 10px 0 var(--pixel-fur);
+
+  clip-path: polygon(
+    15% 0,
+    85% 0,
+    85% 10%,
+    95% 10%,
+    95% 80%,
+    85% 80%,
+    85% 100%,
+    15% 100%,
+    15% 80%,
+    5% 80%,
+    5% 10%,
+    15% 10%
+  );
+}
+
+/* Pixel ears */
+
+.student .gp-ear {
+  top: 0;
+  width: 34px;
+  height: 42px;
+
+  background: #e6a16b;
+  border: 6px solid var(--pixel-outline);
+  border-radius: 0;
+
+  box-shadow: inset 6px 6px 0 #f5b7a0;
+}
+
+.student .gp-ear.left {
+  left: 10px;
+  transform: rotate(-7deg);
+}
+
+.student .gp-ear.right {
+  right: 10px;
+  transform: rotate(7deg);
+}
+
+/* Large square-pixel face */
+
+.student .gp-head {
+  left: 8px;
+  top: 14px;
+  width: 106px;
+  height: 94px;
+
+  background: var(--pixel-fur);
+  border: 7px solid var(--pixel-outline);
+  border-radius: 0;
+  overflow: hidden;
+
+  box-shadow:
+    inset 0 8px 0 var(--pixel-light),
+    inset 0 -12px 0 var(--pixel-shadow);
+
+  clip-path: polygon(
+    15% 0,
+    85% 0,
+    85% 8%,
+    94% 8%,
+    94% 20%,
+    100% 20%,
+    100% 75%,
+    93% 75%,
+    93% 90%,
+    83% 90%,
+    83% 100%,
+    17% 100%,
+    17% 90%,
+    7% 90%,
+    7% 75%,
+    0 75%,
+    0 20%,
+    6% 20%,
+    6% 8%,
+    15% 8%
+  );
+}
+
+/* Forehead fur highlight */
+
+.student .gp-patch {
+  top: 0;
+  right: 0;
+  width: 36px;
+  height: 28px;
+
+  background: #b8734c;
+  border-radius: 0;
+
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 100%,
+    65% 100%,
+    65% 70%,
+    30% 70%,
+    30% 40%,
+    0 40%
+  );
+}
+
+/* Big square eyes */
+
+.student .gp-eye {
+  top: 34px;
+  width: 12px;
+  height: 15px;
+
+  background: var(--pixel-eye);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 #80594e;
+}
+
+.student .gp-eye.left {
+  left: 18px;
+}
+
+.student .gp-eye.right {
+  right: 18px;
+}
+
+/* White highlights inside eyes */
+
+.student .gp-eye::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 4px;
+  height: 4px;
+  background: white;
+}
+
+/* Pixel nose */
+
+.student .gp-nose {
+  top: 51px;
+  left: 41px;
+  width: 12px;
+  height: 8px;
+
+  background: #7e4945;
+  border-radius: 0;
+}
+
+/* Mouth below nose */
+
+.student .gp-nose::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 8px;
+  width: 4px;
+  height: 8px;
+  background: var(--pixel-outline);
+}
+
+/* Square blush cheeks */
+
+.student .gp-cheek {
+  top: 54px;
+  width: 17px;
+  height: 10px;
+
+  background: var(--pixel-cheek);
+  border-radius: 0;
+}
+
+.student .gp-cheek.left {
+  left: 9px;
+}
+
+.student .gp-cheek.right {
+  right: 9px;
+}
+
+/* Small paws */
+
+.student .gp-paws {
+  bottom: 0;
+  left: 24px;
+  width: 24px;
+  height: 14px;
+
+  background: var(--pixel-light);
+  border: 4px solid var(--pixel-outline);
+
+  box-shadow:
+    48px 0 0 -1px var(--pixel-light),
+    48px 0 0 2px var(--pixel-outline);
+}
+
+/* ==========================================
+   EXPRESSIONS
+   ========================================== */
+
+/* Eating carrot: puffed cheeks */
+
+.student.gp-eat-carrot .gp-cheek,
+.student.gp-eat-cookie .gp-cheek {
+  transform: scale(1.55);
+  background: #f58c91;
+}
+
+/* Chewing mouth */
+
+.student.gp-eat-carrot .gp-nose::after,
+.student.gp-eat-cookie .gp-nose::after {
+  width: 12px;
+  height: 7px;
+  left: 0;
+  top: 10px;
+  background: #6c3541;
+}
+
+/* Drawing: concentrated eyes */
+
+.student.gp-draw .gp-eye {
+  height: 8px;
+  top: 39px;
+}
+
+.student.gp-draw .gp-cheek {
+  background: #e9a19b;
+}
+
+/* Star: joyful smiling expression */
+
+.student.gp-star .gp-eye {
+  height: 7px;
+  top: 39px;
+}
+
+.student.gp-star .gp-nose::after {
+  width: 16px;
+  height: 9px;
+  left: -2px;
+  top: 10px;
+
+  background: #7e4148;
+}
+
+/* Teacher warning: nervous expression */
+
+.student.gp-hide .gp-eye {
+  top: 40px;
+  height: 5px;
+}
+
+.student.gp-hide .gp-nose::after {
+  width: 5px;
+  height: 5px;
+  top: 10px;
+  left: 4px;
+}
+
+/* Caught: large shocked eyes */
+
+.student.scared .gp-eye {
+  top: 27px;
+  width: 15px;
+  height: 22px;
+}
+
+.student.scared .gp-nose::after {
+  top: 11px;
+  left: 2px;
+  width: 9px;
+  height: 13px;
+
+  background: #722c43;
+}
+
+.student.scared .gp-cheek {
+  background: #ff7f89;
+}
+
+/* Mobile keeps the same proportions */
+
+@media (max-width: 600px) {
+  .student .gp-head {
+    width: 106px;
+    height: 94px;
+  }
+
+  .student .gp-eye.left {
+    left: 18px;
+  }
+
+  .student .gp-eye.right {
+    right: 18px;
   }
 }
