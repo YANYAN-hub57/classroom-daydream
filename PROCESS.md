@@ -3,468 +3,396 @@
 
 **Course:** SD5913 – Programming for Art & Design  
 **Assignment:** Assignment 3 – An Interactive Experience  
-**Project:** Classroom Daydream V2.0
+**Project:** Classroom Daydream V2.0  
+**Project Type:** Individual Interactive Browser Game  
+**Tools:** VS Code, GitHub, HTML, CSS, JavaScript, ChatGPT
 
 ---
 
 ## 1. Starting Idea
 
-My initial idea was to create a small interactive
-experience based on an everyday classroom situation:
-a student becoming distracted during a lesson.
+Classroom Daydream began with a simple observation of everyday student life: students sometimes become distracted during class.
 
-I wanted to explore how simple actions such as
-doodling, eating snacks, and paying attention
-could become an interactive decision-making game.
+I wanted to transform this familiar situation into a playful interactive experience where users could make choices and immediately understand the consequences of their actions.
 
-The first version allowed players to choose
-between three actions:
+The original idea involved a student secretly doodling, eating snacks, or paying attention to the teacher.
 
-- Doodle
-- Eat snacks
-- Study
+My central design question was:
 
-Each action changed two values: mood and risk.
+**How can an ordinary classroom distraction become a meaningful interactive experience through user input, program response, and feedback?**
 
-The intention was to let the player balance
-enjoyment against the possibility of being caught.
+I chose a small browser-based game because it could be developed, tested, and shared without additional hardware or paid services.
 
 ---
 
 ## 2. Initial Prototype – Version 1.0
 
-The first prototype was developed using HTML,
-CSS, and JavaScript.
+The first prototype was created using HTML, CSS, and JavaScript.
 
-HTML provided the classroom elements and buttons.
+HTML defined the classroom scene, action buttons, progress bars, and feedback messages.
 
-CSS created the environment, student character,
-teacher, progress bars, and animations.
+CSS provided the visual design, including the classroom environment, student character, teacher, and simple animations.
 
-JavaScript controlled the interactions,
-game state, and winning conditions.
+JavaScript controlled the game state, player actions, sound effects, and winning conditions.
 
-The initial interaction loop was:
+### Main Interactions
 
-Input:
-The player clicks an action.
+The player could choose between three actions:
 
-Response:
-Mood and risk values change.
+- Doodle
+- Eat snacks
+- Study
 
-Feedback:
-Progress bars, text, sound, and animation update.
+Each action changed two values: Mood and Risk.
 
-However, testing showed that this interaction
-was too predictable.
+Doodling and eating snacks increased mood but also increased the risk of being caught.
 
-For example, repeatedly collecting rewards
-could satisfy the winning condition without
-requiring much observation or strategy.
+Studying reduced risk but slightly decreased mood.
 
-The visual design was also relatively simple,
-with inconsistent character styles.
+### Input–Response–Feedback Loop
+
+**Input:** The player clicked an action button.
+
+**Response:** JavaScript changed the mood and risk values.
+
+**Feedback:** Progress bars, text messages, sound effects, and short animations communicated the result.
+
+### Initial Limitations
+
+Although the first version was functional, the interactions were relatively predictable.
+
+The player could reach the winning condition through repeated actions without needing to observe the environment.
+
+The visual design also lacked consistency because different elements used different illustration styles.
+
+These weaknesses became clearer during user testing.
 
 ---
 
-## 3. First User Trial
+## 3. First User Trial – Version 1.0
 
-I conducted an informal user trial with
-four participants, identified anonymously
-as A, B, C, and D.
+I conducted an informal usability test with four participants, identified anonymously as A, B, C, and D.
 
-The participants evaluated the first playable
-version of Classroom Daydream.
-
-The feedback revealed problems involving
-game balance, visual consistency,
-interaction mechanics, and character design.
+The participants provided feedback on gameplay, visual design, interaction mechanics, and character identity.
 
 ### Participant A – Game Logic
 
-Participant A observed that the game could be
-won too easily by repeatedly clicking actions.
+Participant A felt that the game was too easy to win through repetitive clicking.
 
-This suggested that the original winning rule
-rewarded repetition rather than meaningful
-decision-making.
+The original winning condition depended mainly on accumulated mood, risk, and the number of actions.
 
-The problem was not simply the numerical values.
-
-The interaction lacked an external condition
-that required the player to observe and adapt.
+This encouraged players to repeat rewarding actions instead of making meaningful decisions.
 
 ### Participant B – Visual Design
 
-Participant B felt that the game interface
-looked too rough.
+Participant B described the interface as visually rough.
 
-The classroom, student, teacher, and objects
-did not have a sufficiently unified visual style.
+The classroom scene, student, teacher, and interactive objects did not share a sufficiently consistent visual language.
 
-This made the experience feel less coherent.
+The participant's feedback suggested that the visual experience needed stronger coherence.
 
-### Participant C – Game Mechanics
+### Participant C – Interaction Mechanics
 
-Participant C suggested drawing inspiration
-from Red Light, Green Light and Whac-A-Mole.
+Participant C suggested taking inspiration from *Red Light, Green Light* and *Whac-A-Mole*.
 
-These games use observation, timing,
-and immediate responses.
+These games involve timing, observation, and reaction.
 
-This feedback introduced the possibility of
-turning the teacher into an active part
-of the game system.
+This suggestion helped me reconsider how the teacher could become an active part of the gameplay rather than a decorative character.
 
 ### Participant D – Character Design
 
-Participant D suggested using a guinea pig
-as the main character.
+Participant D suggested replacing the human student with a guinea pig.
 
-A small animal character could make the game
-more expressive, playful, and memorable.
+A guinea pig character could make the experience more playful, expressive, and memorable.
 
-This idea also offered an opportunity to
-develop a consistent character identity.
+The suggestion also created an opportunity to explore a distinctive character identity.
 
 ---
 
-## 4. Reflection on User Feedback
+## 4. Analysis of the First User Trial
 
-The most important issue identified through
-the trial was the relationship between
-player input and game consequences.
+The first trial revealed four main issues:
 
-In Version 1.0, players could predict
-the result of clicking an action.
+1. Repetitive actions made winning too predictable.
+2. The visual elements lacked a consistent style.
+3. The teacher had limited influence on player decisions.
+4. The student character was not sufficiently expressive.
 
-However, they did not need to observe
-the classroom or respond to changing conditions.
+The most important problem was the relationship between user action and game consequences.
 
-I decided to redesign the central interaction
-rather than only adjust the numerical values.
+In Version 1.0, players did not need to observe changing conditions before clicking.
 
-The revised experience would require
-players to observe the teacher,
-recognise safe and dangerous moments,
-and choose when to interact.
+I therefore decided to redesign the core interaction instead of simply adjusting numerical scores.
 
-This decision directly addresses
-the assignment requirement for a meaningful
-input-response-feedback loop.
+The revised game would encourage players to observe the teacher, recognise safe and dangerous moments, and make decisions based on timing.
 
 ---
 
 ## 5. Design Iteration – Version 2.0
 
-Based on the feedback, I redesigned
-Classroom Daydream around a guinea pig
-student and a teacher observation system.
+Based on the first user trial, I redesigned Classroom Daydream as a timing-based interactive game featuring a guinea pig student.
 
-### Change 1 – Teacher Observation
+### Change 1 – Teacher Observation Mechanic
 
-The teacher now has three possible states:
+The teacher now has three states.
 
-GREEN – SAFE
+**GREEN – SAFE**
 
 The teacher faces the blackboard.
-The player can collect objects safely.
 
-YELLOW – WARNING
+The player can collect objects and earn points.
 
-The teacher is preparing to turn.
-The player is encouraged to stop.
+**YELLOW – WARNING**
 
-RED – DANGER
+The teacher is preparing to turn around.
+
+The player is encouraged to stop interacting.
+
+**RED – DANGER**
 
 The teacher watches the classroom.
-Collecting an object increases
-the caught counter.
 
-This mechanic introduces timing
-and uncertainty into the experience.
+Collecting an object increases the caught counter.
 
-### Change 2 – Random Collectibles
+This mechanic was inspired by the observation and timing principles of *Red Light, Green Light*.
 
-Instead of repeatedly pressing fixed
-action buttons, the player must respond
-to objects appearing in different positions.
+### Change 2 – Random Collectible Objects
 
-Each object is available for a limited time.
+The original fixed action buttons were replaced by randomly appearing objects.
 
-Once collected, the object is immediately
-removed to prevent repeated scoring.
+The objects include:
 
-This mechanic encourages visual attention
-and deliberate clicking.
+- Carrot
+- Cookie
+- Doodle
+- Star
+
+Objects appear at different positions in the classroom and disappear after a short period.
+
+Once an object is collected, it is removed from the active game state to prevent repeated scoring.
+
+This interaction was influenced by the reaction-based structure of *Whac-A-Mole*.
 
 ### Change 3 – New Winning Conditions
 
 Version 1.0 used mood and risk thresholds.
 
-Version 2.0 uses a timed challenge.
+Version 2.0 introduced a 60-second game session.
 
-The player must:
+The player must collect at least eight points and avoid being caught three times.
 
-- Play for up to 60 seconds
-- Collect at least 8 points
-- Avoid being caught 3 times
+Reaching eight points does not immediately end the game.
 
-This changes the experience from
-a numerical optimisation task
-into a timing-based interaction.
+The player must survive until the countdown reaches zero.
+
+This creates a stronger relationship between observation, timing, and decision-making.
 
 ### Change 4 – Guinea Pig Character
 
-The original human student was replaced
-with a stylised guinea pig.
+The human student was replaced with a guinea pig character.
 
-The character was created with CSS shapes
-and uses simple animations to communicate
-different emotional responses.
+The guinea pig was created using simplified CSS shapes to match the pixel-inspired classroom environment.
 
-A successful collection triggers a happy jump.
+Basic happy and frightened animations were introduced to provide feedback.
 
-A dangerous action triggers a frightened movement.
+### Change 5 – Interface and Feedback
 
-### Change 5 – Clearer Feedback
+Version 2.0 introduced:
 
-The revised game includes:
-
-- Colour-coded teacher status
 - Countdown timer
 - Score counter
 - Caught counter
-- Collectible animation
+- Colour-coded teacher states
+- Random collectible objects
 - Sound effects
+- Short character animations
 - Text feedback
 - Win and loss screens
+- Pause, resume, and restart controls
 
-The player can understand the consequence
-of an action and decide whether to continue
-collecting or wait.
+These features were intended to make the game state and consequences easier to understand.
 
 ---
 
 ## 6. Technical Implementation
 
-The game is implemented using
-HTML, CSS, and vanilla JavaScript.
+The project uses HTML, CSS, and vanilla JavaScript.
 
-No external JavaScript framework
-or backend is required.
+No external JavaScript framework, backend, paid API, or machine learning model is required.
 
 ### HTML
 
-The HTML document defines the interface:
+HTML defines the structure of the interface and interactive elements.
 
-- Game title and instructions
-- Timer and score
-- Teacher status
-- Classroom scene
-- Guinea pig character
-- Collectible object
-- Feedback messages
-- Game controls
-- Result overlay
+It includes the classroom environment, teacher, guinea pig, collectible objects, score display, controls, and game result overlay.
 
 ### CSS
 
-CSS is used to create the visual environment
-and character illustrations.
+CSS is responsible for the visual design and animations.
 
-It also provides responsive layouts,
-animations, warning colours,
-and button interaction states.
+It creates the classroom environment, characters, responsive layout, buttons, warning states, and effects.
 
 ### JavaScript
 
-JavaScript stores and updates the game state.
+JavaScript controls the game state and interactions.
 
-The main functions include:
+Important functions include:
 
-- createInitialState()
-- updateHUD()
-- advanceTeacherState()
-- spawnItem()
-- collectItem()
-- gameTick()
-- pauseGame()
-- resumeGame()
-- finishGame()
-- resetGame()
+- `createInitialState()` – creates the initial game state.
+- `updateHUD()` – updates the timer and score display.
+- `advanceTeacherState()` – controls teacher behaviour.
+- `spawnItem()` – generates random collectibles.
+- `collectItem()` – processes player interactions.
+- `gameTick()` – updates the game timer.
+- `pauseGame()` – pauses gameplay.
+- `resumeGame()` – resumes gameplay.
+- `finishGame()` – determines the game result.
+- `resetGame()` – resets the game.
 
-The program checks player input against
-the current teacher state.
-
-The resulting change is communicated
-through visual and audio feedback.
+The main interaction is controlled by checking the teacher's current state when the player clicks a collectible object.
 
 ---
 
 ## 7. Input → Response → Feedback
 
-A central example is collecting an object.
+The most important interaction is collecting an object while observing the teacher.
 
 ### Input
 
-The player clicks a carrot or another
-collectible object.
+The player clicks a collectible object, such as a carrot or doodle.
 
 ### Response
 
-JavaScript checks the current teacher state.
+JavaScript checks the teacher's state.
 
-If the teacher is facing away,
-the score increases.
+If the teacher is facing the blackboard, the player gains one point.
 
-If the teacher is preparing to turn,
-the player receives no points.
+If the teacher is preparing to turn around, the player receives no points.
 
-If the teacher is watching,
-the caught counter increases.
+If the teacher is watching, the caught counter increases.
 
 ### Feedback
 
-The interface updates the score
-or caught counter.
+The interface communicates the result through:
 
-A sound effect and character animation
-communicate the result.
+- Numerical score changes
+- Teacher status indicators
+- Text messages
+- Sound effects
+- Short character animations
+- Visual effects
 
-Text feedback explains the outcome.
+The player uses the feedback to decide when to make another attempt.
 
-The player can then decide when
-to attempt another collection.
-
-This creates a repeated loop of
-observation, action, response,
-and feedback.
+This creates a loop of observation, action, response, feedback, and decision-making.
 
 ---
 
 ## 8. Error and Interruption Handling
 
-The experience includes several safeguards.
+The game includes several safeguards.
 
-First, collected objects disappear
-immediately after being clicked.
+### Repeated Clicks
 
-This prevents multiple points being awarded
-from repeated clicks on the same object.
+A collectible object disappears immediately after being clicked.
 
-Second, the program only allows collection
-while the game is in the playing state.
+This prevents the player from receiving multiple points from the same object.
 
-Third, the game prevents duplicate
-timer intervals.
+### Invalid Game States
 
-Fourth, the game pauses when
-the player switches to another browser tab.
+Objects cannot be collected before the game begins, while paused, or after the game ends.
 
-Finally, audio is optional.
+### Timer Management
 
-If sound cannot play, the visual interaction
-and core game rules remain available.
+The program stops an existing timer before starting another one to prevent duplicate countdown intervals.
 
-These decisions were made to support
-a more reliable user experience.
+### Browser Interruption
+
+The game automatically pauses when the browser tab becomes hidden or the window loses focus.
+
+### Audio Availability
+
+Sound effects are optional.
+
+If the browser cannot play audio, the core game remains functional.
+
+### Restart
+
+The restart control resets the timer, score, caught counter, teacher state, and collectible objects.
+
+These safeguards help make the experience more reliable and understandable.
 
 ---
 
 ## 9. AI Tools and Design Decisions
 
-I used ChatGPT as an AI-assisted development tool.
+I used ChatGPT as an AI-assisted development tool throughout the project.
 
-It supported the project by helping me:
+ChatGPT helped me:
 
-- Understand the assignment requirements
-- Plan the interactive game structure
-- Draft HTML, CSS, and JavaScript
-- Understand VS Code and GitHub workflows
-- Investigate coding and local server errors
-- Explore alternative interaction mechanics
-- Structure the README and PROCESS documents
+- Interpret the assignment requirements.
+- Develop and compare interactive game ideas.
+- Draft HTML, CSS, and JavaScript code.
+- Understand VS Code and GitHub workflows.
+- Investigate programming and local server errors.
+- Explore gameplay improvements.
+- Structure project documentation.
 
 ### AI Suggestion Kept
 
-I kept the suggestion to implement a clear
-input-response-feedback cycle.
+I retained the suggestion to build the game around a clear input-response-feedback cycle.
 
-In Version 2.0, the teacher's changing
-observation state makes this relationship
-more meaningful.
-
-The player must actively observe
-and decide when to collect objects.
+The revised teacher observation system makes this relationship more meaningful because the player must observe changing conditions before acting.
 
 ### AI Suggestion Changed
 
-An earlier implementation focused on
-increasing and decreasing mood and risk
-through three fixed buttons.
+An earlier AI-assisted implementation relied on fixed buttons that increased or decreased mood and risk.
 
-After user testing, I changed this approach.
+After the first user trial, I changed this design because it encouraged repetitive clicking.
 
-Instead of relying only on numerical values,
-the revised game uses observation,
-timing, and random collectible objects.
+The revised game uses teacher observation, random collectibles, and timing-based decisions.
 
-This decision was informed by actual
-user feedback rather than simply accepting
-the original implementation.
+This change was informed by real user feedback rather than simply accepting the initial AI-generated solution.
 
-### Role of AI
+### Reflection on AI Usage
 
-AI was used to support ideation,
-coding, explanation, and documentation.
+AI was useful for rapid prototyping and technical learning.
 
-The project also involved user feedback,
-design decisions, implementation,
-and iterative testing.
+However, user testing revealed problems that were not obvious from the code alone.
+
+The second user trial showed that technically correct feedback is not necessarily engaging or expressive from the player's perspective.
 
 ---
 
 ## 10. Visual Design Decisions
 
-The visual design uses a warm,
-pastel classroom environment.
+The visual design uses a soft, pixel-inspired classroom style.
 
-The colour palette includes:
+The main colours include:
 
 - Cream
 - Dusty pink
-- Soft brown
+- Warm brown
 - Muted green
-- Warm yellow
+- Pale yellow
 
-The guinea pig character and teacher
-use simplified CSS shapes.
+The classroom includes a window, blackboard, desk, teacher, and guinea pig student.
 
-The aim is to create a consistent
-pixel-inspired aesthetic.
+The guinea pig was introduced in response to Participant D's feedback.
 
-The classroom environment is kept simple
-so that the teacher state and collectible
-objects remain easy to notice.
+The teacher's states are communicated through green, yellow, and red visual indicators, accompanied by text labels.
 
-The status indicator uses three colours
-to communicate the player's situation:
+The purpose was to create a playful environment while keeping the gameplay information clear.
 
-Green for safe.
-
-Yellow for warning.
-
-Red for danger.
-
-These visual cues are accompanied by text
-so that the game does not rely on colour alone.
+Although Version 2.0 improved visual consistency, later testing revealed that the character still lacked sufficiently expressive reactions.
 
 ---
 
 ## 11. Screenshots and Development Evidence
 
-### Version 2.0 Main Interface
+Screenshots of Version 2.0 are stored in the `assets` folder.
+
+### Main Game Interface
 
 ![Main Game](assets/screenshot.png)
 
@@ -472,7 +400,7 @@ so that the game does not rely on colour alone.
 
 ![Teacher Warning](assets/teacher-warning.png)
 
-### Teacher Observation
+### Teacher Observation State
 
 ![Teacher State](<assets/teacher-look back.png>)
 
@@ -484,97 +412,148 @@ so that the game does not rely on colour alone.
 
 ![Failure Result](<assets/game-result（failure）.png>)
 
-The screenshots document the interface,
-teacher states, and game results.
-
-Git commit history documents the development
-and subsequent changes.
+The GitHub commit history records the development process and code revisions.
 
 ---
 
-## 12. Second User Trial
+## 12. Second User Trial – Version 2.0
 
-Status: Follow-up testing to be documented.
+### Participant
 
-The second trial should examine whether
-the revised game addresses the feedback
-from the first version.
+Participant A, who previously identified the repetitive-clicking issue in Version 1.0, tested Classroom Daydream V2.0.
 
-Questions to investigate:
+### Test Procedure
 
-1. Can players understand the teacher's
-   three states without explanation?
+The participant played the updated browser game featuring a 60-second timer, randomly appearing collectibles, and teacher observation mechanics.
 
-2. Is the game more engaging than the
-   original repeated-clicking system?
+The gameplay session was screen-recorded to document the interaction.
 
-3. Is the guinea pig character easier
-   to recognise and more visually consistent?
+### Observation
 
-4. Can players understand how they win
-   or lose the game?
+The recording shows the participant interacting with randomly appearing objects while the teacher changes between different observation states.
 
-5. Are the pause and restart controls clear?
+The score counter responds to successful actions, and the interface provides visual information about the teacher's status.
 
-After conducting the second trial,
-record the actual observations,
-any remaining problems, and the
-resulting design decisions here.
+However, the guinea pig character appears relatively passive during collection.
 
-Do not replace this section with
-invented user feedback.
+Although the program includes short character animations, these reactions are not sufficiently prominent to make the character's participation noticeable.
+
+The most obvious results are changes in the score and the disappearance of collectible objects.
+
+### Participant Feedback
+
+Participant A felt that the game mechanics remained relatively simple.
+
+The participant also commented that the clicking effects and visual presentation lacked creativity, and that the interaction was still repetitive.
+
+For example, when the teacher faced away, clicking a carrot or drawing object successfully increased the score.
+
+However, the guinea pig did not appear to respond in a sufficiently noticeable or meaningful way.
+
+The participant felt that the experience was primarily about clicking objects to gain points rather than interacting with the character.
+
+### Analysis
+
+This feedback revealed a distinction between functional feedback and experiential feedback.
+
+At a technical level, the program responds correctly to player input by changing values and triggering effects.
+
+However, these responses do not necessarily make the player feel that their actions have affected the virtual world.
+
+Different objects currently produce similar character reactions.
+
+For example, collecting a carrot should feel different from collecting a drawing object.
+
+The game needs clearer object-specific reactions that connect player actions with the guinea pig's behaviour.
+
+### Design Decision
+
+Based on this feedback, I decided to prioritise improving the expressiveness of the existing interactions rather than adding more complex game mechanics.
+
+The next iteration will focus on making the character visibly respond to different objects and situations.
+
+### Planned Version 2.1 Improvements
+
+**1. Eating Interaction**
+
+Clicking a carrot will trigger an animation in which the food moves toward the guinea pig.
+
+The guinea pig will chew, puff its cheeks, and display a happy expression.
+
+**2. Drawing Interaction**
+
+Clicking a doodle object will trigger a drawing animation.
+
+The guinea pig will move its paws, and a small drawing will appear.
+
+**3. Distinct Object Feedback**
+
+Carrots, cookies, doodles, and stars will produce different animations and sound effects.
+
+**4. Teacher Warning Reaction**
+
+When the teacher prepares to turn around, the guinea pig will visibly stop its activity and attempt to appear attentive.
+
+**5. Caught Reaction**
+
+When the teacher catches the player, the guinea pig will display a more obvious frightened expression.
+
+The scene will also provide stronger visual feedback.
+
+### Current Status
+
+The second user trial has been completed and documented.
+
+The planned Version 2.1 improvements have not yet been implemented and should not be considered completed features of Version 2.0.
+
+Further testing will be needed to evaluate whether the additional animations improve engagement.
 
 ---
 
 ## 13. Known Limitations
 
-The game is designed for a short,
-single-player browser experience.
+The current Version 2.0 has several limitations.
 
-The classroom environment and
-characters are drawn using CSS.
+First, the game contains only one level and a fixed 60-second session.
 
-They are pixel-inspired rather than
-high-resolution sprite animations.
+Second, the interaction mainly focuses on collecting objects and avoiding the teacher's attention.
 
-Collectible objects use emoji,
-which may display differently
-on different devices.
+Third, the guinea pig character has limited expressive animation.
 
-The game does not save progress
-after the browser is refreshed.
+Different collectible objects do not yet produce sufficiently distinct character behaviours.
 
-There is only one level and
-one fixed time limit.
+Fourth, the collectible objects use emoji, which may display differently across operating systems.
+
+Fifth, the game does not save progress after the browser is refreshed.
+
+The second user trial identified character responsiveness as the most important area for future improvement.
 
 ---
 
 ## 14. Final Reflection
 
-The development of Classroom Daydream
-shows how user feedback can transform
-a small interactive idea.
+The development of Classroom Daydream demonstrates how user testing can identify weaknesses in an interactive experience that are not immediately obvious during implementation.
 
-The first prototype demonstrated
-basic input-response-feedback through
-mood and risk values.
+Version 1.0 established a basic input-response-feedback loop through mood and risk values.
 
-However, users identified weaknesses
-in its gameplay and visual design.
+However, the first user trial revealed that the interaction rewarded repetitive clicking and lacked visual consistency.
 
-The revised version introduces
-a more meaningful interaction:
+Version 2.0 introduced a guinea pig character, random collectible objects, and a teacher observation mechanic.
 
-Players must observe changing conditions,
-make decisions under time pressure,
-and interpret immediate feedback.
+These changes created a stronger relationship between observation, timing, and player decisions.
 
-The project demonstrates that
-interaction quality and usability
-are more important than adding
-unnecessary technical complexity.
+The second user trial revealed another important problem.
 
-A small experience can become
-more engaging when its actions,
-consequences, and feedback
-are clearly connected.
+Although the game became more functional, the interaction still lacked sufficiently expressive character responses.
+
+This showed me that **a working interaction is not necessarily an engaging interaction**.
+
+Meaningful feedback should communicate more than changes in numerical values.
+
+It should help users understand and feel how their actions affect the virtual environment.
+
+My next design direction therefore focuses on building a stronger connection between collectible objects, guinea pig behaviours, and the player's sense of participation.
+
+Overall, this project helped me understand the importance of prototyping, user observation, design iteration, and feedback in interactive experience design.
+
+Rather than simply adding more features, I learned to focus on making each interaction more intentional, understandable, and expressive.
