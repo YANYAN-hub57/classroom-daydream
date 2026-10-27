@@ -3,7 +3,7 @@
 
 **Course:** SD5913 – Programming for Art & Design  
 **Assignment:** Assignment 3 – An Interactive Experience  
-**Project:** Classroom Daydream V2.0  
+**Project:** Classroom Daydream — V2.1 Development Log  
 **Project Type:** Individual Interactive Browser Game  
 **Tools:** VS Code, GitHub, HTML, CSS, JavaScript, ChatGPT
 
@@ -472,7 +472,7 @@ Based on this feedback, I decided to prioritise improving the expressiveness of 
 
 The next iteration will focus on making the character visibly respond to different objects and situations.
 
-### Planned Version 2.1 Improvements
+### Version 2.1 Improvement Plan (subsequently prototyped locally)
 
 **1. Eating Interaction**
 
@@ -504,7 +504,7 @@ The scene will also provide stronger visual feedback.
 
 The second user trial has been completed and documented.
 
-The planned Version 2.1 improvements have not yet been implemented and should not be considered completed features of Version 2.0.
+This statement describes the V2.0 retest period. By 27 October 2026, a subsequent V2.1 pixel-item iteration had been prototyped locally; see the dated development addendum below for the distinction between local work and the GitHub Pages release.
 
 Further testing will be needed to evaluate whether the additional animations improve engagement.
 
@@ -557,3 +557,56 @@ My next design direction therefore focuses on building a stronger connection bet
 Overall, this project helped me understand the importance of prototyping, user observation, design iteration, and feedback in interactive experience design.
 
 Rather than simply adding more features, I learned to focus on making each interaction more intentional, understandable, and expressive.
+
+
+---
+
+## 15. Dated Development Addendum — V2.1 (27 October 2026)
+
+### Motivation: Second user trial
+
+Participant A's V2.0 retest showed that collecting different objects was still perceived primarily as score-raising clicks. The guinea pig's reactions were too subtle, so the participant did not clearly connect specific objects with specific character behaviours.
+
+**Research-to-design decision:** Keep the existing teacher observation game loop and make the four existing objects more legible, differentiated and expressive. This avoids increasing scope with new mechanics immediately before the assignment deadline.
+
+### Visual iteration
+
+The previous orange square character was refined into a **tricolour guinea pig** with short rounded ears, a white centre face, brown/orange patches, small eyes and an expressive mouth. The warm classroom palette remained consistent.
+
+A later development screenshot provided on 27 October 2026 shows a pixel-art cookie appearing without a square button background next to the tricolour guinea pig. This is evidence of the **local visual result**, not proof that the public deployment contains the same code.
+
+### Item-specific input → response → feedback
+
+| Player input (safe teacher state) | Program response | Perceptible visual feedback |
+| --- | --- | --- |
+| Collect carrot | Award 1 point, trigger carrot action | Carrot moves to mouth, cheeks alternately expand, guinea pig chews |
+| Collect cookie | Award 1 point, trigger cookie action | Cookie moves toward mouth; pixel crumbs, closed happy eyes and side-to-side motion |
+| Collect doodle | Award 1 point, trigger doodle action | Pencil moves over foreground paper; a pixel flower appears progressively |
+| Collect star | Award 1 point, trigger celebration | Guinea pig jumps; pixel star and sparkle particles appear |
+
+The local implementation generates small transparent pixel sprites with code rather than relying on operating-system emoji images. This improves visual consistency and removes the unwanted collectible background boxes.
+
+### Foreground-layer correction
+
+**Problem:** `.student { z-index: 4 }` and `.desk { z-index: 5 }` placed the guinea pig behind the desk. Raising child effects to a higher z-index could not escape the parent's stacking context.
+
+**Change:** A sibling HTML element `#interaction-layer` sits above the desk and receives temporary food, pencil, drawing and sparkle effects. Its position is measured relative to the displayed guinea pig, supporting responsive positioning.
+
+### What remains unchanged
+
+The core V2.0 rules remain: a 60-second session, a target of eight points, three caught attempts resulting in failure, green/yellow/red teacher states, and pause/resume/restart. The design iteration prioritises clearer feedback rather than adding rules.
+
+### Testing evidence and limitations
+
+- **Observed:** The provided local screenshot shows a tricolour guinea pig, classroom background and unboxed pixel cookie.
+- **Reported work:** The source changes prepared locally include the four distinct object-response animations.
+- **Not yet verified here:** Complete animation sequences, usability impact, keyboard/mobile interaction, timer edge cases and Pages deployment.
+- **Next user trial:** Ask someone to identify the action being performed **without reading the feedback message**. Record which actions are immediately recognisable and where the animation remains ambiguous.
+
+### AI assistance and authorship
+
+ChatGPT supported prototyping of CSS character styling, transparent pixel-item generation, JavaScript animations, foreground layering and documentation. The project author selected the interaction goals, reviewed visuals, ran local previews and made iterative decisions informed by user feedback. Reference artwork was used as visual inspiration; the in-game pixel-item drawings were developed programmatically rather than copied directly from the reference image.
+
+### Version control and release status
+
+The GitHub default branch was checked on 27 October 2026 and still contained earlier versions of the game files. This addendum records progress **without claiming the latest local build has already been deployed**. To complete the V2.1 release, the latest local HTML, CSS, JavaScript and screenshot need to be committed and pushed, followed by a GitHub Pages check.
