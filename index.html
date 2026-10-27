@@ -12,31 +12,30 @@
 
   <meta
     name="description"
-    content="Classroom Daydream — A playful interactive classroom game featuring a guinea pig student."
+    content="Classroom Daydream V2.2 — An interactive pixel-art guinea pig classroom game with expressive teacher reactions and playful collectibles."
   >
 
-  <meta
-    name="theme-color"
-    content="#fff9ee"
-  >
+  <meta name="theme-color" content="#fff9ee">
 
   <title>
-    Classroom Daydream | Guinea Pig Edition
+    Classroom Daydream V2.2 | Pixel Guinea Pig
   </title>
 
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
+  <!-- Main game stylesheet -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Game logic: load once after HTML parsing -->
+  <script src="script.js" defer></script>
+
 </head>
 
 <body>
 
   <main class="game">
 
-    <!-- =====================================
-         1. GAME HEADER
-         ===================================== -->
+    <!-- ==========================================
+         01. GAME HEADER
+         ========================================== -->
 
     <header class="header">
 
@@ -49,15 +48,15 @@
       </h1>
 
       <p class="subtitle">
-        🐹 教室开小差 · A Tiny Guinea Pig Game
+        🐹 豚鼠的课堂开小差
       </p>
 
     </header>
 
 
-    <!-- =====================================
-         2. GAME INSTRUCTIONS
-         ===================================== -->
+    <!-- ==========================================
+         02. GAME INSTRUCTIONS
+         ========================================== -->
 
     <section
       class="instructions"
@@ -65,55 +64,56 @@
     >
 
       <h2 id="instructions-title">
-        ✨ HOW TO PLAY ✨
+        ✦ HOW TO PLAY ✦
       </h2>
 
       <p>
-        欢迎来到小豚鼠的课堂！
+        欢迎来到豚鼠教室！
+        趁老师转身写黑板时，
+        偷偷吃零食、画画、收集星星。
       </p>
 
       <p>
-        趁老师背对教室时，
-        偷偷吃零食、画画、收集星星！
+        🟢 SAFE — 老师背对教室，可以收集道具。
       </p>
 
       <p>
-        小心！老师随时可能回头！
+        🟡 WARNING — 老师准备回头，赶紧停下！
       </p>
 
       <p>
-        🟢 SAFE：可以行动
-        · 🟡 WARNING：准备停止
-        · 🔴 DANGER：不要点击
+        🔴 DANGER — 老师正在检查，不要点击！
       </p>
 
       <p>
         <strong>
           60 秒内获得至少 8 分，
-          并且被老师发现少于 3 次，
-          坚持到下课即可获胜！
+          被发现少于 3 次，
+          坚持到下课即可获胜。
         </strong>
+      </p>
+
+      <p>
+        ✦ 老师检查时没有违规，会微笑表扬。
+        如果被抓到开小差，老师就会生气！
       </p>
 
     </section>
 
 
-    <!-- =====================================
-         3. GAME HUD
-         ===================================== -->
+    <!-- ==========================================
+         03. GAME STATISTICS / HUD
+         ========================================== -->
 
     <section
       class="hud"
       aria-label="Game statistics"
     >
 
-      <!-- TIMER -->
-
+      <!-- Countdown timer -->
       <div class="hud-item">
 
-        <span>
-          ⏰ TIME
-        </span>
+        <span>⏰ TIME</span>
 
         <strong
           id="time-value"
@@ -125,13 +125,10 @@
       </div>
 
 
-      <!-- SCORE -->
-
+      <!-- Score -->
       <div class="hud-item">
 
-        <span>
-          ⭐ SCORE
-        </span>
+        <span>⭐ SCORE</span>
 
         <strong
           id="score-value"
@@ -143,13 +140,10 @@
       </div>
 
 
-      <!-- CAUGHT COUNTER -->
-
+      <!-- Caught count -->
       <div class="hud-item">
 
-        <span>
-          👀 CAUGHT
-        </span>
+        <span>👀 CAUGHT</span>
 
         <strong
           id="caught-value"
@@ -163,9 +157,9 @@
     </section>
 
 
-    <!-- =====================================
-         4. TEACHER STATUS
-         ===================================== -->
+    <!-- ==========================================
+         04. TEACHER STATUS DISPLAY
+         ========================================== -->
 
     <div
       id="teacher-status"
@@ -178,112 +172,181 @@
     </div>
 
 
-    <!-- =====================================
-         5. CLASSROOM SCENE
-         ===================================== -->
+    <!-- ==========================================
+         05. CLASSROOM SCENE
+         ========================================== -->
 
     <section
-      class="scene"
       id="scene"
+      class="scene"
       aria-label="Interactive classroom scene"
     >
 
-      <!-- BACKGROUND WALL -->
-
+      <!-- Classroom wallpaper -->
       <div
         class="wall-decoration"
         aria-hidden="true"
       ></div>
 
 
-      <!-- CLASSROOM FLOOR -->
-
+      <!-- Wooden floor -->
       <div
         class="floor"
         aria-hidden="true"
       ></div>
 
 
-      <!-- WINDOW -->
-
+      <!-- Classroom window -->
       <div
         class="window"
         aria-hidden="true"
       ></div>
 
 
-      <!-- =================================
-           6. CLASSROOM BLACKBOARD
-           ================================= -->
+      <!-- ========================================
+           06. CLASSROOM BLACKBOARD
+           ======================================== -->
 
       <div
         class="board"
         aria-hidden="true"
       >
 
-        <span>
-          MONDAY
-        </span>
+        <span>MONDAY</span>
 
-        <span>
-          2 + 2 = ?
-        </span>
+        <span>2 + 2 = ?</span>
 
-        <small>
-          STAY FOCUSED!
-        </small>
+        <small>STAY FOCUSED!</small>
 
       </div>
 
 
-      <!-- =================================
-           7. TEACHER CHARACTER
-           ================================= -->
+      <!-- ========================================
+           07. PIXEL GUINEA PIG TEACHER V2.2
+
+           Three visual emotions:
+           1. Normal / Facing Away
+           2. Happy / Praise
+           3. Angry / Caught
+
+           Existing teacher states:
+           .facing-away
+           .warning
+           .watching
+
+           New emotion classes:
+           .teacher-happy
+           .teacher-angry
+           ======================================== -->
 
       <div
         id="teacher"
         class="teacher facing-away"
-        aria-label="Teacher"
         role="img"
+        aria-label="Pixel guinea pig teacher"
+        data-emotion="normal"
       >
 
-        <!-- EARS -->
+        <!-- Short rounded ears -->
 
-        <div class="teacher-ear left"></div>
+        <div
+          class="teacher-ear left"
+          aria-hidden="true"
+        ></div>
 
-        <div class="teacher-ear right"></div>
+        <div
+          class="teacher-ear right"
+          aria-hidden="true"
+        ></div>
 
 
-        <!-- HEAD -->
+        <!-- Tricolor pixel head -->
 
-        <div class="teacher-head">
+        <div
+          class="teacher-head"
+          aria-hidden="true"
+        >
 
+          <!-- Asymmetric fur patch -->
+          <div class="teacher-patch"></div>
+
+
+          <!-- Front-facing expression -->
           <div class="teacher-face">
 
+            <!-- Small pixel eyes -->
             <div class="teacher-eyes"></div>
 
+            <!-- Expression eyebrows -->
+            <div class="teacher-brows"></div>
+
+            <!-- Small guinea pig nose -->
             <div class="teacher-nose"></div>
+
+            <!-- Dynamic smiling / angry mouth -->
+            <div class="teacher-mouth"></div>
+
+            <!-- Rosy cheeks -->
+            <div class="teacher-blush left"></div>
+            <div class="teacher-blush right"></div>
 
           </div>
 
         </div>
 
 
-        <!-- BODY -->
+        <!-- Teacher clothes -->
+        <div
+          class="teacher-body"
+          aria-hidden="true"
+        ></div>
 
-        <div class="teacher-body"></div>
+
+        <!-- Teacher feet -->
+        <div
+          class="teacher-feet"
+          aria-hidden="true"
+        ></div>
 
 
-        <!-- FEET -->
+        <!-- ====================================
+             TEACHER PIXEL EMOTION EFFECT
 
-        <div class="teacher-feet"></div>
+             No background / no border.
+
+             script.js draws pixel-art SVG:
+             - thumbs up for HAPPY
+             - anger symbol for ANGRY
+
+             style.css animates:
+             - floating praise
+             - popping anger
+
+             This element is intentionally empty
+             until an emotion is triggered.
+             ==================================== -->
+
+        <div
+          id="teacher-emote"
+          class="teacher-emote"
+          aria-hidden="true"
+        ></div>
 
       </div>
 
 
-      <!-- =================================
-           8. GUINEA PIG STUDENT
-           ================================= -->
+      <!-- ========================================
+           08. TRICOLOR GUINEA PIG STUDENT
+
+           Keep existing class names for:
+           gp-eat-carrot
+           gp-eat-cookie
+           gp-draw
+           gp-star
+           gp-hide
+           scared
+           happy
+           ======================================== -->
 
       <div
         id="student"
@@ -292,58 +355,47 @@
         aria-label="Tricolor pixel guinea pig student"
       >
 
-        <!-- SMALL ROUND EARS -->
-
+        <!-- Ears -->
         <div class="gp-ear left"></div>
-
         <div class="gp-ear right"></div>
 
 
-        <!-- CHUBBY BODY -->
-
+        <!-- Body -->
         <div class="gp-body"></div>
 
 
-        <!-- WIDE TRICOLOR HEAD -->
-
+        <!-- Wide pixel head -->
         <div class="gp-head">
 
-          <!-- ASYMMETRIC BROWN FUR -->
-
+          <!-- Asymmetric fur patch -->
           <div class="gp-patch"></div>
 
-
-          <!-- TINY EYES -->
-
+          <!-- Eyes -->
           <div class="gp-eye left"></div>
-
           <div class="gp-eye right"></div>
 
-
-          <!-- SMALL NOSE AND MOUTH -->
-
+          <!-- Nose and mouth -->
           <div class="gp-nose"></div>
 
-
-          <!-- PINK CHEEKS -->
-
+          <!-- Cheeks -->
           <div class="gp-cheek left"></div>
-
           <div class="gp-cheek right"></div>
 
         </div>
 
 
-        <!-- LITTLE PAWS -->
-
+        <!-- Small paws -->
         <div class="gp-paws"></div>
 
       </div>
 
 
-      <!-- =================================
-           9. CLASSROOM DESK
-           ================================= -->
+      <!-- ========================================
+           09. CLASSROOM DESK
+
+           Foreground desk stays in front
+           of the student character.
+           ======================================== -->
 
       <div
         class="desk"
@@ -355,16 +407,19 @@
       </div>
 
 
-      <!-- =================================
-           10. FOREGROUND INTERACTION LAYER
+      <!-- ========================================
+           10. FRONT INTERACTION LAYER
 
-           This layer is intentionally placed
-           outside the guinea pig and desk.
+           This layer is a sibling of the desk.
 
-           JavaScript inserts reaction props
-           here so they can appear above
-           the desk.
-           ================================= -->
+           JavaScript adds:
+           - pixel carrots
+           - pixel cookies and crumbs
+           - pencils and drawing paper
+           - pixel stars and sparkle particles
+
+           Effects can appear above the desk.
+           ======================================== -->
 
       <div
         id="interaction-layer"
@@ -373,9 +428,16 @@
       ></div>
 
 
-      <!-- =================================
-           11. RANDOM COLLECTIBLE OBJECT
-           ================================= -->
+      <!-- ========================================
+           11. PIXEL COLLECTIBLE
+
+           A real button remains clickable,
+           but style.css removes its visible
+           border and square background.
+
+           script.js inserts transparent SVG
+           pixel sprites inside collectible-icon.
+           ======================================== -->
 
       <button
         id="collectible"
@@ -389,19 +451,14 @@
         <span
           id="collectible-icon"
           aria-hidden="true"
-        >
-          🥕
-        </span>
+        ></span>
 
       </button>
 
 
-      <!-- =================================
-           12. GENERAL FLOATING EFFECT
-
-           Used for +1, warnings,
-           stars and caught effects.
-           ================================= -->
+      <!-- ========================================
+           12. SCORE / CAUGHT VISUAL EFFECT
+           ======================================== -->
 
       <div
         id="effect"
@@ -410,11 +467,11 @@
       ></div>
 
 
-      <!-- =================================
+      <!-- ========================================
            13. GAME OVERLAY
 
-           Start / Pause / Win / Lose
-           ================================= -->
+           Start / Pause / Victory / Failure
+           ======================================== -->
 
       <div
         id="overlay"
@@ -432,10 +489,10 @@
           </h2>
 
           <p id="overlay-message">
-            帮助小豚鼠度过快乐的课堂！
+            帮助小豚鼠度过快乐课堂！
 
             收集至少 8 分，
-            小心不要被老师发现 3 次！
+            注意老师随时可能回头！
           </p>
 
           <button
@@ -453,9 +510,9 @@
     </section>
 
 
-    <!-- =====================================
-         14. GAME FEEDBACK
-         ===================================== -->
+    <!-- ==========================================
+         14. GAME FEEDBACK MESSAGES
+         ========================================== -->
 
     <div
       id="feedback"
@@ -464,21 +521,20 @@
       aria-live="polite"
       aria-atomic="true"
     >
-      🐹 点击开始游戏，帮助小豚鼠偷偷收集道具！
+      🐹 准备好了！点击开始游戏吧。
     </div>
 
 
-    <!-- =====================================
+    <!-- ==========================================
          15. GAME CONTROLS
-         ===================================== -->
+         ========================================== -->
 
     <nav
       class="controls"
       aria-label="Game controls"
     >
 
-      <!-- PAUSE -->
-
+      <!-- Pause / Resume -->
       <button
         id="pause-button"
         type="button"
@@ -488,8 +544,7 @@
       </button>
 
 
-      <!-- SOUND -->
-
+      <!-- Sound On / Off -->
       <button
         id="sound-button"
         type="button"
@@ -499,8 +554,7 @@
       </button>
 
 
-      <!-- RESTART -->
-
+      <!-- Restart -->
       <button
         id="reset-button"
         type="button"
@@ -511,14 +565,14 @@
     </nav>
 
 
-    <!-- =====================================
+    <!-- ==========================================
          16. FOOTER
-         ===================================== -->
+         ========================================== -->
 
     <footer>
 
       <p>
-        🐹 CLASSROOM DAYDREAM
+        CLASSROOM DAYDREAM · V2.2
       </p>
 
       <p>
@@ -530,20 +584,13 @@
       </p>
 
       <p>
-        Made with creativity, curiosity
+        Made with curiosity, creativity,
         and a little classroom mischief.
       </p>
 
     </footer>
 
   </main>
-
-
-  <!-- =====================================
-       17. JAVASCRIPT
-       ===================================== -->
-
-  <script src="script.js"></script>
 
 </body>
 
