@@ -1,7 +1,9 @@
 
-# Classroom Daydream V2.0
+# Classroom Daydream — V2.1 Development
 
 ### A Guinea Pig Classroom Interactive Game
+
+> **Release status (27 October 2026):** The published GitHub Pages site may still reflect the earlier game implementation. The V2.1 pixel-item interaction prototype has been previewed locally, but the latest local `index.html`, `style.css`, and `script.js` must be committed and pushed before this documentation can describe the live game as updated.
 
 **Course:** SD5913 – Programming for Art & Design  
 **Assignment:** Assignment 3 – An Interactive Experience  
@@ -395,3 +397,45 @@ action, consequence, and the next decision.
 
 The project prioritises a complete and understandable
 interaction loop over unnecessary technical complexity.
+
+
+---
+
+## 16. V2.1 — Expressive Pixel Interaction (Local Prototype)
+
+**Status:** Local visual prototype shown in a development screenshot on 27 October 2026; **the matching local game files are not yet confirmed as pushed to the default GitHub branch**. The documented behaviours below describe the implemented *local design iteration*, not independently verified features of the currently published Pages build.
+
+Following the V2.0 retest, the next iteration focuses on making each collectible produce a distinct, visible character response instead of merely incrementing the score.
+
+### Design changes
+
+| Item | Intended and locally implemented feedback |
+| --- | --- |
+| Carrot | Pixel-art carrot without a surrounding box; moves toward the guinea pig's mouth, followed by alternating puffed cheeks and chewing |
+| Cookie | Pixel-art cookie without a surrounding box; travels toward the mouth, produces crumbs, and makes the guinea pig sway with happy closed eyes |
+| Doodle | Pixel pencil and foreground paper; pencil movement gradually reveals a small flower drawing |
+| Star | Pixel star and sparkles; guinea pig jumps to celebrate |
+
+The local prototype also introduces an independent foreground interaction layer (`#interaction-layer`) with a higher stacking order than the desk. This addresses the previous problem of food, pencil and sparkles being hidden behind the desk.
+
+### Design rationale
+
+The **input → response → feedback** loop is now deliberately object-specific:
+
+1. **Input:** The player chooses an item during a safe teacher state.
+2. **Response:** JavaScript awards a point and triggers that item's corresponding visual sequence.
+3. **Feedback:** The item moves, the character's face/body reacts, sound plays, and the score/message updates.
+4. **Next decision:** The player checks the teacher's changing safe / warning / danger state before clicking again.
+
+### Evidence and verification
+
+The development screenshot from 27 October 2026 shows a visible tricolour guinea pig and an unboxed pixel cookie in the classroom. A still screenshot **does not establish** that all animations, mobile layouts, pause handling and win/loss states have passed an end-to-end test. Those checks are part of the release checklist.
+
+### Before publishing this version
+
+- Commit and push the **latest local** `index.html`, `style.css`, and `script.js`.
+- Take a new screenshot of the V2.1 pixel item build, and add it to `assets/`.
+- Test each item, all teacher states, pause/resume/restart, and the 60-second ending.
+- Verify the Pages deployment before calling V2.1 publicly released.
+
+The original emoji limitation in Section 12 describes the **previous published implementation**; the local V2.1 prototype replaces those emoji collectibles with programmatically generated transparent pixel sprites.
