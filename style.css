@@ -1,17 +1,25 @@
 
 /* ============================================================
-   CLASSROOM DAYDREAM V2.5
+   CLASSROOM DAYDREAM V2.6.1
    COMPLETE STYLE.CSS
 
    Pixel Classroom Edition
-   HTML / CSS / JavaScript
-   No external images, fonts, or frameworks
+   Native HTML / CSS / JavaScript
+   No external images, fonts or frameworks
+
+   V2.6.1:
+   - Goal updated to 10 points in HTML / JS
+   - Pixel speech bubbles for student and teacher
+   - Progressive pixel-flower doodle animation
+   - Item-specific visual effects
+   - Win / lose stickers remain on the floor
+   - Settlement effects visible beside result dialog
+   - Original game styling and interactions preserved
    ============================================================ */
 
 
 /* ============================================================
    01. DESIGN SYSTEM
-   V2.5 Update
    ============================================================ */
 
 :root {
@@ -43,7 +51,6 @@
 
 /* ============================================================
    02. GLOBAL RESET
-   V2.5 Update
    ============================================================ */
 
 *,
@@ -55,6 +62,7 @@
 html {
   width: 100%;
   height: 100%;
+
   overflow: hidden;
 
   -webkit-text-size-adjust: 100%;
@@ -73,8 +81,7 @@ body {
   justify-content: center;
   align-items: center;
 
-  overflow-x: hidden;
-  overflow-y: hidden;
+  overflow: hidden;
 
   color: var(--ink);
 
@@ -97,8 +104,11 @@ body {
 
 button {
   font: inherit;
+
   cursor: pointer;
+
   touch-action: manipulation;
+
   user-select: none;
   -webkit-user-select: none;
 }
@@ -120,9 +130,6 @@ button:focus-visible {
 
 /* ============================================================
    03. MAIN GAME CONTAINER
-   V2.5 Update
-
-   Single-screen responsive game layout.
    ============================================================ */
 
 .game {
@@ -191,11 +198,12 @@ button:focus-visible {
 }
 
 .eyebrow {
+  display: block;
+
   color: #a08068;
 
   font-size: 10px;
   font-weight: bold;
-
   letter-spacing: 2px;
 }
 
@@ -204,36 +212,27 @@ button:focus-visible {
 
   color: var(--green);
 
-  font-size: clamp(
-    20px,
-    3vw,
-    33px
-  );
-
+  font-size: clamp(20px, 3vw, 33px);
   font-weight: 900;
   line-height: 1.15;
-
   letter-spacing: 2px;
 
-  text-shadow:
-    3px 3px 0 #b7c7aa;
+  text-shadow: 3px 3px 0 #b7c7aa;
 }
 
-.brand p {
-  margin: 0;
+.brand small {
+  display: block;
 
   color: #947969;
 
   font-size: 10px;
   font-weight: bold;
-
   letter-spacing: 1px;
 }
 
 
 /* ============================================================
    05. PIXEL BUTTON SYSTEM
-   V2.5 Update
    ============================================================ */
 
 .pixel-button {
@@ -254,7 +253,6 @@ button:focus-visible {
 
   font-size: 13px;
   font-weight: 900;
-
   letter-spacing: 1px;
 
   transition:
@@ -276,8 +274,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   06. RULES QUESTION BUTTON
-   V2.5 Update
+   06. QUESTION BUTTON
    ============================================================ */
 
 .help-button {
@@ -305,6 +302,10 @@ button:focus-visible {
 
 /* ============================================================
    07. GAME HUD
+
+   V2.6.1 Score Update:
+   The score target is 10, displayed by index.html
+   and checked by script.js.
    ============================================================ */
 
 .hud {
@@ -333,14 +334,10 @@ button:focus-visible {
 
   border: 3px solid #68534d;
 
-  box-shadow:
-    3px 3px 0 #bea183;
-}
+  box-shadow: 3px 3px 0 #bea183;
 
-.hud-item span {
   font-size: 11px;
   font-weight: bold;
-
   letter-spacing: 1px;
 }
 
@@ -349,7 +346,6 @@ button:focus-visible {
 
   font-size: 27px;
   font-weight: 900;
-
   line-height: 1;
 }
 
@@ -378,7 +374,6 @@ button:focus-visible {
 
   font-size: 12px;
   font-weight: bold;
-
   line-height: 1.4;
   text-align: center;
 }
@@ -409,7 +404,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   09. PIXEL CLASSROOM SCENE
+   09. CLASSROOM SCENE
    ============================================================ */
 
 .scene {
@@ -490,13 +485,12 @@ button:focus-visible {
       #945e45 40px 44px
     );
 
-  box-shadow:
-    inset 0 8px 0 #9e6d4e;
+  box-shadow: inset 0 8px 0 #9e6d4e;
 }
 
 
 /* ============================================================
-   12. PIXEL WINDOW
+   12. WINDOW
    ============================================================ */
 
 .window {
@@ -512,13 +506,11 @@ button:focus-visible {
 
   background: #a6cdc2;
 
-  box-shadow:
-    5px 5px 0 #c9a77f;
+  box-shadow: 5px 5px 0 #c9a77f;
 }
 
 .window-glass {
   position: absolute;
-
   inset: 5px;
 
   background:
@@ -532,9 +524,7 @@ button:focus-visible {
 .window-cross::before,
 .window-cross::after {
   content: "";
-
   position: absolute;
-
   background: #7d5d48;
 }
 
@@ -570,7 +560,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   13. DARK GREEN BLACKBOARD
+   13. CHALKBOARD
    ============================================================ */
 
 .board {
@@ -595,7 +585,6 @@ button:focus-visible {
 
 .board-content {
   position: absolute;
-
   inset: 4px;
 
   display: flex;
@@ -610,24 +599,15 @@ button:focus-visible {
 }
 
 .board-content span {
-  font-size: clamp(
-    13px,
-    1.7vw,
-    20px
-  );
+  font-size: clamp(13px, 1.7vw, 20px);
 }
 
 .board-content b {
-  font-size: clamp(
-    17px,
-    2.3vw,
-    27px
-  );
+  font-size: clamp(17px, 2.3vw, 27px);
 }
 
 .board-content small {
   color: #eedca9;
-
   font-size: 11px;
 }
 
@@ -654,7 +634,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   14. PIXEL CLASSROOM DECORATIONS
+   14. CLOCK AND WALL NOTE
    ============================================================ */
 
 .class-clock {
@@ -747,8 +727,7 @@ button:focus-visible {
 
   border: 6px solid #74503b;
 
-  box-shadow:
-    inset 0 20px 0 #d2a675;
+  box-shadow: inset 0 20px 0 #d2a675;
 }
 
 .side-cabinet::after {
@@ -767,18 +746,10 @@ button:focus-visible {
 
 
 /* ============================================================
-   16. SINGLE-ELEMENT PIXEL GUINEA PIG
-   V2.5 Update
+   16. PIXEL GUINEA PIG BASE
 
-   The whole character is drawn with a single box-shadow
-   on its empty DOM element.
-
-   Character colours and expression pixels are generated
-   by JavaScript using only hard-edge shadows.
-
-   Every pixel has:
-   blur radius = 0
-   spread radius = 0
+   Pure box-shadow characters drawn by JavaScript.
+   No external images or SVG.
    ============================================================ */
 
 .student,
@@ -798,8 +769,7 @@ button:focus-visible {
 
   transform-origin: bottom center;
 
-  transform:
-    scale(var(--character-scale));
+  transform: scale(var(--character-scale));
 
   image-rendering: pixelated;
 
@@ -809,16 +779,13 @@ button:focus-visible {
 
 /* ============================================================
    17. STUDENT POSITION
-   V2.5 Update
-
-   Move the student upward to expose more of the head
-   and shoulders above the foreground desk.
    ============================================================ */
 
 .student,
 .guinea-pig-student {
-  left: 39%;
+  position: absolute;
 
+  left: 39%;
   bottom: 65%;
 
   z-index: 4;
@@ -831,6 +798,8 @@ button:focus-visible {
 
 .teacher,
 .guinea-pig-teacher {
+  position: absolute;
+
   right: 18%;
   left: auto;
 
@@ -842,7 +811,6 @@ button:focus-visible {
 
 /* ============================================================
    19. STUDENT IDLE / BREATHING
-   V2.5 Update
    ============================================================ */
 
 .student.state-safe.normal {
@@ -871,7 +839,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   20. WARNING EXPRESSION AND HIDE
+   20. WARNING / HIDE
    ============================================================ */
 
 .student.state-warning,
@@ -897,7 +865,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   21. DANGER / NERVOUS STATE
+   21. DANGER / NERVOUS
    ============================================================ */
 
 .student.state-danger {
@@ -953,7 +921,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   23. CARROT EATING ANIMATION
+   23. CARROT CHEWING
    ============================================================ */
 
 .student.gp-eat-carrot,
@@ -979,7 +947,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   24. COOKIE EATING ANIMATION
+   24. COOKIE SWAY
    ============================================================ */
 
 .student.gp-eat-cookie {
@@ -1004,7 +972,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   25. DOODLE ANIMATION
+   25. DOODLE DRAWING MOVEMENT
    ============================================================ */
 
 .student.gp-draw {
@@ -1029,7 +997,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   26. STAR / JUMP ANIMATION
+   26. STAR JUMP / VICTORY
    ============================================================ */
 
 .student.gp-star,
@@ -1057,14 +1025,8 @@ button:focus-visible {
 
 
 /* ============================================================
-   27. NEW FOOD ANIMATIONS
-   V2.5 Update
-
-   The following classes support cake, rice ball,
-   and orange juice interactions in V2.5 JavaScript.
+   27. CAKE: HAPPY SATISFACTION
    ============================================================ */
-
-/* CAKE: HAPPY SATISFACTION */
 
 .student.gp-eat-cake,
 .student.action-cake {
@@ -1089,7 +1051,9 @@ button:focus-visible {
 }
 
 
-/* RICE BALL: BIG CHEW */
+/* ============================================================
+   28. RICE BALL: BIG CHEW
+   ============================================================ */
 
 .student.gp-eat-rice,
 .student.action-rice {
@@ -1114,7 +1078,9 @@ button:focus-visible {
 }
 
 
-/* ORANGE JUICE: DRINKING */
+/* ============================================================
+   29. ORANGE JUICE: DRINKING
+   ============================================================ */
 
 .student.gp-drink-juice,
 .student.action-drink {
@@ -1140,7 +1106,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   28. LOSE ANIMATION
+   30. DEFEAT
    ============================================================ */
 
 .student.state-lose {
@@ -1165,7 +1131,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   29. TEACHER WARNING
+   31. TEACHER WARNING
    ============================================================ */
 
 .teacher.warning {
@@ -1190,7 +1156,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   30. TEACHER PRAISE / SMILE
+   32. TEACHER PRAISE
    ============================================================ */
 
 .teacher.teacher-happy {
@@ -1215,7 +1181,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   31. TEACHER ANGRY JUMP
+   33. TEACHER ANGRY JUMP
    ============================================================ */
 
 .teacher.teacher-angry {
@@ -1240,12 +1206,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   32. FOREGROUND CLASSROOM DESK
-
-   V2.5 Update:
-   Desk remains in front of the student.
-   Character position is adjusted without
-   changing the desk position or proportions.
+   34. FOREGROUND CLASSROOM DESK
    ============================================================ */
 
 .desk {
@@ -1257,12 +1218,7 @@ button:focus-visible {
   z-index: 5;
 
   width: 57%;
-
-  height: clamp(
-    65px,
-    20%,
-    100px
-  );
+  height: clamp(65px, 20%, 100px);
 
   background: #ac7954;
 
@@ -1311,7 +1267,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   33. COLLECTIBLE ITEM BUTTON
+   35. COLLECTIBLE ITEM BUTTON
    ============================================================ */
 
 .collectible {
@@ -1345,9 +1301,7 @@ button:focus-visible {
 
 .collectible:hover:not(:disabled) {
   filter:
-    drop-shadow(
-      0 4px 0 #4f383966
-    );
+    drop-shadow(0 4px 0 #4f383966);
 
   transform: scale(1.1);
 }
@@ -1372,7 +1326,6 @@ button:focus-visible {
   display: block;
 
   image-rendering: pixelated;
-  image-rendering: crisp-edges;
 
   pointer-events: none;
 
@@ -1382,17 +1335,17 @@ button:focus-visible {
 @keyframes item-float {
   0%,
   100% {
-    translate: 0 0;
+    transform: translateY(0);
   }
 
   50% {
-    translate: 0 -5px;
+    transform: translateY(-5px);
   }
 }
 
 
 /* ============================================================
-   34. FOREGROUND INTERACTION LAYER
+   36. FOREGROUND INTERACTION LAYER
    ============================================================ */
 
 .interaction-layer {
@@ -1417,7 +1370,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   35. FOOD FLYING TOWARD MOUTH
+   37. FOOD FLYING TO MOUTH
    ============================================================ */
 
 .interaction-layer[data-item="carrot"]
@@ -1425,8 +1378,6 @@ button:focus-visible {
 .interaction-layer[data-item="cookie"]
 .foreground-prop,
 .interaction-layer[data-item="cake"]
-.foreground-prop,
-.interaction-layer[data-item="rice"]
 .foreground-prop,
 .interaction-layer[data-item="riceball"]
 .foreground-prop {
@@ -1463,7 +1414,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   36. COOKIE CRUMBS
+   38. COOKIE CRUMBS
    ============================================================ */
 
 .pixel-crumb {
@@ -1485,9 +1436,7 @@ button:focus-visible {
 @keyframes crumb-burst {
   from {
     opacity: 1;
-
-    transform:
-      translate(0, 0);
+    transform: translate(0, 0);
   }
 
   to {
@@ -1504,13 +1453,16 @@ button:focus-visible {
 
 
 /* ============================================================
-   37. DOODLE DRAWING
+   39. DOODLE PAPER
+   V2.6.1 Update
+
+   Keeps the drawing visible above the desk.
    ============================================================ */
 
 .foreground-doodle-paper {
   position: absolute;
 
-  z-index: 1;
+  z-index: 3;
 
   display: grid;
   place-items: center;
@@ -1534,28 +1486,91 @@ button:focus-visible {
   overflow: hidden;
 }
 
+.foreground-doodle-paper::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 5px;
+
+  border: 2px dashed #ead3b4;
+
+  opacity: 0.7;
+
+  pointer-events: none;
+}
+
+
+/* ============================================================
+   40. PIXEL FLOWER DRAWING
+   V2.6.1 Update
+
+   Progressive reveal instead of instant appearance.
+   ============================================================ */
+
 .foreground-doodle-paper .pixel-item,
-.foreground-doodle-paper img {
+.foreground-doodle-paper .pixel-flower,
+.foreground-doodle-paper .doodle-flower {
+  position: absolute;
+
+  transform-origin: top left;
+
   animation:
-    flower-draw 1.4s steps(12) both;
+    flower-draw 1.5s steps(14, end) forwards;
 }
 
 @keyframes flower-draw {
-  from {
+  0% {
+    opacity: 0;
+
     clip-path:
-      inset(0 100% 0 0);
+      inset(0 100% 100% 0);
   }
 
-  to {
+  10% {
+    opacity: 1;
+
+    clip-path:
+      inset(0 80% 80% 0);
+  }
+
+  30% {
+    clip-path:
+      inset(0 45% 55% 0);
+  }
+
+  55% {
+    clip-path:
+      inset(0 15% 30% 0);
+  }
+
+  80% {
+    clip-path:
+      inset(0 0 12% 0);
+  }
+
+  100% {
+    opacity: 1;
+
     clip-path:
       inset(0 0 0 0);
   }
 }
 
+
+/* ============================================================
+   41. PENCIL MOVEMENT
+   V2.6.1 Update
+
+   Intended to sync with the pencil scratch sound
+   generated in script.js.
+   ============================================================ */
+
 .interaction-layer[data-item="doodle"]
 .foreground-prop {
   animation:
-    pencil-write 0.18s alternate infinite;
+    pencil-write 0.18s ease-in-out
+    alternate infinite;
 }
 
 @keyframes pencil-write {
@@ -1576,7 +1591,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   38. STAR ORBIT
+   42. STAR ORBIT
    ============================================================ */
 
 .interaction-layer[data-item="star"]
@@ -1613,13 +1628,10 @@ button:focus-visible {
 
 
 /* ============================================================
-   39. ORANGE JUICE DRINKING
-   V2.5 Update
+   43. ORANGE JUICE DRINKING
    ============================================================ */
 
 .interaction-layer[data-item="juice"]
-.foreground-prop,
-.interaction-layer[data-item="orangejuice"]
 .foreground-prop {
   animation:
     juice-drink 1.4s ease-in-out forwards;
@@ -1664,7 +1676,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   40. SPARKLE PARTICLES
+   44. SPARKLES / DECORATIONS
    ============================================================ */
 
 .pixel-twinkle {
@@ -1725,7 +1737,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   41. TEACHER PIXEL EMOTIONS
+   45. TEACHER PIXEL EMOTIONS
    ============================================================ */
 
 .teacher-emote {
@@ -1800,13 +1812,220 @@ button:focus-visible {
 
 
 /* ============================================================
-   42. FLOATING SCORE FEEDBACK
+   46. SPEECH BUBBLE LAYER
+   V2.6.1 Update
+
+   Above characters and desk.
+   Below settlement modal.
+
+   Supports student and teacher dialogue.
+   ============================================================ */
+
+.speech-layer {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 22;
+
+  overflow: hidden;
+
+  pointer-events: none;
+}
+
+
+/* ============================================================
+   47. PIXEL SPEECH BUBBLES
+   V2.6.1 Update
+
+   Supported class names:
+   .speech-bubble
+   .pixel-speech
+   .speech-student
+   .speech-teacher
+   ============================================================ */
+
+.speech-bubble,
+.pixel-speech {
+  position: absolute;
+
+  max-width: 180px;
+  min-width: 70px;
+
+  padding: 9px 12px;
+
+  color: #614b41;
+
+  background: #fff9eb;
+
+  border: 3px solid #5d4943;
+
+  border-radius: 0;
+
+  box-shadow:
+    4px 4px 0 #ad8e73,
+    inset 0 0 0 2px #f3e4c9;
+
+  font-family: "Courier New", monospace;
+
+  font-size: 12px;
+  font-weight: 900;
+
+  letter-spacing: 0.2px;
+  line-height: 1.35;
+
+  text-align: center;
+
+  white-space: normal;
+  overflow-wrap: break-word;
+
+  pointer-events: none;
+
+  transform: translate(-50%, -100%);
+
+  animation:
+    speech-appear 1.8s ease-out forwards;
+}
+
+
+/* Pixel tail */
+
+.speech-bubble::after,
+.pixel-speech::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  bottom: -10px;
+
+  width: 12px;
+  height: 10px;
+
+  background: #fff9eb;
+
+  border-left: 3px solid #5d4943;
+  border-bottom: 3px solid #5d4943;
+
+  transform:
+    translateX(-50%)
+    skewY(-35deg);
+}
+
+
+/* Student dialogue */
+
+.speech-bubble.student-bubble,
+.speech-bubble.speech-student,
+.pixel-speech.student-bubble,
+.pixel-speech.speech-student {
+  background: #fff9eb;
+  border-color: #6a5049;
+}
+
+
+/* Teacher dialogue */
+
+.speech-bubble.teacher-bubble,
+.speech-bubble.speech-teacher,
+.pixel-speech.teacher-bubble,
+.pixel-speech.speech-teacher {
+  background: #eef2dc;
+
+  border-color: #52725f;
+
+  color: #355444;
+}
+
+.speech-bubble.teacher-bubble::after,
+.speech-bubble.speech-teacher::after,
+.pixel-speech.teacher-bubble::after,
+.pixel-speech.speech-teacher::after {
+  background: #eef2dc;
+  border-color: #52725f;
+}
+
+
+/* ============================================================
+   48. SPEECH BUBBLE APPEAR / FADE
+   V2.6.1 Update
+   ============================================================ */
+
+@keyframes speech-appear {
+  0% {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -80%)
+      scale(0.5);
+  }
+
+  15% {
+    opacity: 1;
+
+    transform:
+      translate(-50%, -110%)
+      scale(1.08);
+  }
+
+  30% {
+    opacity: 1;
+
+    transform:
+      translate(-50%, -100%)
+      scale(1);
+  }
+
+  75% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -125%)
+      scale(0.95);
+  }
+}
+
+
+/* ============================================================
+   49. PIXEL EMOTION TEXT INSIDE BUBBLE
+   V2.6.1 Update
+   ============================================================ */
+
+.speech-icon,
+.bubble-icon {
+  display: inline-block;
+
+  color: #df8e55;
+
+  font-size: 17px;
+  font-weight: 900;
+
+  image-rendering: pixelated;
+
+  vertical-align: middle;
+}
+
+.speech-bubble strong,
+.pixel-speech strong {
+  color: inherit;
+
+  font-size: 12px;
+  font-weight: 900;
+}
+
+
+/* ============================================================
+   50. FLOATING SCORE EFFECT
    ============================================================ */
 
 .effect {
   position: absolute;
 
-  z-index: 18;
+  z-index: 23;
 
   top: 43%;
   left: 50%;
@@ -1856,10 +2075,14 @@ button:focus-visible {
 
 
 /* ============================================================
-   43. SETTLEMENT PARTICLE LAYER
-   V2.5 Update
+   51. SETTLEMENT PARTICLE LAYER
+   V2.6.1 Update
 
-   Contains the win / lose pixel stickers.
+   The layer remains visible when the result
+   dialog opens.
+
+   It shares the settlement visual region but
+   allows interaction with the dialog.
    ============================================================ */
 
 .result-particles {
@@ -1867,7 +2090,7 @@ button:focus-visible {
 
   inset: 0;
 
-  z-index: 26;
+  z-index: 31;
 
   overflow: hidden;
 
@@ -1876,12 +2099,14 @@ button:focus-visible {
 
 
 /* ============================================================
-   44. RESULT STICKER FALL
-   V2.5 Update
+   52. RESULT STICKERS
+   V2.6.1 Update
 
-   Falling animation uses forwards fill.
-   At 100%, stickers remain at the final
-   position instead of disappearing.
+   Falling stickers:
+   - Spawn from classroom top
+   - Fall toward classroom floor
+   - Keep final position
+   - Remain visible until restart
    ============================================================ */
 
 .result-sticker {
@@ -1897,19 +2122,39 @@ button:focus-visible {
 
   image-rendering: pixelated;
 
+  pointer-events: none;
+
   will-change: transform;
 
   animation-name: result-fall;
-  animation-duration: var(--fall-time, 3s);
-  animation-delay: var(--delay, 0s);
+
+  animation-duration:
+    var(--fall-time, 3s);
+
+  animation-delay:
+    var(--delay, 0s);
 
   animation-timing-function:
-    cubic-bezier(0.28, 0.48, 0.56, 1);
+    cubic-bezier(
+      0.28,
+      0.48,
+      0.56,
+      1
+    );
 
   animation-fill-mode: forwards;
 
   animation-iteration-count: 1;
 }
+
+
+/* ============================================================
+   53. RESULT FALL / LANDING
+   V2.6.1 Update
+
+   Final opacity stays 1.
+   No fade-out at the bottom.
+   ============================================================ */
 
 @keyframes result-fall {
   0% {
@@ -1964,8 +2209,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   45. SETTLEMENT ANIMATION PAUSE
-   V2.5 Update
+   54. SETTLEMENT PAUSE
    ============================================================ */
 
 .result-particles.is-paused
@@ -1977,8 +2221,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   46. GAME PAUSE ANIMATION CONTROL
-   V2.5 Update
+   55. GENERAL GAME PAUSE
    ============================================================ */
 
 .game.game-paused .student,
@@ -1986,13 +2229,18 @@ button:focus-visible {
 .game.game-paused .collectible,
 .game.game-paused .interaction-layer *,
 .game.game-paused .teacher-emote,
+.game.game-paused .speech-layer *,
 .game.game-paused .result-particles * {
   animation-play-state: paused !important;
 }
 
 
 /* ============================================================
-   47. GAME RESULT / PAUSE OVERLAY
+   56. PAUSE / RESULT OVERLAY
+   V2.6.1 Update
+
+   The particle layer sits visually above the
+   overlay backdrop. The dialog remains interactive.
    ============================================================ */
 
 .overlay {
@@ -2011,6 +2259,10 @@ button:focus-visible {
 }
 
 .overlay-card {
+  position: relative;
+
+  z-index: 32;
+
   width: min(390px, 100%);
 
   padding: 18px;
@@ -2045,7 +2297,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   48. RESULT ICON
+   57. RESULT CARD ICON
    ============================================================ */
 
 .result-icon {
@@ -2094,7 +2346,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   49. FEEDBACK STRIP
+   58. FEEDBACK STRIP
    ============================================================ */
 
 .feedback {
@@ -2121,8 +2373,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   50. CONTROL BUTTON LAYOUT
-   V2.5 Update
+   59. CONTROL BUTTON LAYOUT
    ============================================================ */
 
 .controls {
@@ -2170,11 +2421,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   51. PIXEL CONTROL ICONS
-   V2.5 Update
-
-   All icons are CSS shapes.
-   No emoji images or external fonts.
+   60. PIXEL CONTROL ICON BASE
    ============================================================ */
 
 .control-icon {
@@ -2191,7 +2438,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   52. PAUSE ICON
+   61. PAUSE ICON
    ============================================================ */
 
 .icon-pause::before,
@@ -2207,8 +2454,7 @@ button:focus-visible {
 
   background: var(--ink);
 
-  box-shadow:
-    inset 2px 2px 0 #fff3ce;
+  box-shadow: inset 2px 2px 0 #fff3ce;
 }
 
 .icon-pause::before {
@@ -2221,7 +2467,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   53. PLAY ICON
+   62. PLAY ICON
    ============================================================ */
 
 .icon-play::before {
@@ -2243,7 +2489,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   54. BELL ICON
+   63. BELL ICON
    ============================================================ */
 
 .icon-bell::before,
@@ -2286,14 +2532,12 @@ button:focus-visible {
 
 
 /* ============================================================
-   55. MUTED BELL ICON
+   64. MUTED BELL ICON
    ============================================================ */
 
 .icon-bell-muted {
   filter: grayscale(1);
-}
 
-.icon-bell-muted {
   background:
     linear-gradient(
       135deg,
@@ -2305,7 +2549,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   56. RESTART ICON
+   65. RESTART ICON
    ============================================================ */
 
 .icon-restart::before {
@@ -2339,7 +2583,7 @@ button:focus-visible {
 
 
 /* ============================================================
-   57. FOOTER
+   66. FOOTER
    ============================================================ */
 
 footer {
@@ -2355,7 +2599,7 @@ footer {
 
 
 /* ============================================================
-   58. RULES MODAL BACKDROP
+   67. RULES MODAL BACKDROP
    ============================================================ */
 
 .rules-overlay {
@@ -2375,14 +2619,13 @@ footer {
 
 
 /* ============================================================
-   59. RULES DIALOG
+   68. RULES DIALOG
    ============================================================ */
 
 .rules-dialog {
   width: min(550px, 100%);
 
-  max-height:
-    calc(100% - 24px);
+  max-height: calc(100% - 24px);
 
   overflow-y: auto;
 
@@ -2401,7 +2644,7 @@ footer {
 
 
 /* ============================================================
-   60. RULES HEADING
+   69. RULES HEADING
    ============================================================ */
 
 .rules-heading {
@@ -2427,13 +2670,12 @@ footer {
 
 .rules-heading span {
   color: #b98547;
-
   font-size: 20px;
 }
 
 
 /* ============================================================
-   61. RULES TEXT
+   70. RULES TEXT
    ============================================================ */
 
 .rules-intro,
@@ -2444,13 +2686,12 @@ footer {
   text-align: center;
 }
 
-.rules-tip.subtle {
-  color: #947861;
-}
-
 
 /* ============================================================
-   62. MISSION PANEL
+   71. MISSION PANEL
+
+   V2.6.1 Score Update:
+   The win target is 10 points.
    ============================================================ */
 
 .rules-goal {
@@ -2479,12 +2720,11 @@ footer {
 
 
 /* ============================================================
-   63. THREE-STATE RULES
+   72. RULES STATE LIST
    ============================================================ */
 
 .rules-state-list {
   display: grid;
-
   gap: 8px;
 }
 
@@ -2514,7 +2754,7 @@ footer {
 
 
 /* ============================================================
-   64. PIXEL STATUS INDICATORS
+   73. PIXEL STATUS INDICATORS
    ============================================================ */
 
 .state-pixel {
@@ -2543,7 +2783,7 @@ footer {
 
 
 /* ============================================================
-   65. RULES ACTIONS
+   74. RULES BUTTONS
    ============================================================ */
 
 .rules-actions {
@@ -2559,8 +2799,7 @@ footer {
 
 
 /* ============================================================
-   66. MOBILE PORTRAIT HINT
-   V2.5 Update
+   75. MOBILE PORTRAIT HINT
    ============================================================ */
 
 .portrait-hint {
@@ -2606,12 +2845,10 @@ footer {
 
 
 /* ============================================================
-   67. TABLET RESPONSIVENESS
-   V2.5 Update
+   76. TABLET RESPONSIVENESS
    ============================================================ */
 
 @media (max-width: 900px) {
-
   .game {
     padding: 10px;
     gap: 5px;
@@ -2634,16 +2871,20 @@ footer {
     width: 46%;
   }
 
+  .speech-bubble,
+  .pixel-speech {
+    max-width: 140px;
+    font-size: 10px;
+    padding: 6px 8px;
+  }
 }
 
 
 /* ============================================================
-   68. MOBILE LANDSCAPE
-   V2.5 Update
+   77. MOBILE LANDSCAPE
    ============================================================ */
 
 @media (max-width: 700px) {
-
   body {
     padding: 5px;
   }
@@ -2651,15 +2892,12 @@ footer {
   .game {
     width: 100%;
 
-    height:
-      calc(100dvh - 10px);
+    height: calc(100dvh - 10px);
 
     padding: 7px;
-
     gap: 5px;
 
     border-width: 3px;
-
     box-shadow: none;
   }
 
@@ -2668,27 +2906,20 @@ footer {
   }
 
   .header h1 {
-    font-size: clamp(
-      16px,
-      4vw,
-      24px
-    );
-
+    font-size: clamp(16px, 4vw, 24px);
     letter-spacing: 0;
   }
 
   .eyebrow,
-  .brand p {
+  .brand small {
     font-size: 8px;
     letter-spacing: 0;
   }
 
   .help-button {
     flex-basis: 44px;
-
     width: 44px;
     height: 44px;
-
     font-size: 21px;
   }
 
@@ -2698,13 +2929,11 @@ footer {
 
   .hud-item {
     min-height: 45px;
-
     padding: 3px;
-
     border-width: 2px;
   }
 
-  .hud-item span {
+  .hud-item {
     font-size: 10px;
   }
 
@@ -2771,14 +3000,9 @@ footer {
 
   .desk {
     left: 18%;
-
     width: 64%;
 
-    height: clamp(
-      52px,
-      20%,
-      78px
-    );
+    height: clamp(52px, 20%, 78px);
   }
 
   .class-clock,
@@ -2798,7 +3022,6 @@ footer {
 
   .control-button {
     min-height: 48px;
-
     gap: 5px;
   }
 
@@ -2810,13 +3033,30 @@ footer {
     font-size: 9px;
   }
 
+  .speech-bubble,
+  .pixel-speech {
+    max-width: 105px;
+    min-width: 55px;
+
+    padding: 5px;
+
+    font-size: 9px;
+
+    border-width: 2px;
+    box-shadow: 2px 2px 0 #ad8e73;
+  }
+
+  .foreground-doodle-paper {
+    width: 76px;
+    height: 60px;
+  }
+
   footer {
     font-size: 8px;
   }
 
   .rules-dialog {
     padding: 11px;
-
     border-width: 4px;
   }
 
@@ -2827,17 +3067,14 @@ footer {
   .rules-state {
     padding: 6px;
   }
-
 }
 
 
 /* ============================================================
-   69. SHORT SCREEN ADAPTATION
-   V2.5 Update
+   78. SHORT VIEWPORT ADAPTATION
    ============================================================ */
 
 @media (max-height: 700px) {
-
   .game {
     gap: 4px;
 
@@ -2854,7 +3091,7 @@ footer {
   }
 
   .eyebrow,
-  .brand p {
+  .brand small {
     font-size: 8px;
   }
 
@@ -2869,13 +3106,11 @@ footer {
   .teacher-status,
   .feedback {
     min-height: 25px;
-
     padding: 3px;
   }
 
   .control-button {
     min-height: 48px;
-
     gap: 3px;
   }
 
@@ -2894,31 +3129,23 @@ footer {
   .rules-goal {
     padding: 8px 10px;
   }
-
 }
 
 
 /* ============================================================
-   70. PORTRAIT MOBILE OVERLAY
-   V2.5 Update
+   79. PORTRAIT MOBILE HINT
    ============================================================ */
 
-@media (
-  max-width: 767px
-) and (
-  orientation: portrait
-) {
-
+@media (max-width: 767px)
+       and (orientation: portrait) {
   .portrait-hint {
     display: flex !important;
   }
-
 }
 
 
 /* ============================================================
-   71. PIXEL ART RENDERING
-   V2.5 Update
+   80. PIXEL RENDERING
    ============================================================ */
 
 .student,
@@ -2928,6 +3155,7 @@ footer {
 .foreground-prop,
 .foreground-doodle-paper *,
 .teacher-emote,
+.speech-layer *,
 .result-sticker,
 .result-icon,
 .control-icon {
@@ -2935,7 +3163,6 @@ footer {
 }
 
 @supports not (image-rendering: pixelated) {
-
   .student,
   .teacher,
   .collectible,
@@ -2945,13 +3172,11 @@ footer {
   .result-icon {
     image-rendering: crisp-edges;
   }
-
 }
 
 
 /* ============================================================
-   72. PERFORMANCE OPTIMIZATION
-   V2.5 Update
+   81. PERFORMANCE OPTIMIZATION
    ============================================================ */
 
 .student,
@@ -2964,20 +3189,18 @@ footer {
 
 
 /* ============================================================
-   73. REDUCED MOTION
+   82. REDUCED MOTION
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-
   .student.state-safe.normal,
   .collectible {
     animation: none !important;
   }
-
 }
 
 
 /* ============================================================
-   END OF CLASSROOM DAYDREAM V2.5
+   END OF CLASSROOM DAYDREAM V2.6.1
    COMPLETE STYLE.CSS
    ============================================================ */

@@ -2,610 +2,125 @@
 "use strict";
 
 /* ============================================================
-   CLASSROOM DAYDREAM V2.5
+   CLASSROOM DAYDREAM V2.6.1
    COMPLETE SCRIPT.JS
 
-   Pixel Classroom Edition
-
-   Features:
-   - Original 60-second game
-   - SAFE / WARNING / DANGER teacher state machine
-   - Seven collectible items
-   - Single-element CSS box-shadow guinea pigs
-   - English interface
-   - Unique item reactions
-   - Dynamic three-stage 8-bit background music
-   - Looping victory / defeat music
-   - Falling pixel stickers that remain on the floor
-   - Pause, resume, restart and sound toggle
-   - Rules modal and mobile compatibility
-
-   No external dependencies
+   Vanilla JavaScript / Web Audio API
+   No external assets or libraries
    ============================================================ */
 
 
 /* ============================================================
-   01. GAME CONFIGURATION
-   Original mechanics preserved
+   01. GAME SETTINGS
    ============================================================ */
 
+/* V2.6.1 Score Update */
 const CONFIG = {
   duration: 60,
-  targetScore: 8,
+  targetScore: 10,
   maxCaught: 3,
 
   tickRate: 50,
   itemLifetime: 1900,
-
   itemSpawnMin: 350,
   itemSpawnMax: 750,
 
   safeMin: 2800,
   safeMax: 4600,
-
   warningMin: 900,
   warningMax: 1400,
-
   watchingMin: 1700,
   watchingMax: 2400
 };
 
+const random = (a, b) => a + Math.random() * (b - a);
 
-/* ============================================================
-   02. V2.5 Update
-   PIXEL COLOR PALETTE
-   ============================================================ */
-
-const COLORS = {
-  outline: "#654b44",
-  dark: "#49383c",
-
-  brown: "#987b6b",
-  brownLight: "#b49a87",
-
-  grey: "#92918b",
-  greyLight: "#b8b7a8",
-
-  orange: "#e5aa70",
-  orangeLight: "#f4c693",
-
-  white: "#fffaf0",
-  cream: "#f4e6cd",
-
-  pink: "#ecb1b3",
-  pinkDark: "#e1909d",
-
-  eye: "#59413f",
-  highlight: "#fffdf7",
-
-  red: "#e46a77",
-  blue: "#75bfe2",
-  yellow: "#f8d66b",
-
-  green: "#71a876",
-  purple: "#a987c9"
-};
+const choose = array =>
+  array[Math.floor(Math.random() * array.length)];
 
 
 /* ============================================================
-   03. V2.5 Update
-   ZERO-BLUR PIXEL SHADOW HELPERS
+   02. HTML ELEMENTS
    ============================================================ */
 
-function makeCanvas(width, height) {
-  return Array.from(
-    { length: height },
-    () => Array(width).fill(null)
-  );
-}
-
-function pixel(grid, x, y, color) {
-  x = Math.round(x);
-  y = Math.round(y);
-
-  if (
-    y >= 0 &&
-    y < grid.length &&
-    x >= 0 &&
-    x < grid[0].length
-  ) {
-    grid[y][x] = color;
-  }
-}
-
-function fillRect(grid, x, y, width, height, color) {
-  for (let row = y; row < y + height; row++) {
-    for (let col = x; col < x + width; col++) {
-      pixel(grid, col, row, color);
-    }
-  }
-}
-
-function fillOval(grid, cx, cy, rx, ry, color) {
-  for (let y = Math.floor(cy - ry); y <= cy + ry; y++) {
-    for (let x = Math.floor(cx - rx); x <= cx + rx; x++) {
-      const distance =
-        Math.pow((x - cx) / rx, 2) +
-        Math.pow((y - cy) / ry, 2);
-
-      if (distance <= 1) {
-        pixel(grid, x, y, color);
-      }
-    }
-  }
-}
-
-function toBoxShadow(grid, pixelSize = 4) {
-  const shadows = [];
-
-  for (let y = 0; y < grid.length; y++) {
-    for (let x = 0; x < grid[y].length; x++) {
-      const color = grid[y][x];
-
-      if (!color) continue;
-
-      shadows.push(
-        `${x * pixelSize}px ` +
-        `${y * pixelSize}px ` +
-        `0 0 ${color}`
-      );
-    }
-  }
-
-  return shadows.join(",");
-}
-
-
-/* ============================================================
-   04. V2.5 Update
-   STUDENT GUINEA PIG PIXEL SPRITE
-
-   Pure box-shadow, single DOM element.
-
-   Design:
-   - Rounded, stepped silhouette
-   - Grey + white + warm brown fur
-   - Pink ears and cheeks
-   - Small eyes and nose
-   - Small tuft of hair
-   ============================================================ */
-
-function drawStudentSprite(expression = "normal") {
-  const c = COLORS;
-  const g = makeCanvas(36, 37);
-
-  /* BODY */
-
-  fillOval(g, 18, 27, 15, 9, c.outline);
-  fillOval(g, 18, 26, 14, 8, c.cream);
-
-  fillOval(g, 11, 26, 7, 7, c.grey);
-  fillOval(g, 27, 26, 6, 7, c.brown);
-
-  /* EARS */
-
-  fillOval(g, 8, 10, 6, 7, c.outline);
-  fillOval(g, 28, 10, 6, 7, c.outline);
-
-  fillOval(g, 8, 10, 4, 5, c.pink);
-  fillOval(g, 28, 10, 4, 5, c.pink);
-
-  pixel(g, 6, 8, c.cream);
-  pixel(g, 26, 8, c.cream);
-
-  /* OUTER HEAD */
-
-  fillOval(g, 18, 21, 17, 13, c.outline);
-  fillOval(g, 18, 20, 16, 12, c.white);
-
-  /* TRICOLOUR FUR */
-
-  fillOval(g, 9, 18, 8, 10, c.grey);
-  fillOval(g, 28, 18, 7, 10, c.brown);
-
-  fillOval(g, 17, 22, 10, 10, c.white);
-
-  /* SOFT FUR TRANSITIONS */
-
-  fillRect(g, 3, 15, 3, 6, c.greyLight);
-  fillRect(g, 29, 15, 3, 5, c.orange);
-  fillRect(g, 25, 10, 4, 3, c.orangeLight);
-
-  /* LITTLE HAIR TUFT */
-
-  pixel(g, 16, 7, c.outline);
-  pixel(g, 17, 6, c.outline);
-  pixel(g, 18, 5, c.outline);
-  pixel(g, 19, 7, c.outline);
-  pixel(g, 20, 6, c.outline);
-
-  /* FACE BLUSH */
-
-  fillRect(g, 6, 24, 5, 3, c.pink);
-  fillRect(g, 25, 24, 5, 3, c.pink);
-
-  /* EXPRESSIVE EYES */
-
-  const happyExpressions = [
-    "happy", "win", "cookie", "cake"
-  ];
-
-  const shockedExpressions = [
-    "warning", "surprised", "caught"
-  ];
-
-  const sadExpressions = [
-    "sad", "lose"
-  ];
-
-  if (happyExpressions.includes(expression)) {
-    fillRect(g, 11, 20, 5, 1, c.eye);
-    fillRect(g, 21, 20, 5, 1, c.eye);
-    pixel(g, 11, 19, c.eye);
-    pixel(g, 25, 19, c.eye);
-
-  } else if (expression === "blink") {
-    fillRect(g, 11, 21, 5, 1, c.eye);
-    fillRect(g, 21, 21, 5, 1, c.eye);
-
-  } else if (shockedExpressions.includes(expression)) {
-    fillRect(g, 12, 18, 3, 6, c.eye);
-    fillRect(g, 22, 18, 3, 6, c.eye);
-
-    pixel(g, 12, 18, c.highlight);
-    pixel(g, 22, 18, c.highlight);
-
-  } else if (sadExpressions.includes(expression)) {
-    fillRect(g, 11, 22, 5, 2, c.eye);
-    fillRect(g, 21, 22, 5, 2, c.eye);
-    pixel(g, 11, 21, c.eye);
-    pixel(g, 25, 21, c.eye);
-
-  } else if (expression === "danger") {
-    fillRect(g, 12, 19, 3, 4, c.eye);
-    fillRect(g, 22, 19, 3, 4, c.eye);
-
-    fillRect(g, 28, 17, 2, 4, c.blue);
-
-  } else {
-    fillRect(g, 12, 19, 3, 4, c.eye);
-    fillRect(g, 22, 19, 3, 4, c.eye);
-
-    pixel(g, 12, 19, c.highlight);
-    pixel(g, 22, 19, c.highlight);
-  }
-
-  /* NOSE */
-
-  fillRect(g, 17, 25, 3, 2, c.brown);
-  fillRect(g, 18, 27, 1, 2, c.eye);
-
-  /* MOUTH */
-
-  if (
-    expression === "warning" ||
-    expression === "surprised" ||
-    expression === "caught"
-  ) {
-    fillRect(g, 17, 29, 3, 4, c.eye);
-
-  } else if (sadExpressions.includes(expression)) {
-    fillRect(g, 16, 31, 5, 1, c.eye);
-    pixel(g, 16, 30, c.eye);
-    pixel(g, 20, 30, c.eye);
-
-  } else {
-    fillRect(g, 15, 29, 3, 1, c.eye);
-    fillRect(g, 19, 29, 3, 1, c.eye);
-    pixel(g, 16, 30, c.eye);
-    pixel(g, 20, 30, c.eye);
-  }
-
-  /* FOOD EXPRESSIONS */
-
-  if (
-    expression === "carrot" ||
-    expression === "rice"
-  ) {
-    fillRect(g, 5, 23, 7, 5, c.pink);
-    fillRect(g, 24, 23, 7, 5, c.pink);
-  }
-
-  if (expression === "cake") {
-    fillRect(g, 24, 28, 4, 2, c.cream);
-    pixel(g, 27, 29, c.white);
-  }
-
-  if (expression === "juice") {
-    fillRect(g, 17, 28, 3, 4, c.eye);
-  }
-
-  /* TEARS */
-
-  if (
-    expression === "caught" ||
-    expression === "lose"
-  ) {
-    fillRect(g, 9, 23, 2, 5, c.blue);
-    fillRect(g, 26, 23, 2, 5, c.blue);
-  }
-
-  /* PAWS */
-
-  fillRect(g, 10, 32, 5, 2, c.cream);
-  fillRect(g, 22, 32, 5, 2, c.cream);
-
-  /* LOWER OUTLINE */
-
-  fillRect(g, 11, 35, 14, 1, c.outline);
-
-  return toBoxShadow(g, 4);
-}
-
-
-/* ============================================================
-   05. V2.5 Update
-   TEACHER GUINEA PIG PIXEL SPRITE
-
-   Grey + brown mature colouring.
-   Small glasses and pointer.
-   ============================================================ */
-
-function drawTeacherSprite(expression = "back") {
-  const c = COLORS;
-  const g = makeCanvas(35, 38);
-
-  /* BODY */
-
-  fillOval(g, 18, 29, 14, 8, c.outline);
-  fillOval(g, 18, 28, 13, 7, c.green);
-
-  /* EARS */
-
-  fillOval(g, 8, 11, 6, 7, c.outline);
-  fillOval(g, 27, 11, 6, 7, c.outline);
-
-  fillOval(g, 8, 11, 4, 5, c.pink);
-  fillOval(g, 27, 11, 4, 5, c.pink);
-
-  /* HEAD */
-
-  fillOval(g, 18, 21, 16, 13, c.outline);
-  fillOval(g, 18, 20, 15, 12, c.cream);
-
-  fillOval(g, 10, 18, 8, 10, c.grey);
-  fillOval(g, 26, 18, 7, 10, c.brown);
-
-  if (
-    expression === "back" ||
-    expression === "warning"
-  ) {
-    /* TEACHER FACING THE BLACKBOARD */
-
-    fillOval(g, 17, 21, 14, 11, c.brown);
-    fillOval(g, 10, 20, 7, 8, c.grey);
-
-    fillRect(g, 12, 29, 10, 2, c.brownLight);
-
-  } else {
-
-    /* BLUSH */
-
-    fillRect(g, 6, 24, 5, 3, c.pink);
-    fillRect(g, 25, 24, 5, 3, c.pink);
-
-    /* EYES */
-
-    if (expression === "happy") {
-      fillRect(g, 11, 20, 5, 1, c.eye);
-      fillRect(g, 21, 20, 5, 1, c.eye);
-
-    } else {
-      fillRect(g, 12, 19, 3, 4, c.eye);
-      fillRect(g, 22, 19, 3, 4, c.eye);
-    }
-
-    /* GLASSES */
-
-    fillRect(g, 9, 18, 7, 1, c.eye);
-    fillRect(g, 21, 18, 7, 1, c.eye);
-
-    fillRect(g, 9, 18, 1, 7, c.eye);
-    fillRect(g, 15, 18, 1, 7, c.eye);
-
-    fillRect(g, 21, 18, 1, 7, c.eye);
-    fillRect(g, 27, 18, 1, 7, c.eye);
-
-    fillRect(g, 16, 19, 5, 1, c.eye);
-
-    /* NOSE */
-
-    fillRect(g, 17, 26, 3, 2, c.brown);
-
-    /* MOUTH */
-
-    if (expression === "angry") {
-      fillRect(g, 17, 29, 4, 4, c.red);
-
-      /* ANGRY EYEBROWS */
-      fillRect(g, 10, 15, 5, 2, c.eye);
-      fillRect(g, 22, 15, 5, 2, c.eye);
-
-    } else {
-      fillRect(g, 15, 29, 3, 1, c.eye);
-      fillRect(g, 19, 29, 3, 1, c.eye);
-      pixel(g, 16, 30, c.eye);
-      pixel(g, 20, 30, c.eye);
-    }
-  }
-
-  /* TEACHER UNIFORM */
-
-  fillRect(g, 12, 34, 12, 2, c.green);
-  fillRect(g, 16, 34, 3, 2, c.cream);
-
-  /* MINI POINTER */
-
-  fillRect(g, 31, 23, 1, 12, c.outline);
-  pixel(g, 31, 22, c.yellow);
-
-  return toBoxShadow(g, 4);
-}
-
-
-/* ============================================================
-   06. SPRITE CACHE
-   V2.5 Update
-   ============================================================ */
-
-const spriteCache = new Map();
-
-function getStudentShadow(expression) {
-  const key = "student-" + expression;
-
-  if (!spriteCache.has(key)) {
-    spriteCache.set(
-      key,
-      drawStudentSprite(expression)
-    );
-  }
-
-  return spriteCache.get(key);
-}
-
-function getTeacherShadow(expression) {
-  const key = "teacher-" + expression;
-
-  if (!spriteCache.has(key)) {
-    spriteCache.set(
-      key,
-      drawTeacherSprite(expression)
-    );
-  }
-
-  return spriteCache.get(key);
-}
-
-
-/* ============================================================
-   07. HTML REFERENCES
-   ============================================================ */
+const $ = id => document.getElementById(id);
 
 const el = {
-  game: document.getElementById("game"),
-  scene: document.getElementById("scene"),
+  game: $("game"),
+  scene: $("scene"),
 
-  student: document.getElementById("student"),
-  teacher: document.getElementById("teacher"),
+  student: $("student"),
+  teacher: $("teacher"),
+  teacherEmote: $("teacher-emote"),
 
-  teacherEmote:
-    document.getElementById("teacher-emote"),
+  time: $("time-value"),
+  score: $("score-value"),
+  caught: $("caught-value"),
+  status: $("teacher-status"),
 
-  time: document.getElementById("time-value"),
-  score: document.getElementById("score-value"),
-  caught: document.getElementById("caught-value"),
+  collectible: $("collectible"),
+  itemIcon: $("collectible-icon"),
 
-  status:
-    document.getElementById("teacher-status"),
+  layer: $("interaction-layer"),
+  speech: $("speech-layer"),
+  particles: $("result-particles"),
 
-  collectible:
-    document.getElementById("collectible"),
+  resultIcon: $("result-icon"),
+  effect: $("effect"),
+  feedback: $("feedback"),
 
-  itemIcon:
-    document.getElementById("collectible-icon"),
+  overlay: $("overlay"),
+  overlayTitle: $("overlay-title"),
+  overlayMessage: $("overlay-message"),
+  startButton: $("start-button"),
 
-  layer:
-    document.getElementById("interaction-layer"),
+  pauseButton: $("pause-button"),
+  pauseIcon: $("pause-icon"),
+  pauseLabel: $("pause-label"),
 
-  particles:
-    document.getElementById("result-particles"),
+  soundButton: $("sound-button"),
+  soundIcon: $("sound-icon"),
+  soundLabel: $("sound-label"),
 
-  resultIcon:
-    document.getElementById("result-icon"),
+  resetButton: $("reset-button"),
 
-  effect: document.getElementById("effect"),
-  feedback: document.getElementById("feedback"),
+  rulesButton: $("rules-button"),
+  rulesOverlay: $("rules-overlay"),
+  rulesStartButton: $("rules-start-button"),
+  rulesCloseButton: $("rules-close-button"),
 
-  overlay: document.getElementById("overlay"),
-
-  overlayTitle:
-    document.getElementById("overlay-title"),
-
-  overlayMessage:
-    document.getElementById("overlay-message"),
-
-  startButton:
-    document.getElementById("start-button"),
-
-  pauseButton:
-    document.getElementById("pause-button"),
-
-  pauseIcon:
-    document.getElementById("pause-icon"),
-
-  pauseLabel:
-    document.getElementById("pause-label"),
-
-  soundButton:
-    document.getElementById("sound-button"),
-
-  soundIcon:
-    document.getElementById("sound-icon"),
-
-  soundLabel:
-    document.getElementById("sound-label"),
-
-  resetButton:
-    document.getElementById("reset-button"),
-
-  rulesButton:
-    document.getElementById("rules-button"),
-
-  rulesOverlay:
-    document.getElementById("rules-overlay"),
-
-  rulesStartButton:
-    document.getElementById("rules-start-button"),
-
-  rulesCloseButton:
-    document.getElementById("rules-close-button"),
-
-  portraitHint:
-    document.getElementById("portrait-hint")
+  portraitHint: $("portrait-hint")
 };
 
 for (const [name, element] of Object.entries(el)) {
   if (!element) {
-    throw new Error(
-      "Required HTML element missing: " + name
-    );
+    throw new Error(`Missing HTML element: ${name}`);
   }
 }
 
 
 /* ============================================================
-   08. CHARACTER APPEARANCE
+   03. PIXEL COLOURS
    ============================================================ */
 
-function setStudentFace(expression) {
-  el.student.style.boxShadow =
-    getStudentShadow(expression);
-
-  el.student.dataset.face = expression;
-}
-
-function setTeacherFace(expression) {
-  el.teacher.style.boxShadow =
-    getTeacherShadow(expression);
-
-  el.teacher.dataset.face = expression;
-}
-
-
-/* ============================================================
-   09. V2.5 Update
-   PIXEL ITEM PALETTE
-   ============================================================ */
+const C = {
+  K: "#654b44",
+  B: "#9a7d6c",
+  A: "#b49a87",
+  X: "#92918b",
+  x: "#b8b7a8",
+  O: "#e5aa70",
+  L: "#f4c693",
+  W: "#fffaf0",
+  H: "#f4e6cd",
+  P: "#ecb1b3",
+  E: "#59413f",
+  R: "#e46a77",
+  T: "#75bfe2",
+  Y: "#f8d66b",
+  G: "#71a876",
+  V: "#a987c9"
+};
 
 const ITEM_COLORS = {
   K: "#614842",
@@ -627,12 +142,253 @@ const ITEM_COLORS = {
 
 
 /* ============================================================
-   10. V2.5 Update
-   SEVEN PIXEL COLLECTIBLES
+   04. PIXEL DRAWING HELPERS
    ============================================================ */
 
-const PIXEL_ART = {
+function makeCanvas(w, h) {
+  return Array.from(
+    { length: h },
+    () => Array(w).fill(null)
+  );
+}
 
+function rectangle(g, x, y, w, h, color) {
+  for (let yy = y; yy < y + h; yy++) {
+    for (let xx = x; xx < x + w; xx++) {
+      if (
+        g[yy] &&
+        xx >= 0 &&
+        xx < g[yy].length
+      ) {
+        g[yy][xx] = color;
+      }
+    }
+  }
+}
+
+function oval(g, cx, cy, rx, ry, color) {
+  for (let y = Math.ceil(cy - ry); y <= cy + ry; y++) {
+    for (let x = Math.ceil(cx - rx); x <= cx + rx; x++) {
+      const d =
+        ((x - cx) / rx) ** 2 +
+        ((y - cy) / ry) ** 2;
+
+      if (d <= 1) {
+        rectangle(g, x, y, 1, 1, color);
+      }
+    }
+  }
+}
+
+function pixelShadow(g, px = 4) {
+  const shadows = [];
+
+  g.forEach((row, y) => {
+    row.forEach((color, x) => {
+      if (color) {
+        shadows.push(
+          `${x * px}px ${y * px}px 0 0 ${color}`
+        );
+      }
+    });
+  });
+
+  return shadows.join(",");
+}
+
+function patternShadow(rows, palette = ITEM_COLORS, px = 4) {
+  const shadows = [];
+
+  rows.forEach((row, y) => {
+    [...row].forEach((symbol, x) => {
+      if (palette[symbol]) {
+        shadows.push(
+          `${x * px}px ${y * px}px 0 0 ${palette[symbol]}`
+        );
+      }
+    });
+  });
+
+  return shadows.join(",");
+}
+
+
+/* ============================================================
+   05. GUINEA PIG PIXEL CHARACTERS
+
+   One empty DIV per character.
+   Drawn entirely using CSS box-shadow.
+   ============================================================ */
+
+function drawPig(teacher = false, face = "normal") {
+  const g = makeCanvas(36, 38);
+
+  const back =
+    teacher &&
+    (face === "back" || face === "warning");
+
+  // Rounded body
+  oval(g, 18, 28, 15, 8, C.K);
+  oval(g, 18, 27, 14, 7, teacher ? C.G : C.H);
+
+  // Ears
+  oval(g, 8, 11, 6, 7, C.K);
+  oval(g, 28, 11, 6, 7, C.K);
+  oval(g, 8, 11, 4, 5, C.P);
+  oval(g, 28, 11, 4, 5, C.P);
+
+  // Rounded head
+  oval(g, 18, 21, 17, 13, C.K);
+  oval(g, 18, 20, 16, 12, teacher ? C.H : C.W);
+
+  // Fur patches
+  oval(g, 9, 18, 8, 10, C.X);
+  oval(g, 28, 18, 7, 10, teacher ? C.B : C.O);
+  oval(g, 17, 22, 10, 9, C.W);
+
+  if (back) {
+    oval(g, 18, 21, 14, 11, C.B);
+    oval(g, 10, 20, 7, 8, C.X);
+    rectangle(g, 12, 29, 10, 2, C.A);
+  } else {
+    // Cheeks
+    rectangle(g, 6, 24, 5, 3, C.P);
+    rectangle(g, 25, 24, 5, 3, C.P);
+
+    const happy = [
+      "happy", "cookie", "cake", "win", "star"
+    ].includes(face);
+
+    const sad = ["sad", "lose"].includes(face);
+
+    const shocked = [
+      "warning", "caught", "surprised"
+    ].includes(face);
+
+    // Eyes
+    if (happy) {
+      rectangle(g, 11, 20, 5, 1, C.E);
+      rectangle(g, 21, 20, 5, 1, C.E);
+    } else if (sad) {
+      rectangle(g, 11, 22, 5, 2, C.E);
+      rectangle(g, 21, 22, 5, 2, C.E);
+    } else if (shocked) {
+      rectangle(g, 12, 18, 3, 6, C.E);
+      rectangle(g, 22, 18, 3, 6, C.E);
+    } else if (face === "blink") {
+      rectangle(g, 11, 21, 5, 1, C.E);
+      rectangle(g, 21, 21, 5, 1, C.E);
+    } else {
+      rectangle(g, 12, 19, 3, 4, C.E);
+      rectangle(g, 22, 19, 3, 4, C.E);
+      rectangle(g, 12, 19, 1, 1, C.W);
+      rectangle(g, 22, 19, 1, 1, C.W);
+    }
+
+    // Nose
+    rectangle(g, 17, 25, 3, 2, C.B);
+    rectangle(g, 18, 27, 1, 2, C.E);
+
+    // Mouth
+    if (
+      shocked ||
+      face === "juice" ||
+      face === "angry"
+    ) {
+      rectangle(
+        g, 17, 29, 3, 4,
+        face === "angry" ? C.R : C.E
+      );
+    } else if (sad) {
+      rectangle(g, 16, 31, 5, 1, C.E);
+      rectangle(g, 16, 30, 1, 1, C.E);
+      rectangle(g, 20, 30, 1, 1, C.E);
+    } else {
+      rectangle(g, 15, 29, 3, 1, C.E);
+      rectangle(g, 19, 29, 3, 1, C.E);
+      rectangle(g, 16, 30, 1, 1, C.E);
+      rectangle(g, 20, 30, 1, 1, C.E);
+    }
+
+    // Eating expressions
+    if (["carrot", "rice"].includes(face)) {
+      rectangle(g, 5, 23, 7, 5, C.P);
+      rectangle(g, 24, 23, 7, 5, C.P);
+    }
+
+    if (face === "cake") {
+      rectangle(g, 24, 28, 4, 2, C.H);
+    }
+
+    // Sweat and tears
+    if (["danger", "caught", "lose"].includes(face)) {
+      rectangle(g, 27, 19, 2, 6, C.T);
+    }
+
+    if (["caught", "lose"].includes(face)) {
+      rectangle(g, 8, 23, 2, 5, C.T);
+    }
+
+    // Teacher glasses
+    if (teacher) {
+      rectangle(g, 9, 18, 7, 1, C.E);
+      rectangle(g, 21, 18, 7, 1, C.E);
+      rectangle(g, 9, 18, 1, 7, C.E);
+      rectangle(g, 15, 18, 1, 7, C.E);
+      rectangle(g, 21, 18, 1, 7, C.E);
+      rectangle(g, 27, 18, 1, 7, C.E);
+      rectangle(g, 16, 19, 5, 1, C.E);
+
+      if (face === "angry") {
+        rectangle(g, 10, 15, 5, 2, C.E);
+        rectangle(g, 22, 15, 5, 2, C.E);
+      }
+    }
+  }
+
+  // Tuft of hair
+  rectangle(g, 16, 6, 1, 2, C.K);
+  rectangle(g, 18, 5, 1, 3, C.K);
+  rectangle(g, 20, 6, 1, 2, C.K);
+
+  // Feet
+  rectangle(g, 10, 33, 5, 2, C.H);
+  rectangle(g, 22, 33, 5, 2, C.H);
+
+  if (teacher) {
+    // Uniform and pointer
+    rectangle(g, 12, 35, 12, 2, C.G);
+    rectangle(g, 32, 23, 1, 13, C.K);
+    rectangle(g, 32, 22, 1, 1, C.Y);
+  }
+
+  return pixelShadow(g);
+}
+
+const characterCache = new Map();
+
+function setFace(character, expression) {
+  const key = `${character}-${expression}`;
+
+  if (!characterCache.has(key)) {
+    characterCache.set(
+      key,
+      drawPig(character === "teacher", expression)
+    );
+  }
+
+  el[character].style.boxShadow =
+    characterCache.get(key);
+
+  el[character].dataset.face = expression;
+}
+
+
+/* ============================================================
+   06. SEVEN COLLECTIBLE ITEMS
+   ============================================================ */
+
+const ART = {
   carrot: [
     "......GG.......",
     ".....GDDG......",
@@ -644,7 +400,6 @@ const PIXEL_ART = {
     ".....KLOOOK....",
     "......KLOK.....",
     "......KLOK.....",
-    ".......KK......",
     ".......KK......"
   ],
 
@@ -751,1548 +506,7 @@ const PIXEL_ART = {
     "...GG.DD.GG....",
     "..GGG.DD.GGG...",
     "......DD......."
-  ]
-};
-
-
-/* ============================================================
-   11. PIXEL OBJECT RENDERING
-   Single DOM element + CSS box-shadow
-   ============================================================ */
-
-function patternToShadow(
-  rows,
-  palette = ITEM_COLORS,
-  size = 4
-) {
-  const result = [];
-
-  rows.forEach((row, y) => {
-    [...row].forEach((symbol, x) => {
-      const color = palette[symbol];
-
-      if (!color) return;
-
-      result.push(
-        `${x * size}px ${y * size}px 0 0 ${color}`
-      );
-    });
-  });
-
-  return result.join(",");
-}
-
-function makePixelElement(
-  name,
-  className = "pixel-item",
-  size = 4
-) {
-  const element = document.createElement("span");
-
-  element.className = className;
-
-  element.style.position = "absolute";
-  element.style.display = "block";
-
-  element.style.width = size + "px";
-  element.style.height = size + "px";
-
-  element.style.background = "transparent";
-
-  element.style.boxShadow =
-    patternToShadow(PIXEL_ART[name], ITEM_COLORS, size);
-
-  element.style.pointerEvents = "none";
-
-  return element;
-}
-
-
-/* ============================================================
-   12. ORIGINAL ITEMS + THREE NEW ITEMS
-   All seven items award one point
-   ============================================================ */
-
-const ITEMS = [
-
-  {
-    id: "carrot",
-    name: "Carrot",
-    points: 1,
-    sound: 660,
-    animation: "gp-eat-carrot",
-    expression: "carrot",
-    duration: 1600,
-    message: "Crunch! Puffy cheeks for a crunchy carrot!"
-  },
-
-  {
-    id: "cookie",
-    name: "Cookie",
-    points: 1,
-    sound: 560,
-    animation: "gp-eat-cookie",
-    expression: "cookie",
-    duration: 1600,
-    message: "Yummy! Cookie crumbs everywhere!"
-  },
-
-  {
-    id: "doodle",
-    name: "Doodle",
-    points: 1,
-    sound: 750,
-    animation: "gp-draw",
-    expression: "happy",
-    duration: 1800,
-    message: "A lovely flower appears on the desk!"
-  },
-
-  {
-    id: "star",
-    name: "Star",
-    points: 1,
-    sound: 880,
-    animation: "gp-star",
-    expression: "win",
-    duration: 1500,
-    message: "Hooray! A little star celebration!"
-  },
-
-  {
-    id: "cake",
-    name: "Cake",
-    points: 1,
-    sound: 720,
-    animation: "gp-eat-cake",
-    expression: "cake",
-    duration: 1600,
-    message: "So sweet! There's cream on your cheek!"
-  },
-
-  {
-    id: "riceball",
-    name: "Rice Ball",
-    points: 1,
-    sound: 490,
-    animation: "gp-eat-rice",
-    expression: "rice",
-    duration: 1600,
-    message: "Big bite! Those cheeks are full!"
-  },
-
-  {
-    id: "juice",
-    name: "Orange Juice",
-    points: 1,
-    sound: 810,
-    animation: "gp-drink-juice",
-    expression: "juice",
-    duration: 1600,
-    message: "Sip, sip! Refreshing orange juice!"
-  }
-
-];
-
-
-/* ============================================================
-   13. ORIGINAL GAME STATE
-   ============================================================ */
-
-function initialState() {
-  return {
-    mode: "ready",
-
-    timeLeft: CONFIG.duration * 1000,
-
-    score: 0,
-    caught: 0,
-
-    teacherState: "safe",
-    teacherTimeLeft: 3500,
-
-    checkHadViolation: false,
-
-    activeItem: null,
-    itemTimeLeft: 0,
-    nextItemTime: 0,
-
-    collectedCount: 0
-  };
-}
-
-let state = initialState();
-
-let timerId = null;
-let lastTick = 0;
-
-let reactionTimeLeft = 0;
-let reactionFace = null;
-
-let blinkTimer = null;
-let blinkTimeout = null;
-
-let soundEnabled = true;
-
-let rulesOpen = true;
-let rulesReturnMode = "ready";
-let rulesPreviousFocus = null;
-
-let resultPaused = false;
-let settlementToken = 0;
-let settlementTimeouts = [];
-
-const random = (min, max) =>
-  min + Math.random() * (max - min);
-
-const playing = () =>
-  state.mode === "playing";
-
-
-/* ============================================================
-   14. V2.5 Update
-   RESPONSIVE STAGE SCALING
-
-   Keeps the game in the viewport.
-   ============================================================ */
-
-function updateResponsiveStage() {
-  /*
-    The current V2.5 HTML/CSS uses a grid-based
-    responsive shell rather than a fixed-size
-    transform-only stage.
-
-    The scene's actual dimensions are therefore
-    read from CSS, and particles use those bounds.
-
-    CSS media queries handle the visual scaling.
-  */
-
-  const viewportHeight =
-    window.visualViewport
-      ? window.visualViewport.height
-      : window.innerHeight;
-
-  document.documentElement.style.setProperty(
-    "--available-height",
-    viewportHeight + "px"
-  );
-
-  const isPortrait =
-    window.innerWidth < 768 &&
-    window.innerHeight > window.innerWidth;
-
-  el.portraitHint.hidden = !isPortrait;
-}
-
-window.addEventListener(
-  "resize",
-  updateResponsiveStage,
-  { passive: true }
-);
-
-if (window.visualViewport) {
-  window.visualViewport.addEventListener(
-    "resize",
-    updateResponsiveStage,
-    { passive: true }
-  );
-}
-
-
-/* ============================================================
-   15. V2.5 Update
-   WEB AUDIO ENGINE
-   ============================================================ */
-
-let audioContext = null;
-let masterGain = null;
-
-let backgroundTimer = null;
-let backgroundStep = 0;
-
-let settlementTimer = null;
-let settlementStep = 0;
-let settlementWon = false;
-
-let activeOscillators = new Set();
-
-function ensureAudio() {
-  const AudioClass =
-    window.AudioContext ||
-    window.webkitAudioContext;
-
-  if (!AudioClass) return null;
-
-  try {
-    if (!audioContext) {
-      audioContext = new AudioClass();
-
-      masterGain = audioContext.createGain();
-      masterGain.gain.value = 0.65;
-
-      masterGain.connect(
-        audioContext.destination
-      );
-    }
-
-    return audioContext;
-
-  } catch (error) {
-    console.warn("Web Audio unavailable:", error);
-    return null;
-  }
-}
-
-function unlockAudio() {
-  if (!soundEnabled) return;
-
-  const ac = ensureAudio();
-  if (!ac) return;
-
-  if (ac.state === "suspended") {
-    ac.resume().catch(() => {});
-  }
-}
-
-
-/* ============================================================
-   16. PIXEL SYNTHESIZER
-   ============================================================ */
-
-function playTone(
-  frequency,
-  duration = 0.12,
-  volume = 0.03,
-  delay = 0,
-  wave = "square"
-) {
-  if (!soundEnabled) return;
-
-  const ac = ensureAudio();
-  if (!ac || !masterGain) return;
-
-  try {
-    const oscillator = ac.createOscillator();
-    const gain = ac.createGain();
-
-    const startTime =
-      ac.currentTime + delay;
-
-    oscillator.type = wave;
-    oscillator.frequency.setValueAtTime(
-      frequency,
-      startTime
-    );
-
-    gain.gain.setValueAtTime(
-      0.0001,
-      startTime
-    );
-
-    gain.gain.linearRampToValueAtTime(
-      Math.max(0.0002, volume),
-      startTime + 0.008
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-      0.0001,
-      startTime + duration
-    );
-
-    oscillator.connect(gain);
-    gain.connect(masterGain);
-
-    activeOscillators.add(oscillator);
-
-    oscillator.onended = () => {
-      activeOscillators.delete(oscillator);
-
-      try {
-        oscillator.disconnect();
-        gain.disconnect();
-      } catch (_) {}
-    };
-
-    oscillator.start(startTime);
-
-    oscillator.stop(
-      startTime + duration + 0.02
-    );
-
-  } catch (error) {
-    console.warn("Tone skipped:", error);
-  }
-}
-
-function playSound(frequency, duration = 0.13) {
-  playTone(
-    frequency,
-    duration,
-    0.085,
-    0,
-    "square"
-  );
-}
-
-function stopActiveTones() {
-  activeOscillators.forEach(oscillator => {
-    try {
-      oscillator.stop();
-    } catch (_) {}
-  });
-
-  activeOscillators.clear();
-}
-
-function suspendAudio() {
-  if (
-    audioContext &&
-    audioContext.state === "running"
-  ) {
-    audioContext.suspend().catch(() => {});
-  }
-}
-
-function resumeAudio() {
-  if (
-    soundEnabled &&
-    audioContext &&
-    audioContext.state === "suspended"
-  ) {
-    audioContext.resume().catch(() => {});
-  }
-}
-
-
-/* ============================================================
-   17. V2.5 Update
-   THREE-STAGE BACKGROUND MUSIC
-   ============================================================ */
-
-const BACKGROUND_MELODY = [
-  523.25, 659.25, 783.99, 659.25,
-  587.33, 698.46, 880.00, 698.46,
-  659.25, 783.99, 1046.50, 783.99,
-  587.33, 698.46, 783.99, 523.25
-];
-
-const BACKGROUND_BASS = [
-  130.81,
-  146.83,
-  164.81,
-  146.83
-];
-
-function backgroundMusicStage() {
-  const seconds = state.timeLeft / 1000;
-
-  if (seconds > 40) return 0;
-  if (seconds > 20) return 1;
-
-  return 2;
-}
-
-function backgroundMusicTick() {
-  if (
-    !playing() ||
-    rulesOpen ||
-    !soundEnabled
-  ) {
-    return;
-  }
-
-  const stage = backgroundMusicStage();
-
-  const speed = [330, 235, 155][stage];
-  const pitch = [1, 1.12, 1.25][stage];
-
-  const index =
-    backgroundStep % BACKGROUND_MELODY.length;
-
-  playTone(
-    BACKGROUND_MELODY[index] * pitch,
-    Math.min(speed / 1500, 0.18),
-    0.021,
-    0,
-    "square"
-  );
-
-  if (
-    backgroundStep %
-    (stage === 0 ? 4 : 2) === 0
-  ) {
-    playTone(
-      BACKGROUND_BASS[
-        Math.floor(backgroundStep / 4) %
-        BACKGROUND_BASS.length
-      ],
-      0.16,
-      0.012,
-      0,
-      "triangle"
-    );
-  }
-
-  if (
-    stage >= 1 &&
-    backgroundStep % 2 === 1
-  ) {
-    playTone(
-      stage === 2 ? 210 : 175,
-      0.035,
-      0.009,
-      0,
-      "square"
-    );
-  }
-
-  if (
-    stage === 2 &&
-    backgroundStep % 4 === 3
-  ) {
-    playTone(
-      1174.66,
-      0.045,
-      0.012,
-      0,
-      "square"
-    );
-  }
-
-  backgroundStep += 1;
-
-  backgroundTimer = setTimeout(
-    backgroundMusicTick,
-    speed
-  );
-}
-
-function stopBackgroundMusic() {
-  if (backgroundTimer !== null) {
-    clearTimeout(backgroundTimer);
-    backgroundTimer = null;
-  }
-}
-
-function startBackgroundMusic() {
-  stopBackgroundMusic();
-
-  if (
-    !playing() ||
-    rulesOpen ||
-    !soundEnabled
-  ) {
-    return;
-  }
-
-  unlockAudio();
-  backgroundMusicTick();
-}
-
-
-/* ============================================================
-   18. V2.5 Update
-   VICTORY / DEFEAT MUSIC
-   ============================================================ */
-
-const WIN_MELODY = [
-  [523.25, 0.16],
-  [659.25, 0.16],
-  [783.99, 0.16],
-  [1046.50, 0.34],
-  [783.99, 0.16],
-  [880.00, 0.16],
-  [1046.50, 0.38],
-  [1174.66, 0.16],
-  [1318.51, 0.52]
-];
-
-const LOSE_MELODY = [
-  [392.00, 0.35],
-  [349.23, 0.38],
-  [329.63, 0.40],
-  [293.66, 0.44],
-  [261.63, 0.65]
-];
-
-function settlementMusicTick() {
-  if (
-    state.mode !== "finished" ||
-    resultPaused ||
-    rulesOpen ||
-    !soundEnabled
-  ) {
-    return;
-  }
-
-  const melody =
-    settlementWon
-      ? WIN_MELODY
-      : LOSE_MELODY;
-
-  const index =
-    settlementStep % melody.length;
-
-  const [frequency, duration] =
-    melody[index];
-
-  playTone(
-    frequency,
-    duration,
-    settlementWon ? 0.042 : 0.031,
-    0,
-    settlementWon ? "square" : "triangle"
-  );
-
-  settlementStep += 1;
-
-  const extraGap =
-    index === melody.length - 1
-      ? 650
-      : 60;
-
-  settlementTimer = setTimeout(
-    settlementMusicTick,
-    duration * 1000 + extraGap
-  );
-}
-
-function stopSettlementMusic() {
-  if (settlementTimer !== null) {
-    clearTimeout(settlementTimer);
-    settlementTimer = null;
-  }
-}
-
-function startSettlementMusic(won) {
-  stopSettlementMusic();
-
-  settlementWon = won;
-  settlementStep = 0;
-
-  if (
-    !soundEnabled ||
-    resultPaused ||
-    rulesOpen
-  ) {
-    return;
-  }
-
-  unlockAudio();
-  settlementMusicTick();
-}
-
-
-/* ============================================================
-   19. V2.5 Update
-   PIXEL CONTROL BUTTON ICONS
-   ============================================================ */
-
-function updateControlButtons() {
-  const paused =
-    state.mode === "paused" ||
-    resultPaused;
-
-  el.pauseIcon.className =
-    "control-icon " +
-    (paused ? "icon-play" : "icon-pause");
-
-  el.pauseLabel.textContent =
-    paused ? "RESUME" : "PAUSE";
-
-  el.pauseButton.setAttribute(
-    "aria-label",
-    paused ? "Resume game" : "Pause game"
-  );
-
-  el.soundIcon.className =
-    "control-icon " +
-    (soundEnabled
-      ? "icon-bell"
-      : "icon-bell-muted");
-
-  el.soundLabel.textContent =
-    soundEnabled ? "SOUND ON" : "SOUND OFF";
-
-  el.soundButton.setAttribute(
-    "aria-label",
-    soundEnabled ? "Mute sound" : "Enable sound"
-  );
-
-  el.soundButton.setAttribute(
-    "aria-pressed",
-    String(soundEnabled)
-  );
-}
-
-
-/* ============================================================
-   20. GAME HUD
-   ============================================================ */
-
-function updateHUD() {
-  const seconds =
-    Math.ceil(state.timeLeft / 1000);
-
-  el.time.textContent = String(seconds);
-  el.score.textContent = String(state.score);
-
-  el.caught.textContent =
-    `${state.caught} / ${CONFIG.maxCaught}`;
-
-  el.time.style.color =
-    seconds <= 10 ? "#d76370" : "";
-
-  el.score.style.color =
-    state.score >= CONFIG.targetScore
-      ? "#3e966a"
-      : "";
-
-  el.caught.style.color =
-    state.caught >= 2
-      ? "#d76370"
-      : "";
-}
-
-function feedback(message) {
-  el.feedback.textContent = message;
-}
-
-function showEffect(message) {
-  el.effect.textContent = message;
-
-  el.effect.classList.remove("pop");
-
-  void el.effect.offsetWidth;
-
-  el.effect.classList.add("pop");
-}
-
-function showOverlay(title, message, buttonText) {
-  el.overlayTitle.textContent = title;
-  el.overlayMessage.textContent = message;
-  el.startButton.textContent = buttonText;
-
-  el.overlay.hidden = false;
-}
-
-function hideOverlay() {
-  el.overlay.hidden = true;
-}
-
-
-/* ============================================================
-   21. STUDENT STATE CLASSES
-   ============================================================ */
-
-const STUDENT_STATE_CLASSES = [
-  "state-safe",
-  "state-warning",
-  "state-danger",
-  "state-win",
-  "state-lose",
-
-  "normal",
-  "blink",
-  "surprised",
-  "happy",
-  "sad",
-  "scared",
-
-  "gp-hide",
-  "gp-eat-carrot",
-  "gp-eat-cookie",
-  "gp-draw",
-  "gp-star",
-  "gp-eat-cake",
-  "gp-eat-rice",
-  "gp-drink-juice",
-
-  "action-eat",
-  "action-jump"
-];
-
-function clearStudentStateClasses() {
-  el.student.classList.remove(
-    ...STUDENT_STATE_CLASSES
-  );
-}
-
-function setStudentState(className, expression) {
-  clearStudentStateClasses();
-
-  el.student.classList.add(className);
-
-  setStudentFace(expression);
-}
-
-
-/* ============================================================
-   22. STUDENT IDLE EXPRESSIONS
-   ============================================================ */
-
-function updateStudentIdle() {
-  if (!playing()) return;
-
-  if (state.teacherState === "warning") {
-    setStudentState(
-      "state-warning",
-      "warning"
-    );
-
-  } else if (state.teacherState === "watching") {
-    setStudentState(
-      "state-danger",
-      "danger"
-    );
-
-  } else {
-    setStudentState(
-      "state-safe",
-      "normal"
-    );
-
-    el.student.classList.add("normal");
-  }
-}
-
-
-/* ============================================================
-   23. V2.5 Update
-   OCCASIONAL BLINKING
-   ============================================================ */
-
-function stopBlinking() {
-  if (blinkTimer !== null) {
-    clearInterval(blinkTimer);
-    blinkTimer = null;
-  }
-
-  if (blinkTimeout !== null) {
-    clearTimeout(blinkTimeout);
-    blinkTimeout = null;
-  }
-}
-
-function startBlinking() {
-  stopBlinking();
-
-  blinkTimer = setInterval(() => {
-    if (
-      !playing() ||
-      rulesOpen ||
-      state.teacherState !== "safe" ||
-      reactionTimeLeft > 0
-    ) {
-      return;
-    }
-
-    setStudentFace("blink");
-
-    blinkTimeout = setTimeout(() => {
-      if (
-        playing() &&
-        state.teacherState === "safe" &&
-        reactionTimeLeft <= 0
-      ) {
-        setStudentFace("normal");
-      }
-    }, 140);
-
-  }, 3300);
-}
-
-
-/* ============================================================
-   24. TEACHER EMOTION PIXEL ART
-   ============================================================ */
-
-const TEACHER_EMOTES = {
-  happy: [
-    "........KK......",
-    ".......KYYK.....",
-    ".......KYYK.....",
-    "...KKK.KYYK.....",
-    "..KGGGKKYYKK....",
-    "..KGGGYYYYYK....",
-    "..KGGGYYYYYK....",
-    "..KGGGYYYYK.....",
-    "...KKKKKKKK....."
   ],
-
-  angry: [
-    "RR..........RR",
-    ".RR..RRRR..RR.",
-    "..RRR....RR...",
-    "...RYYYYR.....",
-    "..RYYYYYYR....",
-    "...RYYYYR.....",
-    "..RRRRRRRR....",
-    ".RR..RRRR..RR.",
-    "RR..........RR"
-  ]
-};
-
-const EMOTE_PALETTE = {
-  K: "#59403f",
-  Y: "#ffdc69",
-  G: "#75b47a",
-  R: "#e86578"
-};
-
-function clearTeacherEmotion() {
-  el.teacher.classList.remove(
-    "teacher-happy",
-    "teacher-angry"
-  );
-
-  el.teacherEmote.className =
-    "teacher-emote";
-
-  el.teacherEmote.style.boxShadow = "";
-
-  el.teacher.dataset.emotion = "normal";
-}
-
-function showTeacherEmotion(type) {
-  clearTeacherEmotion();
-
-  el.teacher.classList.add(
-    type === "happy"
-      ? "teacher-happy"
-      : "teacher-angry"
-  );
-
-  setTeacherFace(type);
-
-  el.teacherEmote.style.boxShadow =
-    patternToShadow(
-      TEACHER_EMOTES[type],
-      EMOTE_PALETTE,
-      4
-    );
-
-  el.teacherEmote.classList.add(type);
-
-  el.teacher.dataset.emotion = type;
-}
-
-
-/* ============================================================
-   25. ORIGINAL THREE-STATE TEACHER MACHINE
-   ============================================================ */
-
-function updateTeacherAppearance() {
-  el.teacher.classList.remove(
-    "facing-away",
-    "warning",
-    "watching"
-  );
-
-  el.status.classList.remove(
-    "safe",
-    "warning",
-    "danger"
-  );
-
-  if (state.teacherState === "safe") {
-    el.teacher.classList.add("facing-away");
-    el.status.classList.add("safe");
-
-    el.status.textContent =
-      "SAFE — The teacher faces the board. Collect items!";
-
-    setTeacherFace("back");
-
-  } else if (state.teacherState === "warning") {
-    el.teacher.classList.add("warning");
-    el.status.classList.add("warning");
-
-    el.status.textContent =
-      "WARNING — The teacher is about to turn around!";
-
-    setTeacherFace("warning");
-
-  } else {
-    el.teacher.classList.add("watching");
-    el.status.classList.add("danger");
-
-    el.status.textContent =
-      "DANGER — The teacher is watching. Don't tap!";
-
-    setTeacherFace(
-      state.checkHadViolation
-        ? "angry"
-        : "happy"
-    );
-  }
-}
-
-function advanceTeacher() {
-  /* SAFE -> WARNING */
-
-  if (state.teacherState === "safe") {
-    clearTeacherEmotion();
-
-    state.teacherState = "warning";
-
-    state.teacherTimeLeft = random(
-      CONFIG.warningMin,
-      CONFIG.warningMax
-    );
-
-    clearReaction();
-
-    setStudentState(
-      "state-warning",
-      "warning"
-    );
-
-    feedback(
-      "The teacher is turning around! Hide your treats!"
-    );
-
-    playSound(350);
-
-  } else if (state.teacherState === "warning") {
-    /* WARNING -> DANGER */
-
-    clearTeacherEmotion();
-
-    state.teacherState = "watching";
-
-    state.teacherTimeLeft = random(
-      CONFIG.watchingMin,
-      CONFIG.watchingMax
-    );
-
-    state.checkHadViolation = false;
-
-    setStudentState(
-      "state-danger",
-      "danger"
-    );
-
-    showTeacherEmotion("happy");
-
-    feedback(
-      "The teacher is checking the classroom. Stay still!"
-    );
-
-    playSound(850, 0.15);
-
-  } else {
-    /* DANGER -> SAFE */
-
-    const wasCaught =
-      state.checkHadViolation;
-
-    clearTeacherEmotion();
-
-    state.teacherState = "safe";
-
-    state.teacherTimeLeft = random(
-      CONFIG.safeMin,
-      CONFIG.safeMax
-    );
-
-    state.checkHadViolation = false;
-
-    clearReaction();
-
-    feedback(
-      wasCaught
-        ? "The teacher turned back. Be more careful!"
-        : "Inspection passed! The teacher looks pleased."
-    );
-  }
-
-  updateTeacherAppearance();
-
-  if (
-    state.teacherState === "safe" &&
-    playing()
-  ) {
-    updateStudentIdle();
-  }
-}
-
-function updateTeacher(delta) {
-  state.teacherTimeLeft -= delta;
-
-  while (state.teacherTimeLeft <= 0) {
-    const overflow =
-      -state.teacherTimeLeft;
-
-    advanceTeacher();
-
-    state.teacherTimeLeft -= overflow;
-  }
-}
-
-
-/* ============================================================
-   26. ORIGINAL ITEM SPAWNING
-   Seven items, equal probability
-   ============================================================ */
-
-function hideItem() {
-  state.activeItem = null;
-  state.itemTimeLeft = 0;
-
-  el.collectible.hidden = true;
-  el.collectible.disabled = true;
-}
-
-function scheduleItem() {
-  state.nextItemTime = random(
-    CONFIG.itemSpawnMin,
-    CONFIG.itemSpawnMax
-  );
-}
-
-function spawnItem() {
-  if (!playing() || state.activeItem) return;
-
-  const index =
-    Math.floor(Math.random() * ITEMS.length);
-
-  const item = ITEMS[index];
-
-  state.activeItem = item;
-  state.itemTimeLeft = CONFIG.itemLifetime;
-
-  const sprite = makePixelElement(
-    item.id,
-    "pixel-item",
-    4
-  );
-
-  sprite.style.left = "12px";
-  sprite.style.top = "5px";
-
-  el.itemIcon.replaceChildren(sprite);
-
-  const positions = [
-    { left: 28, bottom: 31 },
-    { left: 39, bottom: 38 },
-    { left: 53, bottom: 31 },
-    { left: 66, bottom: 38 }
-  ];
-
-  const position =
-    positions[
-      Math.floor(
-        Math.random() * positions.length
-      )
-    ];
-
-  el.collectible.style.left =
-    position.left + "%";
-
-  el.collectible.style.bottom =
-    position.bottom + "%";
-
-  el.collectible.setAttribute(
-    "aria-label",
-    "Collect " + item.name
-  );
-
-  el.collectible.hidden = false;
-  el.collectible.disabled = false;
-}
-
-function updateItems(delta) {
-  if (state.activeItem) {
-    state.itemTimeLeft -= delta;
-
-    if (state.itemTimeLeft <= 0) {
-      hideItem();
-      scheduleItem();
-    }
-
-  } else {
-    state.nextItemTime -= delta;
-
-    if (state.nextItemTime <= 0) {
-      spawnItem();
-    }
-  }
-}
-
-
-/* ============================================================
-   27. STUDENT POSITION FOR INTERACTION EFFECTS
-   ============================================================ */
-
-function getStudentPosition() {
-  const sceneRect =
-    el.scene.getBoundingClientRect();
-
-  const pigRect =
-    el.student.getBoundingClientRect();
-
-  return {
-    x: pigRect.left - sceneRect.left + 72,
-    y: pigRect.top - sceneRect.top + 88
-  };
-}
-
-
-/* ============================================================
-   28. REACTION CLEANUP
-   ============================================================ */
-
-function clearReaction() {
-  reactionTimeLeft = 0;
-  reactionFace = null;
-
-  el.layer.replaceChildren();
-
-  delete el.layer.dataset.item;
-
-  if (playing()) {
-    updateStudentIdle();
-  }
-}
-
-
-/* ============================================================
-   29. PIXEL FOREGROUND EFFECT HELPERS
-   ============================================================ */
-
-function addForegroundItem(name, x, y) {
-  const item = makePixelElement(
-    name,
-    "foreground-prop",
-    4
-  );
-
-  item.style.left = x + "px";
-  item.style.top = y + "px";
-
-  el.layer.appendChild(item);
-
-  return item;
-}
-
-function createCrumbs(x, y, count = 9) {
-  for (let i = 0; i < count; i++) {
-    const crumb = document.createElement("span");
-
-    crumb.className = "pixel-crumb";
-
-    crumb.style.left =
-      x + random(-8, 8) + "px";
-
-    crumb.style.top =
-      y + random(-8, 8) + "px";
-
-    crumb.style.setProperty(
-      "--dx",
-      random(-55, 55) + "px"
-    );
-
-    crumb.style.setProperty(
-      "--dy",
-      random(-42, 50) + "px"
-    );
-
-    el.layer.appendChild(crumb);
-  }
-}
-
-function createTwinkles(x, y, count = 10) {
-  for (let i = 0; i < count; i++) {
-    const star = document.createElement("span");
-
-    star.className = "pixel-twinkle";
-
-    const angle =
-      i * Math.PI * 2 / count;
-
-    const radius = random(30, 75);
-
-    star.style.left =
-      x + Math.cos(angle) * radius + "px";
-
-    star.style.top =
-      y + Math.sin(angle) * radius + "px";
-
-    star.style.animationDelay =
-      random(0, 0.3) + "s";
-
-    el.layer.appendChild(star);
-  }
-}
-
-function addDecoration(symbol, x, y) {
-  const decoration =
-    document.createElement("span");
-
-  decoration.className =
-    "foreground-sparkle";
-
-  decoration.textContent = symbol;
-
-  decoration.style.left = x + "px";
-  decoration.style.top = y + "px";
-
-  el.layer.appendChild(decoration);
-}
-
-
-/* ============================================================
-   30. V2.5 Update
-   SEVEN DIFFERENT ITEM ANIMATIONS
-   ============================================================ */
-
-function playItemReaction(item) {
-  clearReaction();
-
-  const { x, y } = getStudentPosition();
-
-  el.layer.dataset.item = item.id;
-
-  setStudentState(
-    item.animation,
-    item.expression
-  );
-
-  /* CARROT */
-
-  if (item.id === "carrot") {
-    addForegroundItem(
-      "carrot",
-      x + 20,
-      y
-    );
-
-    addDecoration("♥", x - 30, y - 45);
-  }
-
-  /* COOKIE */
-
-  if (item.id === "cookie") {
-    addForegroundItem(
-      "cookie",
-      x + 20,
-      y
-    );
-
-    createCrumbs(x + 20, y + 5);
-  }
-
-  /* DOODLE */
-
-  if (item.id === "doodle") {
-    const paper =
-      document.createElement("div");
-
-    paper.className =
-      "foreground-doodle-paper";
-
-    const sceneRect =
-      el.scene.getBoundingClientRect();
-
-    const deskRect =
-      document.querySelector(".desk")
-        .getBoundingClientRect();
-
-    const px = Math.min(
-      x + 65,
-      sceneRect.width - 85
-    );
-
-    const py = Math.min(
-      y + 35,
-      deskRect.top - sceneRect.top + 45
-    );
-
-    paper.style.left = px + "px";
-    paper.style.top = py + "px";
-
-    const flower = makePixelElement(
-      "flower",
-      "pixel-item",
-      4
-    );
-
-    flower.style.left = "10px";
-    flower.style.top = "8px";
-
-    paper.appendChild(flower);
-    el.layer.appendChild(paper);
-
-    addForegroundItem(
-      "doodle",
-      px - 20,
-      py - 20
-    );
-  }
-
-  /* STAR */
-
-  if (item.id === "star") {
-    addForegroundItem(
-      "star",
-      x,
-      y - 45
-    );
-
-    createTwinkles(x, y - 30);
-  }
-
-  /* CAKE */
-
-  if (item.id === "cake") {
-    addForegroundItem(
-      "cake",
-      x + 20,
-      y
-    );
-
-    createCrumbs(x + 18, y + 10, 5);
-
-    addDecoration("♥", x + 15, y - 40);
-  }
-
-  /* RICE BALL */
-
-  if (item.id === "riceball") {
-    addForegroundItem(
-      "riceball",
-      x + 18,
-      y
-    );
-
-    createCrumbs(x + 12, y + 8, 4);
-  }
-
-  /* ORANGE JUICE */
-
-  if (item.id === "juice") {
-    addForegroundItem(
-      "juice",
-      x + 23,
-      y
-    );
-
-    createTwinkles(
-      x + 20,
-      y - 20,
-      4
-    );
-  }
-
-  reactionFace = item.expression;
-  reactionTimeLeft = item.duration;
-
-  showEffect("+1");
-}
-
-
-/* ============================================================
-   31. ORIGINAL SCORING AND CAUGHT LOGIC
-   ============================================================ */
-
-function collectItem() {
-  if (
-    !playing() ||
-    rulesOpen ||
-    !state.activeItem
-  ) {
-    return;
-  }
-
-  const item = state.activeItem;
-
-  /* Prevent multiple clicks on one item */
-
-  hideItem();
-  scheduleItem();
-
-  /* DANGER */
-
-  if (state.teacherState === "watching") {
-    state.caught += 1;
-    state.checkHadViolation = true;
-
-    clearReaction();
-
-    setStudentState(
-      "scared",
-      "caught"
-    );
-
-    showTeacherEmotion("angry");
-
-    showEffect("!");
-    playSound(170, 0.25);
-
-    feedback(
-      `Caught! ${state.caught}/${CONFIG.maxCaught} warnings.`
-    );
-
-    updateHUD();
-
-    if (state.caught >= CONFIG.maxCaught) {
-      finishGame(
-        false,
-        "The teacher caught you three times!"
-      );
-    } else {
-      reactionTimeLeft = 600;
-    }
-
-    return;
-  }
-
-  /* WARNING */
-
-  if (state.teacherState === "warning") {
-    clearReaction();
-
-    setStudentState(
-      "gp-hide",
-      "warning"
-    );
-
-    showEffect("!");
-    playSound(300);
-
-    feedback(
-      "Too risky! No point awarded."
-    );
-
-    reactionTimeLeft = 400;
-
-    return;
-  }
-
-  /* SAFE */
-
-  state.score += item.points;
-  state.collectedCount += 1;
-
-  playItemReaction(item);
-  playSound(item.sound);
-
-  updateHUD();
-
-  feedback(
-    `${item.message} Score: ${state.score}/${CONFIG.targetScore}.`
-  );
-}
-
-
-/* ============================================================
-   32. V2.5 Update
-   PIXEL SETTLEMENT STICKERS
-   ============================================================ */
-
-const RESULT_ART = {
 
   smile: [
     "..KKKKKK..",
@@ -2314,8 +528,16 @@ const RESULT_ART = {
     ".KRRRRK.",
     "..KKKK..",
     "...KK...",
-    "...KK...",
     "...KK..."
+  ],
+
+  heart: [
+    ".RR..RR.",
+    "RRRRRRRR",
+    "RRRRRRRR",
+    ".RRRRRR.",
+    "..RRRR..",
+    "...RR..."
   ],
 
   confetti: [
@@ -2325,18 +547,6 @@ const RESULT_ART = {
     "...YY...",
     ".P....V.",
     "P......V"
-  ],
-
-  party: [
-    ".......BB...",
-    "......BBBB..",
-    ".....KYYK...",
-    "....KYYYYK..",
-    "...KYYYYYYK.",
-    "..KPPPPPPPPK",
-    ".KKKKKKKKKKK",
-    "........R...",
-    "....G......."
   ],
 
   bubble: [
@@ -2358,12 +568,12 @@ const RESULT_ART = {
   ],
 
   tear: [
-    "...BB...",
-    "..BBBB..",
-    ".BBBBBB.",
-    "BBBBBBBB",
-    ".BBBBBB.",
-    "..BBBB.."
+    "...TT...",
+    "..TTTT..",
+    ".TTTTTT.",
+    "TTTTTTTT",
+    ".TTTTTT.",
+    "..TTTT.."
   ],
 
   exclamation: [
@@ -2374,233 +584,1215 @@ const RESULT_ART = {
     "......",
     "..KK..",
     "..KK.."
+  ],
+
+  question: [
+    "..KKKK..",
+    ".KK..KK.",
+    ".....KK.",
+    "....KK..",
+    "...KK...",
+    "........",
+    "...KK..."
+  ],
+
+  thumbs: [
+    "......KK..",
+    ".....KYYK.",
+    "..KK.KYYK.",
+    ".KGGKKYYK.",
+    ".KGGYYYYK.",
+    ".KGGYYYYK.",
+    "..KKKKKKK."
+  ],
+
+  anger: [
+    "RR.....RR",
+    ".RR.R.RR.",
+    "..RRRRR..",
+    "..RYYR...",
+    ".RRRRRRR.",
+    "RR.....RR"
   ]
 };
 
-const RESULT_COLORS = {
-  K: "#4e3b41",
-  W: "#fff9ec",
-  Y: "#ffdc68",
-  R: "#e66d84",
-  G: "#79c491",
-  P: "#db99d0",
-  V: "#9277c8",
-  B: "#88c7e1",
-  X: "#9899a1"
-};
+function sprite(name, className = "pixel-item", px = 4) {
+  const element = document.createElement("span");
 
+  element.className = className;
 
-/* ============================================================
-   33. V2.5 Update
-   CREATE FALLING PIXEL STICKERS
+  Object.assign(element.style, {
+    position: "absolute",
+    display: "block",
+    width: `${px}px`,
+    height: `${px}px`,
+    background: "transparent",
+    pointerEvents: "none"
+  });
 
-   Stickers stay at the landing position.
-   ============================================================ */
+  element.style.boxShadow =
+    patternShadow(ART[name], ITEM_COLORS, px);
 
-function createResultSticker(type, won, delay) {
-  const sticker =
-    document.createElement("div");
-
-  sticker.className = "result-sticker";
-
-  const rows =
-    type === "star"
-      ? PIXEL_ART.star
-      : RESULT_ART[type];
-
-  const palette =
-    type === "star"
-      ? ITEM_COLORS
-      : RESULT_COLORS;
-
-  const size = random(0, 1) < 0.5 ? 4 : 5;
-
-  sticker.style.boxShadow =
-    patternToShadow(rows, palette, size);
-
-  const sceneWidth = el.scene.clientWidth;
-  const sceneHeight = el.scene.clientHeight;
-
-  const artWidth =
-    Math.max(...rows.map(row => row.length)) *
-    size;
-
-  const artHeight = rows.length * size;
-
-  const startX = random(
-    5,
-    Math.max(6, sceneWidth - artWidth - 5)
-  );
-
-  const drift = random(-24, 24);
-
-  const landingX = Math.max(
-    5,
-    Math.min(
-      sceneWidth - artWidth - 5,
-      startX + drift
-    )
-  );
-
-  const landingY =
-    sceneHeight - artHeight - random(7, 30);
-
-  /*
-    CSS starts each particle at top: -65px.
-    Therefore the animation distance to the
-    final landing position is landingY + 65.
-  */
-
-  sticker.style.setProperty(
-    "--x",
-    startX + "px"
-  );
-
-  sticker.style.setProperty(
-    "--drift",
-    (landingX - startX) + "px"
-  );
-
-  sticker.style.setProperty(
-    "--distance",
-    (landingY + 65) + "px"
-  );
-
-  sticker.style.setProperty(
-    "--fall-time",
-    random(
-      won ? 2.2 : 3.0,
-      won ? 3.1 : 4.0
-    ) + "s"
-  );
-
-  sticker.style.setProperty(
-    "--delay",
-    delay + "s"
-  );
-
-  sticker.style.setProperty(
-    "--rotation",
-    random(-30, 30) + "deg"
-  );
-
-  el.particles.appendChild(sticker);
+  return element;
 }
 
+const ITEMS = [
+  {
+    id: "carrot",
+    name: "Carrot",
+    animation: "gp-eat-carrot",
+    face: "carrot",
+    duration: 1600,
+    message: "Crunchy carrot! Puffy cheeks!"
+  },
+  {
+    id: "cookie",
+    name: "Cookie",
+    animation: "gp-eat-cookie",
+    face: "cookie",
+    duration: 1600,
+    message: "Crunch, crunch! What a tasty cookie!"
+  },
+  {
+    id: "doodle",
+    name: "Doodle",
+    animation: "gp-draw",
+    face: "happy",
+    duration: 1800,
+    message: "A little pixel flower takes shape!"
+  },
+  {
+    id: "star",
+    name: "Star",
+    animation: "gp-star",
+    face: "win",
+    duration: 1500,
+    message: "A shiny star! Make a wish!"
+  },
+  {
+    id: "cake",
+    name: "Cake",
+    animation: "gp-eat-cake",
+    face: "cake",
+    duration: 1600,
+    message: "Yummy, yummy! Sweet cake!"
+  },
+  {
+    id: "riceball",
+    name: "Rice Ball",
+    animation: "gp-eat-rice",
+    face: "rice",
+    duration: 1600,
+    message: "A big bite of rice ball!"
+  },
+  {
+    id: "juice",
+    name: "Orange Juice",
+    animation: "gp-drink-juice",
+    face: "juice",
+    duration: 1600,
+    message: "Gulp, gulp! Refreshing juice!"
+  }
+];
+
 
 /* ============================================================
-   34. V2.5 Update
-   WIN / LOSE PARTICLE EFFECTS
+   07. GAME STATE
    ============================================================ */
 
-function startSettlementParticles(won) {
-  el.particles.replaceChildren();
+function initialState() {
+  return {
+    mode: "ready",
+    timeLeft: CONFIG.duration * 1000,
+    score: 0,
+    caught: 0,
 
-  el.particles.classList.remove("is-paused");
-  el.scene.classList.remove("settlement-paused");
+    teacherState: "safe",
+    teacherTimeLeft: 3500,
+    checkHadViolation: false,
 
-  const types = won
-    ? [
-        "star",
-        "balloon",
-        "party",
-        "smile",
-        "bubble"
-      ]
-    : [
-        "sadStar",
-        "tear",
-        "exclamation"
-      ];
+    activeItem: null,
+    itemTimeLeft: 0,
+    nextItemTime: 0,
+    collectedCount: 0
+  };
+}
 
-  const count = 28;
+let state = initialState();
 
-  for (let i = 0; i < count; i++) {
-    const type =
-      types[Math.floor(Math.random() * types.length)];
+let timer = null;
+let lastTick = 0;
+let reactionTime = 0;
 
-    const delay = random(0, 0.85);
+let blinkTimer = null;
+let blinkReturn = null;
 
-    createResultSticker(
-      type,
-      won,
-      delay
-    );
+let rulesOpen = true;
+let rulesBefore = "ready";
+let returnFocus = null;
+let settlementPausedForRules = false;
+
+let soundOn = true;
+let resultPaused = false;
+let settlementWon = false;
+
+const playing = () => state.mode === "playing";
+
+
+/* ============================================================
+   08. WEB AUDIO SYSTEM
+   ============================================================ */
+
+let audio = null;
+let master = null;
+
+const activeVoices = new Set();
+
+function audioInit() {
+  try {
+    if (!audio) {
+      const AudioClass =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+      if (!AudioClass) return null;
+
+      audio = new AudioClass();
+
+      master = audio.createGain();
+      master.gain.value = 0.6;
+      master.connect(audio.destination);
+    }
+
+    return audio;
+  } catch (error) {
+    console.warn("Audio unavailable:", error);
+    return null;
   }
 }
 
+function audioResume() {
+  const context = audioInit();
+
+  if (
+    context &&
+    soundOn &&
+    context.state === "suspended"
+  ) {
+    context.resume().catch(() => {});
+  }
+}
+
+function audioSuspend() {
+  if (audio && audio.state === "running") {
+    audio.suspend().catch(() => {});
+  }
+}
+
+function tone(
+  frequency,
+  duration = 0.12,
+  volume = 0.035,
+  type = "square",
+  delay = 0
+) {
+  if (!soundOn) return;
+
+  const context = audioInit();
+  if (!context || !master) return;
+
+  try {
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+
+    const start = context.currentTime + delay;
+
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(
+      frequency,
+      start
+    );
+
+    gain.gain.setValueAtTime(0.0001, start);
+
+    gain.gain.linearRampToValueAtTime(
+      volume,
+      start + 0.008
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      start + duration
+    );
+
+    oscillator.connect(gain);
+    gain.connect(master);
+
+    activeVoices.add(oscillator);
+
+    oscillator.onended = () => {
+      activeVoices.delete(oscillator);
+      oscillator.disconnect();
+      gain.disconnect();
+    };
+
+    oscillator.start(start);
+    oscillator.stop(start + duration + 0.02);
+  } catch (error) {
+    console.warn("Sound skipped:", error);
+  }
+}
+
+function noise(duration = 0.08, volume = 0.025) {
+  if (!soundOn) return;
+
+  const context = audioInit();
+  if (!context || !master) return;
+
+  try {
+    const length = Math.max(
+      1,
+      Math.floor(context.sampleRate * duration)
+    );
+
+    const buffer = context.createBuffer(
+      1,
+      length,
+      context.sampleRate
+    );
+
+    const data = buffer.getChannelData(0);
+
+    for (let i = 0; i < length; i++) {
+      data[i] =
+        (Math.random() * 2 - 1) *
+        (1 - i / length);
+    }
+
+    const source = context.createBufferSource();
+    const gain = context.createGain();
+
+    source.buffer = buffer;
+    gain.gain.value = volume;
+
+    source.connect(gain);
+    gain.connect(master);
+
+    activeVoices.add(source);
+
+    source.onended = () => {
+      activeVoices.delete(source);
+      source.disconnect();
+      gain.disconnect();
+    };
+
+    source.start();
+  } catch (error) {
+    console.warn("Noise skipped:", error);
+  }
+}
+
+function stopVoices() {
+  for (const voice of activeVoices) {
+    try {
+      voice.stop();
+    } catch (_) {}
+  }
+
+  activeVoices.clear();
+}
+
+
+/* ============================================================
+   09. THREE-STAGE BACKGROUND MUSIC
+   ============================================================ */
+
+let bgmTimer = null;
+let bgmStep = 0;
+
+const BGM_MELODY = [
+  523.25, 659.25, 783.99, 659.25,
+  587.33, 698.46, 880, 698.46,
+  659.25, 783.99, 1046.5, 783.99,
+  587.33, 698.46, 783.99, 523.25
+];
+
+function stopBgm() {
+  clearTimeout(bgmTimer);
+  bgmTimer = null;
+}
+
+function bgmTick() {
+  if (!playing() || rulesOpen || !soundOn) return;
+
+  const seconds = state.timeLeft / 1000;
+  const stage =
+    seconds > 40 ? 0 :
+    seconds > 20 ? 1 : 2;
+
+  const speed = [330, 235, 155][stage];
+  const pitch = [1, 1.12, 1.25][stage];
+
+  tone(
+    BGM_MELODY[bgmStep % BGM_MELODY.length] * pitch,
+    0.13,
+    0.018
+  );
+
+  if (bgmStep % (stage === 0 ? 4 : 2) === 0) {
+    tone(
+      [130.81, 146.83, 164.81, 146.83][
+        Math.floor(bgmStep / 4) % 4
+      ],
+      0.14,
+      0.012,
+      "triangle"
+    );
+  }
+
+  if (stage >= 1 && bgmStep % 2 === 1) {
+    tone(190, 0.035, 0.007);
+  }
+
+  if (stage === 2 && bgmStep % 4 === 3) {
+    tone(1174.66, 0.05, 0.01);
+  }
+
+  bgmStep++;
+  bgmTimer = setTimeout(bgmTick, speed);
+}
+
+function startBgm() {
+  stopBgm();
+
+  if (!playing() || rulesOpen || !soundOn) return;
+
+  audioResume();
+  bgmTick();
+}
+
+
+/* ============================================================
+   10. SETTLEMENT MUSIC
+   ============================================================ */
+
+let resultMusicTimer = null;
+let resultStep = 0;
+
+const WIN_TUNE = [
+  [523.25, 0.16],
+  [659.25, 0.16],
+  [783.99, 0.16],
+  [1046.5, 0.34],
+  [783.99, 0.16],
+  [880, 0.16],
+  [1046.5, 0.4],
+  [1318.51, 0.5]
+];
+
+const LOSE_TUNE = [
+  [392, 0.35],
+  [349.23, 0.38],
+  [329.63, 0.4],
+  [293.66, 0.44],
+  [261.63, 0.65]
+];
+
+function stopResultMusic() {
+  clearTimeout(resultMusicTimer);
+  resultMusicTimer = null;
+}
+
+function resultMusicTick() {
+  if (
+    state.mode !== "finished" ||
+    resultPaused ||
+    rulesOpen ||
+    !soundOn
+  ) return;
+
+  const melody = settlementWon ? WIN_TUNE : LOSE_TUNE;
+  const [frequency, duration] =
+    melody[resultStep % melody.length];
+
+  tone(
+    frequency,
+    duration,
+    settlementWon ? 0.045 : 0.032,
+    settlementWon ? "square" : "triangle"
+  );
+
+  const atEnd =
+    resultStep % melody.length === melody.length - 1;
+
+  resultStep++;
+
+  resultMusicTimer = setTimeout(
+    resultMusicTick,
+    duration * 1000 + (atEnd ? 650 : 65)
+  );
+}
+
+function startResultMusic(won) {
+  stopResultMusic();
+
+  settlementWon = won;
+  resultStep = 0;
+
+  if (soundOn && !resultPaused && !rulesOpen) {
+    audioResume();
+    resultMusicTick();
+  }
+}
+
+
+/* ============================================================
+   11. DIFFERENT ITEM SOUNDS
+   ============================================================ */
+
+function itemSound(id) {
+  if (!soundOn) return;
+
+  switch (id) {
+    case "carrot":
+      noise(0.055, 0.038);
+      tone(570, 0.07, 0.045);
+      break;
+
+    case "cookie":
+      // Crunch, crunch
+      noise(0.11, 0.065);
+      tone(290, 0.08, 0.03);
+      setTimeout(() => {
+        if (playing() && soundOn) {
+          noise(0.1, 0.06);
+          tone(320, 0.07, 0.03);
+        }
+      }, 220);
+      break;
+
+    case "doodle":
+      // Scratchy pencil-on-paper sound
+      for (let i = 0; i < 9; i++) {
+        setTimeout(() => {
+          if (playing() && soundOn) {
+            noise(0.065, 0.016);
+          }
+        }, i * 150);
+      }
+      break;
+
+    case "star":
+      // Metallic chime
+      [1046.5, 1568, 2093].forEach((freq, i) => {
+        tone(freq, 0.38, 0.045, "sine", i * 0.08);
+      });
+      break;
+
+    case "cake":
+      // Cheerful "yum-yum" melodic imitation
+      [659.25, 783.99, 659.25, 880].forEach(
+        (freq, i) => {
+          tone(freq, 0.15, 0.048, "triangle", i * 0.16);
+        }
+      );
+      break;
+
+    case "riceball":
+      noise(0.1, 0.04);
+      tone(390, 0.09, 0.04);
+      break;
+
+    case "juice":
+      // Three rounded gulp sounds
+      [300, 260, 220].forEach((freq, i) => {
+        tone(freq, 0.13, 0.055, "sine", i * 0.24);
+      });
+      break;
+  }
+}
+
+
+/* ============================================================
+   12. HUD AND BUTTONS
+   ============================================================ */
+
+function updateHUD() {
+  const seconds = Math.ceil(state.timeLeft / 1000);
+
+  el.time.textContent = String(seconds);
+  el.score.textContent = String(state.score);
+  el.caught.textContent =
+    `${state.caught} / ${CONFIG.maxCaught}`;
+
+  el.score.style.color =
+    state.score >= CONFIG.targetScore ? "#3e966a" : "";
+
+  el.time.style.color =
+    seconds <= 10 ? "#d76370" : "";
+}
+
+function updateButtons() {
+  const paused =
+    state.mode === "paused" || resultPaused;
+
+  el.pauseIcon.className =
+    "control-icon " +
+    (paused ? "icon-play" : "icon-pause");
+
+  el.pauseLabel.textContent =
+    paused ? "RESUME" : "PAUSE";
+
+  el.soundIcon.className =
+    "control-icon " +
+    (soundOn ? "icon-bell" : "icon-bell-muted");
+
+  el.soundLabel.textContent =
+    soundOn ? "SOUND ON" : "SOUND OFF";
+
+  el.soundButton.setAttribute(
+    "aria-pressed",
+    String(soundOn)
+  );
+}
+
+function feedback(text) {
+  el.feedback.textContent = text;
+}
+
+function showEffect(text) {
+  el.effect.textContent = text;
+  el.effect.classList.remove("pop");
+  void el.effect.offsetWidth;
+  el.effect.classList.add("pop");
+}
+
+function showOverlay(title, message, action) {
+  el.overlayTitle.textContent = title;
+  el.overlayMessage.textContent = message;
+  el.startButton.textContent = action;
+  el.overlay.hidden = false;
+}
+
+function hideOverlay() {
+  el.overlay.hidden = true;
+}
+
+
+/* ============================================================
+   13. STUDENT EXPRESSIONS
+   ============================================================ */
+
+const STUDENT_CLASSES = [
+  "state-safe", "state-warning", "state-danger",
+  "state-win", "state-lose",
+  "normal", "blink", "scared", "happy",
+  "gp-hide", "gp-eat-carrot", "gp-eat-cookie",
+  "gp-draw", "gp-star", "gp-eat-cake",
+  "gp-eat-rice", "gp-drink-juice"
+];
+
+function setStudent(className, expression) {
+  el.student.classList.remove(...STUDENT_CLASSES);
+  el.student.classList.add(className);
+  setFace("student", expression);
+}
+
+function idle() {
+  if (state.teacherState === "safe") {
+    setStudent("state-safe", "normal");
+    el.student.classList.add("normal");
+  } else if (state.teacherState === "warning") {
+    setStudent("state-warning", "warning");
+  } else {
+    setStudent("state-danger", "danger");
+  }
+}
+
+function stopBlink() {
+  clearInterval(blinkTimer);
+  clearTimeout(blinkReturn);
+  blinkTimer = null;
+  blinkReturn = null;
+}
+
+function startBlink() {
+  stopBlink();
+
+  blinkTimer = setInterval(() => {
+    if (
+      !playing() ||
+      rulesOpen ||
+      reactionTime > 0 ||
+      state.teacherState !== "safe"
+    ) return;
+
+    setFace("student", "blink");
+
+    blinkReturn = setTimeout(() => {
+      if (
+        playing() &&
+        state.teacherState === "safe" &&
+        reactionTime <= 0
+      ) {
+        setFace("student", "normal");
+      }
+    }, 140);
+  }, 3300);
+}
+
+
+/* ============================================================
+   14. TEACHER STATE MACHINE
+   ============================================================ */
+
+function teacherEmotion(kind) {
+  el.teacher.classList.remove(
+    "teacher-happy",
+    "teacher-angry"
+  );
+
+  el.teacherEmote.className = "teacher-emote";
+  el.teacherEmote.style.boxShadow = "";
+
+  if (!kind) return;
+
+  el.teacher.classList.add(
+    kind === "happy" ? "teacher-happy" : "teacher-angry"
+  );
+
+  setFace("teacher", kind);
+
+  el.teacherEmote.classList.add(kind);
+  el.teacherEmote.style.boxShadow =
+    patternShadow(ART[kind === "happy" ? "thumbs" : "anger"]);
+}
+
+function appearance() {
+  el.teacher.classList.remove(
+    "facing-away", "warning", "watching"
+  );
+
+  el.status.className =
+    `teacher-status ${state.teacherState === "watching"
+      ? "danger"
+      : state.teacherState}`;
+
+  if (state.teacherState === "safe") {
+    el.teacher.classList.add("facing-away");
+    setFace("teacher", "back");
+
+    el.status.textContent =
+      "SAFE — The teacher faces the board. Collect items!";
+  } else if (state.teacherState === "warning") {
+    el.teacher.classList.add("warning");
+    setFace("teacher", "warning");
+
+    el.status.textContent =
+      "WARNING — The teacher is about to turn around!";
+  } else {
+    el.teacher.classList.add("watching");
+    setFace(
+      "teacher",
+      state.checkHadViolation ? "angry" : "happy"
+    );
+
+    el.status.textContent =
+      "DANGER — The teacher is watching. Don't tap!";
+  }
+}
+
+function updateTeacher(delta) {
+  state.teacherTimeLeft -= delta;
+
+  while (state.teacherTimeLeft <= 0) {
+    const overflow = -state.teacherTimeLeft;
+
+    if (state.teacherState === "safe") {
+      state.teacherState = "warning";
+      state.teacherTimeLeft = random(
+        CONFIG.warningMin, CONFIG.warningMax
+      );
+
+      clearReaction();
+      setStudent("state-warning", "warning");
+      feedback("The teacher is turning around!");
+      tone(350, 0.12, 0.08);
+    } else if (state.teacherState === "warning") {
+      state.teacherState = "watching";
+      state.teacherTimeLeft = random(
+        CONFIG.watchingMin, CONFIG.watchingMax
+      );
+
+      state.checkHadViolation = false;
+      teacherEmotion("happy");
+      setStudent("state-danger", "danger");
+
+      feedback("The teacher is checking the classroom!");
+      tone(850, 0.15, 0.08);
+    } else {
+      state.teacherState = "safe";
+      state.teacherTimeLeft = random(
+        CONFIG.safeMin, CONFIG.safeMax
+      );
+
+      state.checkHadViolation = false;
+      teacherEmotion(null);
+      clearReaction();
+
+      feedback("The teacher has turned back!");
+    }
+
+    appearance();
+    state.teacherTimeLeft -= overflow;
+  }
+}
+
+
+/* ============================================================
+   15. RANDOM COLLECTIBLES
+   ============================================================ */
+
+function hideItem() {
+  state.activeItem = null;
+  state.itemTimeLeft = 0;
+  el.collectible.hidden = true;
+  el.collectible.disabled = true;
+}
+
+function nextItem() {
+  state.nextItemTime = random(
+    CONFIG.itemSpawnMin,
+    CONFIG.itemSpawnMax
+  );
+}
+
+function spawnItem() {
+  if (!playing() || state.activeItem) return;
+
+  const item = choose(ITEMS);
+
+  state.activeItem = item;
+  state.itemTimeLeft = CONFIG.itemLifetime;
+
+  const icon = sprite(item.id);
+  icon.style.left = "12px";
+  icon.style.top = "5px";
+
+  el.itemIcon.replaceChildren(icon);
+
+  const position = choose([
+    [28, 31],
+    [39, 38],
+    [53, 31],
+    [66, 38]
+  ]);
+
+  el.collectible.style.left = `${position[0]}%`;
+  el.collectible.style.bottom = `${position[1]}%`;
+
+  el.collectible.setAttribute(
+    "aria-label",
+    `Collect ${item.name}`
+  );
+
+  el.collectible.hidden = false;
+  el.collectible.disabled = false;
+}
+
+function updateItems(delta) {
+  if (state.activeItem) {
+    state.itemTimeLeft -= delta;
+
+    if (state.itemTimeLeft <= 0) {
+      hideItem();
+      nextItem();
+    }
+  } else {
+    state.nextItemTime -= delta;
+
+    if (state.nextItemTime <= 0) {
+      spawnItem();
+    }
+  }
+}
+
+
+/* ============================================================
+   16. SPEECH BUBBLES
+   ============================================================ */
+
+function clearSpeech() {
+  el.speech.replaceChildren();
+}
+
+function speech(character, message) {
+  const bubble = document.createElement("div");
+  bubble.className =
+    `speech-bubble ${character}-bubble`;
+
+  bubble.textContent = message;
+
+  const scene = el.scene.getBoundingClientRect();
+  const pig = el[character].getBoundingClientRect();
+
+  const x =
+    pig.left - scene.left + (character === "teacher" ? 65 : 72);
+
+  const y =
+    pig.top - scene.top + 15;
+
+  bubble.style.left =
+    `${Math.max(75, Math.min(scene.width - 75, x))}px`;
+
+  bubble.style.top =
+    `${Math.max(55, y)}px`;
+
+  el.speech.appendChild(bubble);
+}
+
+function talkFor(item) {
+  const conversations = {
+    cookie: ["Crunch, crunch!", "Hmm?"],
+    cake: ["Yummy, yummy!", "What's that?"],
+    juice: ["So refreshing!", "Did I hear something?"],
+    star: ["A shiny star!", "Huh?"]
+  };
+
+  const pair = conversations[item.id];
+
+  if (pair) {
+    speech("student", pair[0]);
+    speech("teacher", pair[1]);
+  }
+}
+
+
+/* ============================================================
+   17. INTERACTION EFFECTS
+   ============================================================ */
+
+function clearReaction() {
+  reactionTime = 0;
+  el.layer.replaceChildren();
+  clearSpeech();
+  delete el.layer.dataset.item;
+
+  if (playing()) idle();
+}
+
+function studentPosition() {
+  const scene = el.scene.getBoundingClientRect();
+  const pig = el.student.getBoundingClientRect();
+
+  return {
+    x: pig.left - scene.left + 72,
+    y: pig.top - scene.top + 88
+  };
+}
+
+function prop(name, x, y) {
+  const element = sprite(name, "foreground-prop");
+  element.style.left = `${x}px`;
+  element.style.top = `${y}px`;
+
+  el.layer.appendChild(element);
+}
+
+function crumbs(x, y, count = 9) {
+  for (let i = 0; i < count; i++) {
+    const crumb = document.createElement("span");
+    crumb.className = "pixel-crumb";
+
+    crumb.style.left = `${x + random(-8, 8)}px`;
+    crumb.style.top = `${y + random(-8, 8)}px`;
+
+    crumb.style.setProperty(
+      "--dx",
+      `${random(-55, 55)}px`
+    );
+
+    crumb.style.setProperty(
+      "--dy",
+      `${random(-42, 50)}px`
+    );
+
+    el.layer.appendChild(crumb);
+  }
+}
+
+function twinkles(x, y) {
+  for (let i = 0; i < 10; i++) {
+    const star = document.createElement("span");
+    star.className = "pixel-twinkle";
+
+    const angle = i * Math.PI / 5;
+    const radius = random(30, 75);
+
+    star.style.left =
+      `${x + Math.cos(angle) * radius}px`;
+
+    star.style.top =
+      `${y + Math.sin(angle) * radius}px`;
+
+    el.layer.appendChild(star);
+  }
+}
+
+function react(item) {
+  clearReaction();
+
+  const { x, y } = studentPosition();
+
+  el.layer.dataset.item = item.id;
+
+  setStudent(item.animation, item.face);
+
+  if (["carrot", "cookie", "cake", "riceball", "juice"]
+    .includes(item.id)) {
+    prop(item.id, x + 20, y);
+  }
+
+  if (item.id === "cookie") {
+    crumbs(x + 20, y + 5);
+  }
+
+  if (item.id === "cake") {
+    crumbs(x + 15, y + 8, 4);
+  }
+
+  if (item.id === "riceball") {
+    crumbs(x + 15, y + 6, 4);
+  }
+
+  if (item.id === "star") {
+    prop("star", x, y - 45);
+    twinkles(x, y - 30);
+  }
+
+  if (item.id === "doodle") {
+    const paper = document.createElement("div");
+    paper.className = "foreground-doodle-paper";
+
+    const desk = document.querySelector(".desk")
+      .getBoundingClientRect();
+
+    const scene = el.scene.getBoundingClientRect();
+
+    const px = Math.min(x + 65, scene.width - 90);
+    const py = Math.min(
+      y + 35,
+      desk.top - scene.top + 45
+    );
+
+    paper.style.left = `${px}px`;
+    paper.style.top = `${py}px`;
+
+    const flower = sprite("flower", "pixel-item");
+    flower.style.left = "12px";
+    flower.style.top = "8px";
+
+    // The clipping element gradually reveals the flower.
+    const reveal = document.createElement("div");
+    reveal.className = "flower-reveal";
+    reveal.appendChild(flower);
+
+    paper.appendChild(reveal);
+    el.layer.appendChild(paper);
+
+    prop("doodle", px - 20, py - 20);
+  }
+
+  talkFor(item);
+  itemSound(item.id);
+
+  reactionTime = item.duration;
+
+  showEffect("+1");
+}
+
+
+/* ============================================================
+   18. COLLECT / SCORE / CAUGHT
+   ============================================================ */
+
+function collect() {
+  if (!playing() || rulesOpen || !state.activeItem) {
+    return;
+  }
+
+  const item = state.activeItem;
+
+  // Prevent duplicate scoring.
+  hideItem();
+  nextItem();
+
+  if (state.teacherState === "watching") {
+    state.caught++;
+    state.checkHadViolation = true;
+
+    clearReaction();
+
+    setStudent("scared", "caught");
+    teacherEmotion("angry");
+
+    showEffect("!");
+    tone(170, 0.26, 0.09);
+
+    feedback(
+      `Caught! ${state.caught}/${CONFIG.maxCaught} times.`
+    );
+
+    updateHUD();
+
+    if (state.caught >= CONFIG.maxCaught) {
+      finish(false, "Caught three times!");
+    } else {
+      reactionTime = 600;
+    }
+
+    return;
+  }
+
+  if (state.teacherState === "warning") {
+    clearReaction();
+
+    setStudent("gp-hide", "warning");
+    showEffect("!");
+
+    tone(300, 0.12, 0.08);
+    feedback("Too risky! No point awarded.");
+
+    reactionTime = 400;
+    return;
+  }
+
+  // SAFE: all seven items award exactly one point.
+  state.score++;
+  state.collectedCount++;
+
+  react(item);
+  updateHUD();
+
+  /* V2.6.1 Score Update */
+  feedback(
+    `${item.message} Score: ${state.score}/${CONFIG.targetScore}.`
+  );
+}
+
+
+/* ============================================================
+   19. RESULT STICKERS
+   ============================================================ */
+
 function clearSettlement() {
-  settlementToken += 1;
-
-  settlementTimeouts.forEach(clearTimeout);
-  settlementTimeouts = [];
-
   resultPaused = false;
 
   el.particles.replaceChildren();
-
-  el.particles.classList.remove(
-    "is-paused"
-  );
-
-  el.scene.classList.remove(
-    "settlement-paused"
-  );
+  el.particles.classList.remove("is-paused");
 
   el.resultIcon.className = "result-icon";
   el.resultIcon.style.boxShadow = "";
 
-  stopSettlementMusic();
+  stopResultMusic();
 }
 
+function dropSticker(name, delay, won) {
+  const px = Math.random() < 0.5 ? 4 : 5;
+  const element = sprite(name, "result-sticker", px);
 
-/* ============================================================
-   35. V2.5 Update
-   RESULT CARD ICON
-   ============================================================ */
+  const rows = ART[name];
 
-function updateResultIcon(won) {
-  el.resultIcon.className =
-    "result-icon " + (won ? "win" : "lose");
+  const artWidth =
+    Math.max(...rows.map(row => row.length)) * px;
 
-  el.resultIcon.style.boxShadow =
-    patternToShadow(
+  const artHeight = rows.length * px;
+
+  const sceneWidth = el.scene.clientWidth;
+  const sceneHeight = el.scene.clientHeight;
+
+  const startX = random(
+    8,
+    Math.max(9, sceneWidth - artWidth - 8)
+  );
+
+  const endX = Math.max(
+    8,
+    Math.min(
+      sceneWidth - artWidth - 8,
+      startX + random(-24, 24)
+    )
+  );
+
+  const ground =
+    sceneHeight - artHeight - random(7, 30);
+
+  element.style.setProperty("--x", `${startX}px`);
+
+  element.style.setProperty(
+    "--drift",
+    `${endX - startX}px`
+  );
+
+  element.style.setProperty(
+    "--distance",
+    `${ground + 65}px`
+  );
+
+  element.style.setProperty(
+    "--fall-time",
+    `${random(won ? 2.2 : 3, won ? 3.1 : 4)}s`
+  );
+
+  element.style.setProperty(
+    "--delay",
+    `${delay}s`
+  );
+
+  element.style.setProperty(
+    "--rotation",
+    `${random(-30, 30)}deg`
+  );
+
+  el.particles.appendChild(element);
+}
+
+function settlement(won) {
+  clearSettlement();
+
+  const types = won
+    ? ["star", "balloon", "heart", "smile", "bubble", "confetti"]
+    : ["sadStar", "tear", "exclamation"];
+
+  for (let i = 0; i < 28; i++) {
+    dropSticker(
+      choose(types),
+      random(0, 0.85),
       won
-        ? PIXEL_ART.star
-        : RESULT_ART.tear,
-
-      won
-        ? ITEM_COLORS
-        : RESULT_COLORS,
-
-      5
     );
+  }
+
+  el.resultIcon.style.boxShadow = patternShadow(
+    ART[won ? "star" : "tear"],
+    ITEM_COLORS,
+    5
+  );
+
+  el.resultIcon.className =
+    `result-icon ${won ? "win" : "lose"}`;
+
+  startResultMusic(won);
 }
-
-
-/* ============================================================
-   36. V2.5 Update
-   SETTLEMENT PAUSE / RESUME
-   ============================================================ */
 
 function pauseSettlement() {
-  if (
-    state.mode !== "finished" ||
-    resultPaused
-  ) {
-    return;
-  }
+  if (state.mode !== "finished" || resultPaused) return;
 
   resultPaused = true;
 
-  el.particles.classList.add(
-    "is-paused"
-  );
-
-  stopSettlementMusic();
-  suspendAudio();
-
-  updateControlButtons();
+  el.particles.classList.add("is-paused");
+  stopResultMusic();
+  audioSuspend();
+  updateButtons();
 }
 
 function resumeSettlement() {
@@ -2608,51 +1800,32 @@ function resumeSettlement() {
     state.mode !== "finished" ||
     !resultPaused ||
     rulesOpen
-  ) {
-    return;
-  }
+  ) return;
 
   resultPaused = false;
 
-  el.particles.classList.remove(
-    "is-paused"
-  );
+  el.particles.classList.remove("is-paused");
 
-  resumeAudio();
-
-  if (soundEnabled) {
-    startSettlementMusic(settlementWon);
-  }
-
-  updateControlButtons();
+  audioResume();
+  startResultMusic(settlementWon);
+  updateButtons();
 }
 
 
 /* ============================================================
-   37. ORIGINAL TIMER
+   20. GAME TIMER
    ============================================================ */
 
 function stopTimer() {
-  if (timerId !== null) {
-    clearInterval(timerId);
-    timerId = null;
-  }
+  clearInterval(timer);
+  timer = null;
 }
 
-function gameTick() {
-  if (
-    !playing() ||
-    rulesOpen
-  ) {
-    return;
-  }
+function tick() {
+  if (!playing() || rulesOpen) return;
 
   const now = performance.now();
-
-  const delta = Math.max(
-    0,
-    now - lastTick
-  );
+  const delta = Math.max(0, now - lastTick);
 
   lastTick = now;
 
@@ -2662,17 +1835,16 @@ function gameTick() {
   );
 
   if (state.timeLeft <= 0) {
-    state.timeLeft = 0;
-
+    /* V2.6.1 Score Update */
     const won =
       state.score >= CONFIG.targetScore &&
       state.caught < CONFIG.maxCaught;
 
-    finishGame(
+    finish(
       won,
       won
-        ? "You made it to the end of class!"
-        : "Class is over, but you needed more points!"
+        ? "You made it through class!"
+        : `Class is over. You needed ${CONFIG.targetScore} points.`
     );
 
     return;
@@ -2681,10 +1853,10 @@ function gameTick() {
   updateTeacher(delta);
   updateItems(delta);
 
-  if (reactionTimeLeft > 0) {
-    reactionTimeLeft -= delta;
+  if (reactionTime > 0) {
+    reactionTime -= delta;
 
-    if (reactionTimeLeft <= 0) {
+    if (reactionTime <= 0) {
       clearReaction();
     }
   }
@@ -2697,35 +1869,22 @@ function startTimer() {
 
   lastTick = performance.now();
 
-  timerId = setInterval(
-    gameTick,
-    CONFIG.tickRate
-  );
+  timer = setInterval(tick, CONFIG.tickRate);
 }
 
 
 /* ============================================================
-   38. START GAME
+   21. START / PAUSE / RESUME
    ============================================================ */
 
 function startGame() {
   if (playing()) return;
 
-  if (state.mode === "paused") {
-    resumeGame();
-    return;
-  }
-
-  if (state.mode === "finished") {
-    resetGame();
-  }
-
   clearReaction();
-  clearTeacherEmotion();
+  teacherEmotion(null);
   clearSettlement();
 
   state.mode = "playing";
-
   state.teacherState = "safe";
   state.teacherTimeLeft = 3500;
   state.checkHadViolation = false;
@@ -2733,33 +1892,27 @@ function startGame() {
   hideOverlay();
 
   el.game.classList.remove("game-paused");
-
   el.pauseButton.disabled = false;
 
-  updateTeacherAppearance();
-  updateStudentIdle();
+  appearance();
+  idle();
 
-  scheduleItem();
-
-  unlockAudio();
+  nextItem();
+  audioResume();
 
   startTimer();
-  startBackgroundMusic();
-  startBlinking();
+  startBgm();
+  startBlink();
 
-  updateControlButtons();
+  updateButtons();
 
+  /* V2.6.1 Score Update */
   feedback(
-    "The game has started! Collect items when it is safe."
+    `Collect ${CONFIG.targetScore} points before class ends!`
   );
 
-  playSound(700);
+  tone(700, 0.14, 0.085);
 }
-
-
-/* ============================================================
-   39. PAUSE GAME
-   ============================================================ */
 
 function pauseGame() {
   if (!playing()) return;
@@ -2767,15 +1920,15 @@ function pauseGame() {
   state.mode = "paused";
 
   stopTimer();
-  stopBackgroundMusic();
-  stopBlinking();
+  stopBgm();
+  stopBlink();
 
   el.game.classList.add("game-paused");
 
   el.collectible.hidden = true;
   el.collectible.disabled = true;
 
-  suspendAudio();
+  audioSuspend();
 
   showOverlay(
     "PAUSED",
@@ -2784,82 +1937,73 @@ function pauseGame() {
   );
 
   feedback("Game paused.");
-
-  updateControlButtons();
+  updateButtons();
 }
 
-
-/* ============================================================
-   40. RESUME GAME
-   ============================================================ */
-
 function resumeGame() {
-  if (
-    state.mode !== "paused" ||
-    rulesOpen
-  ) {
-    return;
-  }
+  if (state.mode !== "paused" || rulesOpen) return;
 
   state.mode = "playing";
 
   hideOverlay();
-
-  el.game.classList.remove(
-    "game-paused"
-  );
+  el.game.classList.remove("game-paused");
 
   if (state.activeItem) {
     el.collectible.hidden = false;
     el.collectible.disabled = false;
   }
 
-  resumeAudio();
+  audioResume();
 
   startTimer();
-  startBackgroundMusic();
-  startBlinking();
+  startBgm();
+  startBlink();
 
-  updateControlButtons();
+  updateButtons();
 
-  feedback("Game resumed!");
+  /* V2.6.1 Score Update */
+  feedback(
+    `Keep going! Goal: ${CONFIG.targetScore} points.`
+  );
 }
 
 
 /* ============================================================
-   41. WIN / LOSE
+   22. GAME END
    ============================================================ */
 
-function finishGame(won, reason) {
+function finish(won, reason) {
   if (state.mode === "finished") return;
 
   state.mode = "finished";
 
   stopTimer();
-  stopBackgroundMusic();
-  stopBlinking();
+  stopBgm();
+  stopBlink();
 
   hideItem();
 
-  clearReaction();
-  clearTeacherEmotion();
+  reactionTime = 0;
 
-  stopActiveTones();
+  el.layer.replaceChildren();
+  clearSpeech();
 
-  setStudentState(
+  teacherEmotion(null);
+  stopVoices();
+
+  setStudent(
     won ? "state-win" : "state-lose",
     won ? "win" : "lose"
   );
 
-  el.game.classList.remove(
-    "game-paused"
-  );
+  el.game.classList.remove("game-paused");
 
+  /* V2.6.1 Score Update */
   const summary =
     `${reason}\n` +
-    `Final score: ${state.score}\n` +
+    `Final score: ${state.score} / ${CONFIG.targetScore}\n` +
     `Items collected: ${state.collectedCount}\n` +
-    `Times caught: ${state.caught}`;
+    `Times caught: ${state.caught} / ${CONFIG.maxCaught}`;
 
   showOverlay(
     won ? "YOU WIN!" : "GAME OVER",
@@ -2872,80 +2016,68 @@ function finishGame(won, reason) {
   feedback(
     won
       ? "Congratulations! What a brilliant daydream!"
-      : "Better luck next time, little guinea pig!"
+      : `Better luck next time! Reach ${CONFIG.targetScore} points.`
   );
-
-  updateResultIcon(won);
-
-  startSettlementParticles(won);
 
   el.pauseButton.disabled = false;
 
-  startSettlementMusic(won);
-
-  updateControlButtons();
+  settlement(won);
+  updateButtons();
 }
 
 
 /* ============================================================
-   42. RESET GAME
+   23. RESET
    ============================================================ */
 
-function resetGame() {
+function reset() {
   stopTimer();
-  stopBackgroundMusic();
-  stopSettlementMusic();
-  stopBlinking();
-
-  stopActiveTones();
+  stopBgm();
+  stopResultMusic();
+  stopBlink();
+  stopVoices();
 
   clearSettlement();
 
   state = initialState();
-
-  reactionTimeLeft = 0;
-  reactionFace = null;
+  reactionTime = 0;
+  bgmStep = 0;
 
   el.layer.replaceChildren();
-  delete el.layer.dataset.item;
+  clearSpeech();
 
   hideItem();
 
-  el.effect.classList.remove("pop");
   el.effect.textContent = "";
+  el.effect.classList.remove("pop");
 
-  clearTeacherEmotion();
+  teacherEmotion(null);
 
-  setStudentState(
-    "state-safe",
-    "normal"
-  );
-
+  setStudent("state-safe", "normal");
   el.student.classList.add("normal");
 
-  updateTeacherAppearance();
+  appearance();
 
-  el.game.classList.remove(
-    "game-paused"
-  );
+  el.game.classList.remove("game-paused");
 
   el.pauseButton.disabled = true;
 
   updateHUD();
   hideOverlay();
-  updateControlButtons();
+  updateButtons();
 
+  /* V2.6.1 Score Update */
   feedback(
-    "Ready to play! Press START GAME."
+    `Ready to play! Reach ${CONFIG.targetScore} points before class ends.`
   );
 }
 
 
 /* ============================================================
-   43. RULES MODAL
+   24. RULES MODAL
    ============================================================ */
 
-function setRulesVisibility(visible) {
+function rulesVisible(visible) {
   rulesOpen = visible;
   el.rulesOverlay.hidden = !visible;
 }
@@ -2953,69 +2085,62 @@ function setRulesVisibility(visible) {
 function openRules() {
   if (rulesOpen) return;
 
-  rulesPreviousFocus =
-    document.activeElement;
-
-  rulesReturnMode = state.mode;
+  returnFocus = document.activeElement;
+  rulesBefore = state.mode;
+  settlementPausedForRules = false;
 
   if (playing()) {
     pauseGame();
-  }
-
-  if (
+  } else if (
     state.mode === "finished" &&
     !resultPaused
   ) {
     pauseSettlement();
+    settlementPausedForRules = true;
   }
 
-  setRulesVisibility(true);
+  rulesVisible(true);
 
-  const initial =
-    rulesReturnMode === "ready";
+  const initial = rulesBefore === "ready";
 
   el.rulesStartButton.hidden = !initial;
   el.rulesCloseButton.hidden = initial;
 
-  if (initial) {
-    el.rulesStartButton.focus();
-  } else {
-    el.rulesCloseButton.focus();
-  }
+  (initial
+    ? el.rulesStartButton
+    : el.rulesCloseButton
+  ).focus();
 }
 
 function closeRules() {
   if (!rulesOpen) return;
 
-  const previousMode =
-    rulesReturnMode;
+  const previous = rulesBefore;
 
-  setRulesVisibility(false);
-
-  rulesReturnMode = "ready";
+  rulesVisible(false);
+  rulesBefore = "ready";
 
   if (
-    previousMode === "playing" &&
+    previous === "playing" &&
     state.mode === "paused"
   ) {
     resumeGame();
   }
 
   if (
-    previousMode === "finished" &&
-    resultPaused
+    previous === "finished" &&
+    settlementPausedForRules
   ) {
     resumeSettlement();
   }
 
-  if (
-    rulesPreviousFocus &&
-    typeof rulesPreviousFocus.focus === "function"
-  ) {
-    rulesPreviousFocus.focus();
+  settlementPausedForRules = false;
+
+  if (returnFocus?.focus) {
+    returnFocus.focus();
   }
 
-  rulesPreviousFocus = null;
+  returnFocus = null;
 }
 
 function startFromRules() {
@@ -3024,64 +2149,34 @@ function startFromRules() {
     return;
   }
 
-  setRulesVisibility(false);
+  rulesVisible(false);
+  rulesBefore = "ready";
+  returnFocus = null;
 
-  rulesReturnMode = "ready";
-  rulesPreviousFocus = null;
-
-  /* Audio must be unlocked by a real user click */
-
-  unlockAudio();
+  // Start audio from the actual user interaction.
+  audioResume();
 
   startGame();
 }
 
-function restartToRules() {
-  resetGame();
+function restart() {
+  reset();
 
-  rulesReturnMode = "ready";
-  rulesPreviousFocus = null;
+  rulesBefore = "ready";
 
-  setRulesVisibility(true);
+  rulesVisible(true);
 
   el.rulesStartButton.hidden = false;
   el.rulesCloseButton.hidden = true;
-
   el.rulesStartButton.focus();
 }
 
 
 /* ============================================================
-   44. V2.5 Update
-   KEYBOARD FOCUS MANAGEMENT
+   25. BUTTON EVENTS
    ============================================================ */
 
-function trapRulesFocus(event) {
-  if (
-    !rulesOpen ||
-    event.key !== "Tab"
-  ) {
-    return;
-  }
-
-  const target =
-    rulesReturnMode === "ready"
-      ? el.rulesStartButton
-      : el.rulesCloseButton;
-
-  event.preventDefault();
-  target.focus();
-}
-
-
-/* ============================================================
-   45. RULES EVENTS
-   ============================================================ */
-
-el.rulesButton.addEventListener(
-  "click",
-  openRules
-);
+el.rulesButton.addEventListener("click", openRules);
 
 el.rulesStartButton.addEventListener(
   "click",
@@ -3093,238 +2188,173 @@ el.rulesCloseButton.addEventListener(
   closeRules
 );
 
+el.collectible.addEventListener("click", collect);
 
-/* ============================================================
-   46. COLLECTIBLE EVENT
+el.startButton.addEventListener("click", () => {
+  if (rulesOpen) return;
 
-   On mobile, the click event also handles touch
-   without generating duplicate scoring.
-   ============================================================ */
+  if (state.mode === "paused") {
+    resumeGame();
+  } else if (state.mode === "finished") {
+    restart();
+  } else {
+    startGame();
+  }
+});
 
-el.collectible.addEventListener(
-  "click",
-  collectItem
-);
+el.pauseButton.addEventListener("click", () => {
+  if (rulesOpen) return;
 
+  if (playing()) {
+    pauseGame();
+  } else if (state.mode === "paused") {
+    resumeGame();
+  } else if (state.mode === "finished") {
+    resultPaused
+      ? resumeSettlement()
+      : pauseSettlement();
+  }
+});
 
-/* ============================================================
-   47. PAUSE / RESUME / RESULT OVERLAY EVENTS
-   ============================================================ */
+el.resetButton.addEventListener("click", () => {
+  if (!rulesOpen) restart();
+});
 
-el.startButton.addEventListener(
-  "click",
-  () => {
-    if (rulesOpen) return;
+el.soundButton.addEventListener("click", () => {
+  if (rulesOpen) return;
 
-    if (state.mode === "paused") {
-      resumeGame();
+  soundOn = !soundOn;
 
-    } else if (state.mode === "finished") {
-      restartToRules();
+  if (!soundOn) {
+    stopBgm();
+    stopResultMusic();
+    stopVoices();
+    audioSuspend();
+  } else {
+    audioResume();
 
-    } else {
-      startGame();
+    if (playing()) {
+      startBgm();
+    } else if (
+      state.mode === "finished" &&
+      !resultPaused
+    ) {
+      startResultMusic(settlementWon);
     }
   }
-);
 
-el.pauseButton.addEventListener(
-  "click",
-  () => {
-    if (rulesOpen) return;
+  updateButtons();
+});
+
+
+/* ============================================================
+   26. KEYBOARD AND PAGE VISIBILITY
+   ============================================================ */
+
+document.addEventListener("keydown", event => {
+  if (rulesOpen) {
+    if (
+      event.key === "Escape" &&
+      rulesBefore !== "ready"
+    ) {
+      event.preventDefault();
+      closeRules();
+    }
+
+    if (event.key === "Tab") {
+      event.preventDefault();
+
+      (rulesBefore === "ready"
+        ? el.rulesStartButton
+        : el.rulesCloseButton
+      ).focus();
+    }
+
+    return;
+  }
+
+  if (
+    event.code === "Space" &&
+    event.target === document.body
+  ) {
+    event.preventDefault();
 
     if (playing()) {
       pauseGame();
-
     } else if (state.mode === "paused") {
       resumeGame();
-
-    } else if (state.mode === "finished") {
-      if (resultPaused) {
-        resumeSettlement();
-      } else {
-        pauseSettlement();
-      }
     }
   }
-);
+});
 
+function autoPause() {
+  if (playing()) pauseGame();
 
-/* ============================================================
-   48. RESTART EVENT
-   ============================================================ */
-
-el.resetButton.addEventListener(
-  "click",
-  () => {
-    if (rulesOpen) return;
-
-    restartToRules();
+  if (
+    state.mode === "finished" &&
+    !resultPaused
+  ) {
+    pauseSettlement();
   }
-);
-
-
-/* ============================================================
-   49. SOUND TOGGLE
-   ============================================================ */
-
-el.soundButton.addEventListener(
-  "click",
-  () => {
-    if (rulesOpen) return;
-
-    soundEnabled = !soundEnabled;
-
-    if (!soundEnabled) {
-      stopBackgroundMusic();
-      stopSettlementMusic();
-      stopActiveTones();
-
-      suspendAudio();
-
-    } else {
-      unlockAudio();
-
-      if (playing()) {
-        startBackgroundMusic();
-
-      } else if (
-        state.mode === "finished" &&
-        !resultPaused
-      ) {
-        startSettlementMusic(settlementWon);
-      }
-    }
-
-    updateControlButtons();
-  }
-);
-
-
-/* ============================================================
-   50. KEYBOARD EVENTS
-   ============================================================ */
-
-document.addEventListener(
-  "keydown",
-  event => {
-    trapRulesFocus(event);
-
-    if (rulesOpen) {
-      if (
-        event.key === "Escape" &&
-        rulesReturnMode !== "ready"
-      ) {
-        event.preventDefault();
-        closeRules();
-      }
-
-      return;
-    }
-
-    if (
-      event.code === "Space" &&
-      event.target === document.body
-    ) {
-      event.preventDefault();
-
-      if (playing()) {
-        pauseGame();
-
-      } else if (state.mode === "paused") {
-        resumeGame();
-
-      } else if (state.mode === "finished") {
-        if (resultPaused) {
-          resumeSettlement();
-        } else {
-          pauseSettlement();
-        }
-      }
-    }
-  }
-);
-
-
-/* ============================================================
-   51. AUTOMATIC PAUSE
-   When switching tabs or apps
-   ============================================================ */
+}
 
 document.addEventListener(
   "visibilitychange",
   () => {
-    if (!document.hidden) return;
-
-    if (playing()) {
-      pauseGame();
-    }
-
-    if (
-      state.mode === "finished" &&
-      !resultPaused
-    ) {
-      pauseSettlement();
-    }
+    if (document.hidden) autoPause();
   }
 );
 
-window.addEventListener(
-  "blur",
-  () => {
-    if (playing()) {
-      pauseGame();
-    }
-
-    if (
-      state.mode === "finished" &&
-      !resultPaused
-    ) {
-      pauseSettlement();
-    }
-  }
-);
+window.addEventListener("blur", autoPause);
 
 
 /* ============================================================
-   52. TOUCH SUPPORT
-   V2.5 Update
-
-   Native click supports touch screens.
-   touch-action: manipulation in CSS prevents delays.
+   27. MOBILE VIEWPORT
    ============================================================ */
 
-document.addEventListener(
-  "touchstart",
-  () => {},
+function fit() {
+  const portrait =
+    window.innerWidth < 768 &&
+    window.innerHeight > window.innerWidth;
+
+  el.portraitHint.hidden = !portrait;
+
+  document.documentElement.style.setProperty(
+    "--available-height",
+    `${window.visualViewport?.height || window.innerHeight}px`
+  );
+}
+
+window.addEventListener(
+  "resize",
+  fit,
+  { passive: true }
+);
+
+window.visualViewport?.addEventListener(
+  "resize",
+  fit,
   { passive: true }
 );
 
 
 /* ============================================================
-   53. INITIALIZATION
+   28. INITIALISE GAME
    ============================================================ */
 
-function initializeGame() {
-  updateResponsiveStage();
+fit();
+reset();
 
-  resetGame();
+rulesBefore = "ready";
 
-  rulesReturnMode = "ready";
-  rulesPreviousFocus = null;
+rulesVisible(true);
 
-  setRulesVisibility(true);
+el.rulesStartButton.hidden = false;
+el.rulesCloseButton.hidden = true;
 
-  el.rulesStartButton.hidden = false;
-  el.rulesCloseButton.hidden = true;
-
-  el.rulesStartButton.focus();
-}
-
-initializeGame();
+el.rulesStartButton.focus();
 
 
 /* ============================================================
-   END OF CLASSROOM DAYDREAM V2.5
-   COMPLETE SCRIPT.JS
+   END OF CLASSROOM DAYDREAM V2.6.1
    ============================================================ */
