@@ -1,21 +1,50 @@
 
-/* =========================================================
-   CLASSROOM DAYDREAM V2.4 — COMPLETE STYLE.CSS
-   ========================================================= */
+/* ============================================================
+   CLASSROOM DAYDREAM V2.5
+   COMPLETE STYLE.CSS
 
-/* V2.4 Update: palette and single-screen layout */
+   Pixel Classroom Edition
+   HTML / CSS / JavaScript
+   No external images, fonts, or frameworks
+   ============================================================ */
+
+
+/* ============================================================
+   01. DESIGN SYSTEM
+   V2.5 Update
+   ============================================================ */
 
 :root {
   --ink: #3b3036;
+  --ink-light: #68534e;
+
   --paper: #fff3d9;
+  --paper-dark: #ead9b9;
+
   --green: #315746;
+  --green-light: #7caa8a;
+  --green-dark: #244738;
+
   --wood: #b88258;
+  --wood-light: #d8aa7b;
   --wood-dark: #77513e;
+
   --pink: #e49b9a;
   --gold: #f5ce72;
+  --red: #df6f76;
+
   --pig-px: 4px;
   --teacher-px: 4px;
+
+  --pixel-border: 3px solid var(--ink);
+  --pixel-shadow: 4px 4px 0 #8d6c56;
 }
+
+
+/* ============================================================
+   02. GLOBAL RESET
+   V2.5 Update
+   ============================================================ */
 
 *,
 *::before,
@@ -23,38 +52,64 @@
   box-sizing: border-box;
 }
 
-html,
-body {
-  margin: 0;
+html {
   width: 100%;
   height: 100%;
   overflow: hidden;
+
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  height: 100vh;
   height: 100dvh;
+
+  margin: 0;
   padding: 10px;
-  background: #d9c8b3;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  overflow-x: hidden;
+  overflow-y: hidden;
+
   color: var(--ink);
-  font-family: "Courier New", monospace;
+
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #d9c8b3 0 42px,
+      #decdb8 42px 84px
+    );
+
+  font-family:
+    "Courier New",
+    "PingFang SC",
+    "Microsoft YaHei",
+    monospace;
+
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
 }
 
 button {
   font: inherit;
   cursor: pointer;
   touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 button:disabled {
+  opacity: 0.55;
   cursor: not-allowed;
-  opacity: .55;
 }
 
 button:focus-visible {
-  outline: 3px dashed #dba448;
+  outline: 3px dashed #e4ab56;
   outline-offset: 3px;
 }
 
@@ -62,70 +117,149 @@ button:focus-visible {
   display: none !important;
 }
 
+
+/* ============================================================
+   03. MAIN GAME CONTAINER
+   V2.5 Update
+
+   Single-screen responsive game layout.
+   ============================================================ */
+
 .game {
+  position: relative;
+
   width: min(1160px, 100%);
-  height: min(860px, calc(100dvh - 20px));
+
+  height: min(
+    860px,
+    calc(100vh - 20px)
+  );
+
+  height: min(
+    860px,
+    calc(100dvh - 20px)
+  );
+
   min-height: 0;
+
   padding: 12px 16px;
+
   display: grid;
+
   grid-template-rows:
-    auto auto auto minmax(0,1fr)
-    auto auto auto;
+    auto
+    auto
+    auto
+    minmax(0, 1fr)
+    auto
+    auto
+    auto;
+
   gap: 7px;
+
   background: #f9efd9;
+
   border: 5px solid var(--ink);
-  box-shadow: 5px 5px 0 #98755d;
+
+  box-shadow:
+    5px 5px 0 #98755d,
+    inset 0 0 0 3px #e7d3ac;
+
   overflow: hidden;
 }
+
+
+/* ============================================================
+   04. HEADER
+   ============================================================ */
 
 .header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  min-height: 58px;
 }
 
 .brand {
   flex: 1;
+  min-width: 0;
+
   text-align: center;
 }
 
 .eyebrow {
   color: #a08068;
+
   font-size: 10px;
   font-weight: bold;
+
   letter-spacing: 2px;
 }
 
 .header h1 {
   margin: 2px 0;
-  font-size: clamp(20px,3vw,33px);
+
   color: var(--green);
-  text-shadow: 3px 3px 0 #b7c7aa;
+
+  font-size: clamp(
+    20px,
+    3vw,
+    33px
+  );
+
+  font-weight: 900;
+  line-height: 1.15;
+
   letter-spacing: 2px;
+
+  text-shadow:
+    3px 3px 0 #b7c7aa;
 }
 
-.subtitle {
+.brand p {
   margin: 0;
+
   color: #947969;
+
   font-size: 10px;
   font-weight: bold;
+
   letter-spacing: 1px;
 }
 
-/* V2.4 Update: pixel buttons */
+
+/* ============================================================
+   05. PIXEL BUTTON SYSTEM
+   V2.5 Update
+   ============================================================ */
 
 .pixel-button {
+  min-height: 42px;
+
   padding: 8px 14px;
-  min-height: 38px;
+
+  color: var(--ink);
   background: #e8bd77;
+
   border: 3px solid var(--ink);
   border-radius: 0;
+
   box-shadow:
     inset 3px 3px 0 #ffdf9f,
     inset -3px -3px 0 #b98051,
     4px 4px 0 #8b6956;
-  color: var(--ink);
+
+  font-size: 13px;
   font-weight: 900;
+
+  letter-spacing: 1px;
+
+  transition:
+    transform 0.1s ease,
+    filter 0.1s ease;
 }
 
 .pixel-button:not(:disabled):hover {
@@ -134,64 +268,119 @@ button:focus-visible {
 }
 
 .pixel-button:not(:disabled):active {
-  transform: translate(3px,3px);
-  box-shadow: inset 2px 2px 0 #996e4b;
+  transform: translate(3px, 3px);
+
+  box-shadow:
+    inset 2px 2px 0 #996e4b;
 }
 
+
+/* ============================================================
+   06. RULES QUESTION BUTTON
+   V2.5 Update
+   ============================================================ */
+
 .help-button {
-  width: 43px;
-  height: 43px;
+  flex: 0 0 44px;
+
+  width: 44px;
+  height: 44px;
+
   padding: 0;
+
+  display: grid;
+  place-items: center;
+
   background: #7eaa8b;
-  color: white;
+  color: #fffdf0;
+
   font-size: 25px;
+
+  box-shadow:
+    inset 3px 3px 0 #a9d1af,
+    inset -3px -3px 0 #4c8063,
+    4px 4px 0 #8b6956;
 }
+
+
+/* ============================================================
+   07. GAME HUD
+   ============================================================ */
 
 .hud {
   display: grid;
-  grid-template-columns: repeat(3,minmax(0,1fr));
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
   gap: 9px;
 }
 
 .hud-item {
+  min-width: 0;
   min-height: 61px;
-  padding: 4px;
+
+  padding: 5px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   gap: 2px;
+
   background: #ebdfc6;
+
   border: 3px solid #68534d;
-  box-shadow: 3px 3px 0 #bea183;
+
+  box-shadow:
+    3px 3px 0 #bea183;
 }
 
 .hud-item span {
   font-size: 11px;
   font-weight: bold;
+
+  letter-spacing: 1px;
 }
 
 .hud-item strong {
-  font-size: 27px;
   color: var(--green);
+
+  font-size: 27px;
+  font-weight: 900;
+
   line-height: 1;
 }
 
 .hud-item small {
-  font-size: 9px;
   color: #947965;
+
+  font-size: 9px;
+  font-weight: bold;
 }
+
+
+/* ============================================================
+   08. TEACHER STATUS
+   ============================================================ */
 
 .teacher-status {
   min-height: 34px;
+
   padding: 6px 8px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
+
   border: 3px solid #69544e;
+
   font-size: 12px;
   font-weight: bold;
+
+  line-height: 1.4;
+  text-align: center;
 }
 
 .teacher-status.safe {
@@ -207,31 +396,53 @@ button:focus-visible {
 .teacher-status.danger {
   background: #f2b8ab;
   color: #993e43;
-  animation: danger-blink .45s alternate infinite;
+
+  animation:
+    danger-blink 0.45s alternate infinite;
 }
 
 @keyframes danger-blink {
-  to { filter: brightness(.85); }
+  to {
+    filter: brightness(0.85);
+  }
 }
 
-/* V2.4 Update: pixel classroom */
+
+/* ============================================================
+   09. PIXEL CLASSROOM SCENE
+   ============================================================ */
 
 .scene {
   position: relative;
   isolation: isolate;
+
+  width: 100%;
   height: 100%;
+
+  min-width: 0;
   min-height: 0;
+
   overflow: hidden;
+
   background: #ecdbb7;
+
   border: 5px solid var(--ink);
 }
 
+
+/* ============================================================
+   10. CLASSROOM WALL
+   ============================================================ */
+
 .wall-decoration {
   position: absolute;
+
   inset: 0 0 28%;
+
   background:
     repeating-linear-gradient(
-      90deg,transparent 0 66px,
+      90deg,
+      transparent 0 66px,
       #f5e8cd 66px 70px,
       transparent 70px 136px
     ),
@@ -240,60 +451,97 @@ button:focus-visible {
 
 .wall-rail {
   position: absolute;
+
   bottom: 28%;
+  left: 0;
+
   width: 100%;
   height: 10px;
+
   background: #815e46;
+
   border-top: 3px solid #c39870;
 }
 
+
+/* ============================================================
+   11. WOODEN FLOOR
+   ============================================================ */
+
 .floor {
   position: absolute;
+
   bottom: 0;
+  left: 0;
+
   width: 100%;
   height: 28%;
+
   background:
     repeating-linear-gradient(
-      90deg,transparent 0 78px,
+      90deg,
+      transparent 0 78px,
       #81553d 78px 82px
     ),
     repeating-linear-gradient(
-      0deg,#b87c50 0 35px,
+      0deg,
+      #b87c50 0 35px,
       #c89360 35px 40px,
       #945e45 40px 44px
     );
+
+  box-shadow:
+    inset 0 8px 0 #9e6d4e;
 }
+
+
+/* ============================================================
+   12. PIXEL WINDOW
+   ============================================================ */
 
 .window {
   position: absolute;
+
   top: 11%;
   left: 8%;
+
   width: 23%;
   height: 37%;
+
   border: 9px solid #7d5d48;
+
   background: #a6cdc2;
-  box-shadow: 5px 5px 0 #c9a77f;
+
+  box-shadow:
+    5px 5px 0 #c9a77f;
 }
 
 .window-glass {
   position: absolute;
+
   inset: 5px;
-  background: linear-gradient(
-    145deg,#acd0c6 0 50%,
-    #cbe5d6 50%
-  );
+
+  background:
+    linear-gradient(
+      145deg,
+      #acd0c6 0 50%,
+      #cbe5d6 50% 100%
+    );
 }
 
 .window-cross::before,
 .window-cross::after {
   content: "";
+
   position: absolute;
+
   background: #7d5d48;
 }
 
 .window-cross::before {
   width: 10px;
   height: 100%;
+
   top: 0;
   left: calc(50% - 5px);
 }
@@ -301,63 +549,94 @@ button:focus-visible {
 .window-cross::after {
   width: 100%;
   height: 10px;
+
   top: calc(50% - 5px);
   left: 0;
 }
 
 .window-sill {
   position: absolute;
+
   bottom: -13px;
   left: -13px;
   right: -13px;
+
   height: 9px;
+
   background: #b78a61;
+
   border-bottom: 4px solid #76513d;
 }
 
+
+/* ============================================================
+   13. DARK GREEN BLACKBOARD
+   ============================================================ */
+
 .board {
   position: absolute;
+
   top: 8%;
   right: 8%;
+
   width: 45%;
   height: 39%;
+
   background: #315545;
+
   border: 10px solid #78553c;
+
   box-shadow:
     5px 5px 0 #bc956b,
     inset 0 0 0 4px #4c735e;
+
   color: #f2ebd4;
 }
 
 .board-content {
   position: absolute;
+
   inset: 4px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   gap: 9px;
+
   font-weight: bold;
   text-align: center;
 }
 
-.board-day {
-  font-size: clamp(13px,1.7vw,20px);
+.board-content span {
+  font-size: clamp(
+    13px,
+    1.7vw,
+    20px
+  );
 }
 
-.board-equation {
-  font-size: clamp(17px,2.3vw,27px);
+.board-content b {
+  font-size: clamp(
+    17px,
+    2.3vw,
+    27px
+  );
 }
 
-.board small {
+.board-content small {
   color: #eedca9;
+
   font-size: 11px;
 }
 
 .chalk-pieces {
   position: absolute;
+
   bottom: -9px;
   left: 9%;
+
   display: flex;
   gap: 8px;
 }
@@ -365,6 +644,7 @@ button:focus-visible {
 .chalk-pieces i {
   width: 14px;
   height: 5px;
+
   background: #fff8df;
 }
 
@@ -372,234 +652,622 @@ button:focus-visible {
   background: #edb8a3;
 }
 
+
+/* ============================================================
+   14. PIXEL CLASSROOM DECORATIONS
+   ============================================================ */
+
 .class-clock {
   position: absolute;
+
   top: 12%;
   left: 35%;
+
   width: 34px;
   height: 34px;
+
   background: #f9e8c6;
+
   border: 5px solid #775340;
 }
 
 .class-clock::before {
   content: "";
+
   position: absolute;
+
   left: 10px;
   top: 3px;
+
   width: 3px;
   height: 13px;
+
   background: var(--ink);
 }
 
 .clock-hand {
   position: absolute;
+
   top: 13px;
   left: 11px;
+
   width: 9px;
   height: 3px;
+
   background: var(--ink);
 }
 
 .wall-note {
   position: absolute;
+
   top: 51%;
   left: 7%;
+
   padding: 9px;
+
   color: #ae696b;
-  font-weight: bold;
   background: #fff1d5;
+
+  font-weight: bold;
+
   border: 4px solid #806046;
+
   transform: rotate(-5deg);
 }
 
+
+/* ============================================================
+   15. BACKGROUND FURNITURE
+   ============================================================ */
+
 .back-chair {
   position: absolute;
+
   bottom: 17%;
   right: 5%;
+
   width: 71px;
   height: 75px;
+
   background: #af815d;
+
   border: 7px solid #6e4c3d;
 }
 
 .side-cabinet {
   position: absolute;
+
   bottom: 18%;
   left: 5%;
+
   width: 84px;
   height: 64px;
-  border: 6px solid #74503b;
+
   background: #b68a61;
-  box-shadow: inset 0 20px 0 #d2a675;
+
+  border: 6px solid #74503b;
+
+  box-shadow:
+    inset 0 20px 0 #d2a675;
 }
 
 .side-cabinet::after {
   content: "";
+
   position: absolute;
+
   left: 30px;
   top: 14px;
+
   width: 16px;
   height: 5px;
+
   background: #57433c;
 }
 
-/* V2.4 Update:
-   One empty div per guinea pig.
-   Every character pixel is a 0-blur box-shadow.
-   JavaScript assigns the pixel positions/colors. */
+
+/* ============================================================
+   16. SINGLE-ELEMENT PIXEL GUINEA PIG
+   V2.5 Update
+
+   The whole character is drawn with a single box-shadow
+   on its empty DOM element.
+
+   Character colours and expression pixels are generated
+   by JavaScript using only hard-edge shadows.
+
+   Every pixel has:
+   blur radius = 0
+   spread radius = 0
+   ============================================================ */
 
 .student,
 .teacher {
   --character-scale: 1;
   --pig-px: 4px;
+
   position: absolute;
+
   width: var(--pig-px);
   height: var(--pig-px);
+
   background: transparent;
+
   border: 0;
   border-radius: 0;
-  image-rendering: pixelated;
+
   transform-origin: bottom center;
+
+  transform:
+    scale(var(--character-scale));
+
+  image-rendering: pixelated;
+
   will-change: transform;
 }
 
-.student {
-  left: 43%;
-  bottom: 52%;
+
+/* ============================================================
+   17. STUDENT POSITION
+   V2.5 Update
+
+   Move the student upward to expose more of the head
+   and shoulders above the foreground desk.
+   ============================================================ */
+
+.student,
+.guinea-pig-student {
+  left: 39%;
+
+  bottom: 65%;
+
   z-index: 4;
-  transform: scale(var(--character-scale));
 }
 
-.teacher {
+
+/* ============================================================
+   18. TEACHER POSITION
+   ============================================================ */
+
+.teacher,
+.guinea-pig-teacher {
+  right: 18%;
   left: auto;
-  right: 17%;
-  bottom: 51%;
+
+  bottom: 64%;
+
   z-index: 3;
-  transform: scale(var(--character-scale));
 }
 
-/* V2.4 Update: expression and body action animations */
+
+/* ============================================================
+   19. STUDENT IDLE / BREATHING
+   V2.5 Update
+   ============================================================ */
 
 .student.state-safe.normal {
-  animation: pig-breathe 2s ease-in-out infinite;
+  animation:
+    pig-breathe 2s ease-in-out infinite;
 }
 
 .student.blink {
   animation: none;
 }
 
+@keyframes pig-breathe {
+  0%,
+  100% {
+    transform:
+      scale(var(--character-scale))
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      scale(var(--character-scale))
+      translateY(-2px);
+  }
+}
+
+
+/* ============================================================
+   20. WARNING EXPRESSION AND HIDE
+   ============================================================ */
+
 .student.state-warning,
 .student.gp-hide {
-  animation: pig-hide .4s ease-in-out;
+  animation:
+    pig-hide 0.4s ease-in-out;
 }
+
+@keyframes pig-hide {
+  0%,
+  100% {
+    transform:
+      scale(var(--character-scale))
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      scale(var(--character-scale))
+      translateY(12px);
+  }
+}
+
+
+/* ============================================================
+   21. DANGER / NERVOUS STATE
+   ============================================================ */
 
 .student.state-danger {
-  animation: pig-tremble .26s ease-in-out infinite;
+  animation:
+    pig-tremble 0.26s ease-in-out infinite;
 }
 
-.student.scared {
-  animation: pig-shock .22s ease-in-out 3;
+@keyframes pig-tremble {
+  0%,
+  100% {
+    transform:
+      scale(var(--character-scale))
+      translateX(0);
+  }
+
+  50% {
+    transform:
+      scale(var(--character-scale))
+      translateX(2px);
+  }
 }
+
+
+/* ============================================================
+   22. CAUGHT / SHOCKED
+   ============================================================ */
+
+.student.scared {
+  animation:
+    pig-shock 0.22s ease-in-out 3;
+}
+
+@keyframes pig-shock {
+  0%,
+  100% {
+    transform:
+      scale(var(--character-scale))
+      translateX(0);
+  }
+
+  25% {
+    transform:
+      scale(var(--character-scale))
+      translateX(-8px);
+  }
+
+  75% {
+    transform:
+      scale(var(--character-scale))
+      translateX(8px);
+  }
+}
+
+
+/* ============================================================
+   23. CARROT EATING ANIMATION
+   ============================================================ */
 
 .student.gp-eat-carrot,
 .student.action-eat {
-  animation: pig-chew .25s ease-in-out 6;
+  animation:
+    pig-chew 0.25s ease-in-out 6;
 }
+
+@keyframes pig-chew {
+  0%,
+  100% {
+    transform:
+      scale(var(--character-scale))
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      scale(var(--character-scale))
+      translateY(4px);
+  }
+}
+
+
+/* ============================================================
+   24. COOKIE EATING ANIMATION
+   ============================================================ */
 
 .student.gp-eat-cookie {
-  animation: pig-sway .2s ease-in-out 8;
+  animation:
+    pig-sway 0.2s ease-in-out 8;
 }
 
-.student.gp-draw {
-  animation: pig-draw .3s ease-in-out 5;
+@keyframes pig-sway {
+  0%,
+  100% {
+    transform:
+      scale(var(--character-scale))
+      rotate(-5deg);
+  }
+
+  50% {
+    transform:
+      scale(var(--character-scale))
+      rotate(5deg);
+  }
 }
+
+
+/* ============================================================
+   25. DOODLE ANIMATION
+   ============================================================ */
+
+.student.gp-draw {
+  animation:
+    pig-draw 0.3s ease-in-out 5;
+}
+
+@keyframes pig-draw {
+  0%,
+  100% {
+    transform:
+      scale(var(--character-scale))
+      rotate(-2deg);
+  }
+
+  50% {
+    transform:
+      scale(var(--character-scale))
+      rotate(4deg);
+  }
+}
+
+
+/* ============================================================
+   26. STAR / JUMP ANIMATION
+   ============================================================ */
 
 .student.gp-star,
 .student.action-jump,
 .student.state-win,
 .student.happy {
-  animation: pig-jump .46s ease-in-out 3;
-}
-
-.student.state-lose {
-  animation: pig-sad .7s ease-in-out 2;
-}
-
-.teacher.warning {
-  animation: teacher-warning .3s ease-in-out infinite alternate;
-}
-
-.teacher.teacher-happy {
-  animation: teacher-nod .4s ease-in-out 3;
-}
-
-.teacher.teacher-angry {
-  animation: teacher-angry .22s ease-in-out 7;
-}
-
-@keyframes pig-breathe {
-  0%,100% { transform: scale(var(--character-scale)); }
-  50% { transform: scale(var(--character-scale)) translateY(-2px); }
-}
-
-@keyframes pig-hide {
-  50% { transform: scale(var(--character-scale)) translateY(12px); }
-}
-
-@keyframes pig-tremble {
-  50% { transform: scale(var(--character-scale)) translateX(2px); }
-}
-
-@keyframes pig-shock {
-  25% { transform: scale(var(--character-scale)) translateX(-8px); }
-  75% { transform: scale(var(--character-scale)) translateX(8px); }
-}
-
-@keyframes pig-chew {
-  50% { transform: scale(var(--character-scale)) translateY(4px); }
-}
-
-@keyframes pig-sway {
-  0%,100% { transform: scale(var(--character-scale)) rotate(-5deg); }
-  50% { transform: scale(var(--character-scale)) rotate(5deg); }
-}
-
-@keyframes pig-draw {
-  50% { transform: scale(var(--character-scale)) rotate(4deg); }
+  animation:
+    pig-jump 0.46s ease-in-out 3;
 }
 
 @keyframes pig-jump {
-  45% { transform: scale(var(--character-scale)) translateY(-32px); }
+  0%,
+  100% {
+    transform:
+      scale(var(--character-scale))
+      translateY(0);
+  }
+
+  45% {
+    transform:
+      scale(var(--character-scale))
+      translateY(-32px);
+  }
+}
+
+
+/* ============================================================
+   27. NEW FOOD ANIMATIONS
+   V2.5 Update
+
+   The following classes support cake, rice ball,
+   and orange juice interactions in V2.5 JavaScript.
+   ============================================================ */
+
+/* CAKE: HAPPY SATISFACTION */
+
+.student.gp-eat-cake,
+.student.action-cake {
+  animation:
+    pig-cake 0.38s ease-in-out 4;
+}
+
+@keyframes pig-cake {
+  0%,
+  100% {
+    transform:
+      scale(var(--character-scale))
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      scale(var(--character-scale))
+      translateY(-5px)
+      rotate(3deg);
+  }
+}
+
+
+/* RICE BALL: BIG CHEW */
+
+.student.gp-eat-rice,
+.student.action-rice {
+  animation:
+    pig-rice 0.3s ease-in-out 5;
+}
+
+@keyframes pig-rice {
+  0%,
+  100% {
+    transform:
+      scale(var(--character-scale))
+      rotate(-3deg);
+  }
+
+  50% {
+    transform:
+      scale(var(--character-scale))
+      translateY(5px)
+      rotate(3deg);
+  }
+}
+
+
+/* ORANGE JUICE: DRINKING */
+
+.student.gp-drink-juice,
+.student.action-drink {
+  animation:
+    pig-drink 0.3s ease-in-out 5;
+}
+
+@keyframes pig-drink {
+  0%,
+  100% {
+    transform:
+      scale(var(--character-scale))
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      scale(var(--character-scale))
+      translateY(3px)
+      scaleY(0.98);
+  }
+}
+
+
+/* ============================================================
+   28. LOSE ANIMATION
+   ============================================================ */
+
+.student.state-lose {
+  animation:
+    pig-sad 0.7s ease-in-out 2;
 }
 
 @keyframes pig-sad {
-  50% { transform: scale(var(--character-scale)) translateY(7px); }
+  0%,
+  100% {
+    transform:
+      scale(var(--character-scale))
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      scale(var(--character-scale))
+      translateY(7px);
+  }
+}
+
+
+/* ============================================================
+   29. TEACHER WARNING
+   ============================================================ */
+
+.teacher.warning {
+  animation:
+    teacher-warning 0.3s ease-in-out
+    infinite alternate;
 }
 
 @keyframes teacher-warning {
-  to { transform: scale(var(--character-scale)) rotate(3deg); }
+  0% {
+    transform:
+      scale(var(--character-scale))
+      rotate(-3deg);
+  }
+
+  100% {
+    transform:
+      scale(var(--character-scale))
+      rotate(3deg);
+  }
+}
+
+
+/* ============================================================
+   30. TEACHER PRAISE / SMILE
+   ============================================================ */
+
+.teacher.teacher-happy {
+  animation:
+    teacher-nod 0.4s ease-in-out 3;
 }
 
 @keyframes teacher-nod {
-  50% { transform: scale(var(--character-scale)) translateY(5px); }
+  0%,
+  100% {
+    transform:
+      scale(var(--character-scale))
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      scale(var(--character-scale))
+      translateY(5px);
+  }
+}
+
+
+/* ============================================================
+   31. TEACHER ANGRY JUMP
+   ============================================================ */
+
+.teacher.teacher-angry {
+  animation:
+    teacher-angry 0.22s ease-in-out 7;
 }
 
 @keyframes teacher-angry {
-  50% { transform: scale(var(--character-scale)) translateY(-16px); }
+  0%,
+  100% {
+    transform:
+      scale(var(--character-scale))
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      scale(var(--character-scale))
+      translateY(-16px);
+  }
 }
 
-/* Classroom desk */
+
+/* ============================================================
+   32. FOREGROUND CLASSROOM DESK
+
+   V2.5 Update:
+   Desk remains in front of the student.
+   Character position is adjusted without
+   changing the desk position or proportions.
+   ============================================================ */
 
 .desk {
   position: absolute;
-  z-index: 5;
+
   left: 22%;
   bottom: 10%;
+
+  z-index: 5;
+
   width: 57%;
-  height: clamp(65px,20%,100px);
+
+  height: clamp(
+    65px,
+    20%,
+    100px
+  );
+
   background: #ac7954;
+
   border: 7px solid #664638;
+
   box-shadow:
     0 12px 0 #8a6045,
     0 18px 0 #664638;
@@ -607,646 +1275,712 @@ button:focus-visible {
 
 .desk-top {
   position: absolute;
+
   top: -11px;
   left: -13px;
   right: -13px;
+
   height: 16px;
+
   border: 4px solid #664638;
+
   background: #d6a67c;
 }
 
 .desk-shine {
   position: absolute;
+
   top: 14px;
   left: 12px;
   right: 12px;
+
   height: 6px;
+
   background: #e6b891;
 }
 
 .desk-panel {
   position: absolute;
+
   inset: 28px 12px 10px;
+
   border: 5px solid #8c6249;
+
   background: #b98660;
 }
 
-/* Collectibles and foreground interactions */
+
+/* ============================================================
+   33. COLLECTIBLE ITEM BUTTON
+   ============================================================ */
 
 .collectible {
   position: absolute;
+
   z-index: 15;
+
   width: 62px;
   height: 62px;
+
+  padding: 0;
+
   display: grid;
   place-items: center;
-  padding: 0;
+
   border: 0;
+  border-radius: 0;
+
   background: transparent;
+
   box-shadow: none;
-  animation: item-float 1s ease-in-out infinite;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  touch-action: manipulation;
+
+  animation:
+    item-float 1s ease-in-out infinite;
 }
 
 .collectible:hover:not(:disabled) {
-  filter: drop-shadow(0 4px 0 #4f383966);
+  filter:
+    drop-shadow(
+      0 4px 0 #4f383966
+    );
+
   transform: scale(1.1);
 }
 
+.collectible:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
 #collectible-icon {
+  position: relative;
+
   width: 100%;
   height: 100%;
+
   display: grid;
   place-items: center;
+
   pointer-events: none;
 }
 
 .pixel-item {
-  width: 54px;
-  height: 54px;
   display: block;
+
   image-rendering: pixelated;
-  object-fit: contain;
+  image-rendering: crisp-edges;
+
   pointer-events: none;
+
+  user-select: none;
 }
 
 @keyframes item-float {
-  50% { translate: 0 -5px; }
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 0 -5px;
+  }
 }
 
-.interaction-layer,
-.result-particles {
+
+/* ============================================================
+   34. FOREGROUND INTERACTION LAYER
+   ============================================================ */
+
+.interaction-layer {
   position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
 
-.interaction-layer { z-index: 12; }
-.result-particles { z-index: 26; overflow: hidden; }
+  inset: 0;
+
+  z-index: 12;
+
+  pointer-events: none;
+
+  overflow: visible;
+}
 
 .foreground-prop {
   position: absolute;
-  width: 56px;
-  height: 56px;
+
   image-rendering: pixelated;
+
+  pointer-events: none;
 }
 
-.interaction-layer[data-item="carrot"] .foreground-prop,
-.interaction-layer[data-item="cookie"] .foreground-prop {
-  animation: food-fly .8s ease-in forwards;
+
+/* ============================================================
+   35. FOOD FLYING TOWARD MOUTH
+   ============================================================ */
+
+.interaction-layer[data-item="carrot"]
+.foreground-prop,
+.interaction-layer[data-item="cookie"]
+.foreground-prop,
+.interaction-layer[data-item="cake"]
+.foreground-prop,
+.interaction-layer[data-item="rice"]
+.foreground-prop,
+.interaction-layer[data-item="riceball"]
+.foreground-prop {
+  animation:
+    food-fly 0.8s ease-in forwards;
 }
 
 @keyframes food-fly {
-  0% { opacity: 1; transform: translate(42px,-32px) rotate(20deg); }
-  80% { opacity: 1; transform: translate(-25px,5px) scale(.6); }
-  100% { opacity: 0; transform: translate(-28px,7px) scale(.1); }
+  0% {
+    opacity: 1;
+
+    transform:
+      translate(42px, -32px)
+      rotate(20deg)
+      scale(1);
+  }
+
+  80% {
+    opacity: 1;
+
+    transform:
+      translate(-25px, 5px)
+      scale(0.6);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translate(-28px, 7px)
+      scale(0.1);
+  }
 }
+
+
+/* ============================================================
+   36. COOKIE CRUMBS
+   ============================================================ */
 
 .pixel-crumb {
   position: absolute;
+
   width: 8px;
   height: 8px;
+
   background: #d89747;
+
   border: 2px solid #98603b;
-  animation: crumb-burst .8s ease-out forwards;
+
+  pointer-events: none;
+
+  animation:
+    crumb-burst 0.8s ease-out forwards;
 }
 
 @keyframes crumb-burst {
-  to { opacity: 0; transform: translate(var(--dx),var(--dy)) rotate(90deg); }
+  from {
+    opacity: 1;
+
+    transform:
+      translate(0, 0);
+  }
+
+  to {
+    opacity: 0;
+
+    transform:
+      translate(
+        var(--dx),
+        var(--dy)
+      )
+      rotate(90deg);
+  }
 }
+
+
+/* ============================================================
+   37. DOODLE DRAWING
+   ============================================================ */
 
 .foreground-doodle-paper {
   position: absolute;
+
   z-index: 1;
+
   display: grid;
   place-items: center;
+
   width: 95px;
   height: 74px;
+
   padding: 6px;
+
   background: #fff7e4;
+
   border: 4px solid #785447;
-  box-shadow: 4px 4px 0 #9e745a;
-  transform: translate(-50%,-50%) rotate(-5deg);
+
+  box-shadow:
+    4px 4px 0 #9e745a;
+
+  transform:
+    translate(-50%, -50%)
+    rotate(-5deg);
+
   overflow: hidden;
 }
 
+.foreground-doodle-paper .pixel-item,
 .foreground-doodle-paper img {
-  width: 100%;
-  height: 100%;
-  image-rendering: pixelated;
-  animation: flower-draw 1.4s steps(12) both;
+  animation:
+    flower-draw 1.4s steps(12) both;
 }
 
 @keyframes flower-draw {
-  from { clip-path: inset(0 100% 0 0); }
-  to { clip-path: inset(0 0 0 0); }
+  from {
+    clip-path:
+      inset(0 100% 0 0);
+  }
+
+  to {
+    clip-path:
+      inset(0 0 0 0);
+  }
 }
 
-.interaction-layer[data-item="doodle"] .foreground-prop {
-  animation: pencil-write .18s alternate infinite;
+.interaction-layer[data-item="doodle"]
+.foreground-prop {
+  animation:
+    pencil-write 0.18s alternate infinite;
 }
 
 @keyframes pencil-write {
-  from { transform: translate(-50%,-50%) rotate(-28deg) translateY(-5px); }
-  to { transform: translate(-50%,-50%) rotate(18deg) translateY(5px); }
+  from {
+    transform:
+      translate(-50%, -50%)
+      rotate(-28deg)
+      translateY(-5px);
+  }
+
+  to {
+    transform:
+      translate(-50%, -50%)
+      rotate(18deg)
+      translateY(5px);
+  }
 }
 
-.interaction-layer[data-item="star"] .foreground-prop {
-  animation: star-orbit 1.3s ease-out forwards;
+
+/* ============================================================
+   38. STAR ORBIT
+   ============================================================ */
+
+.interaction-layer[data-item="star"]
+.foreground-prop {
+  animation:
+    star-orbit 1.3s ease-out forwards;
 }
 
 @keyframes star-orbit {
-  0% { opacity: 0; transform: translate(-50%,-50%) scale(.4); }
-  40% { opacity: 1; transform: translate(-80%,-95%) rotate(150deg); }
-  100% { opacity: 0; transform: translate(-50%,-190%) rotate(360deg); }
+  0% {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -50%)
+      scale(0.4);
+  }
+
+  40% {
+    opacity: 1;
+
+    transform:
+      translate(-80%, -95%)
+      rotate(150deg);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -190%)
+      rotate(360deg);
+  }
 }
+
+
+/* ============================================================
+   39. ORANGE JUICE DRINKING
+   V2.5 Update
+   ============================================================ */
+
+.interaction-layer[data-item="juice"]
+.foreground-prop,
+.interaction-layer[data-item="orangejuice"]
+.foreground-prop {
+  animation:
+    juice-drink 1.4s ease-in-out forwards;
+}
+
+@keyframes juice-drink {
+  0% {
+    opacity: 1;
+
+    transform:
+      translate(40px, -22px)
+      rotate(-15deg)
+      scale(1);
+  }
+
+  35% {
+    opacity: 1;
+
+    transform:
+      translate(-22px, 4px)
+      rotate(0deg)
+      scale(0.8);
+  }
+
+  75% {
+    opacity: 1;
+
+    transform:
+      translate(-23px, 4px)
+      rotate(4deg)
+      scale(0.8);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translate(28px, 12px)
+      scale(0.6);
+  }
+}
+
+
+/* ============================================================
+   40. SPARKLE PARTICLES
+   ============================================================ */
 
 .pixel-twinkle {
   position: absolute;
+
   width: 9px;
   height: 9px;
+
   background: #ffe47c;
+
   box-shadow:
     0 -8px 0 -2px #fff2b6,
     0 8px 0 -2px #fff2b6,
     -8px 0 0 -2px #fff2b6,
     8px 0 0 -2px #fff2b6;
-  animation: sparkle-out 1.1s ease-out forwards;
+
+  animation:
+    sparkle-out 1.1s ease-out forwards;
 }
 
 .foreground-sparkle {
   position: absolute;
-  font-size: 26px;
+
   color: #eeb265;
-  animation: sparkle-out 1.1s ease-out forwards;
+
+  font-size: 26px;
+  font-weight: bold;
+
+  animation:
+    sparkle-out 1.1s ease-out forwards;
 }
 
 @keyframes sparkle-out {
-  0% { opacity: 0; transform: scale(.4) translateY(10px); }
-  40% { opacity: 1; transform: scale(1.2) translateY(-15px); }
-  100% { opacity: 0; transform: scale(.5) translateY(-44px); }
+  0% {
+    opacity: 0;
+
+    transform:
+      scale(0.4)
+      translateY(10px);
+  }
+
+  40% {
+    opacity: 1;
+
+    transform:
+      scale(1.2)
+      translateY(-15px);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      scale(0.5)
+      translateY(-44px);
+  }
 }
 
-/* Teacher pixel emote drawn via CSS box-shadow */
+
+/* ============================================================
+   41. TEACHER PIXEL EMOTIONS
+   ============================================================ */
 
 .teacher-emote {
   position: absolute;
+
   right: 12%;
   top: 35%;
+
+  z-index: 20;
+
   width: 4px;
   height: 4px;
-  z-index: 20;
+
   pointer-events: none;
+
   opacity: 0;
+
+  image-rendering: pixelated;
 }
 
 .teacher-emote.happy {
-  animation: praise-float 1.35s ease-out both;
+  animation:
+    praise-float 1.35s ease-out both;
 }
 
 .teacher-emote.angry {
   opacity: 1;
-  animation: angry-pop .24s ease-in-out 6;
+
+  animation:
+    angry-pop 0.24s ease-in-out 6;
 }
 
 @keyframes praise-float {
-  0% { opacity: 0; transform: translateY(10px) scale(.7); }
-  35% { opacity: 1; transform: translateY(-10px) scale(1.1); }
-  80% { opacity: 1; }
-  100% { opacity: 0; transform: translateY(-45px); }
+  0% {
+    opacity: 0;
+
+    transform:
+      translateY(10px)
+      scale(0.7);
+  }
+
+  35% {
+    opacity: 1;
+
+    transform:
+      translateY(-10px)
+      scale(1.1);
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translateY(-45px);
+  }
 }
 
 @keyframes angry-pop {
-  50% { transform: scale(1.3); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.3);
+  }
 }
+
+
+/* ============================================================
+   42. FLOATING SCORE FEEDBACK
+   ============================================================ */
 
 .effect {
   position: absolute;
+
   z-index: 18;
+
   top: 43%;
   left: 50%;
+
   opacity: 0;
-  pointer-events: none;
+
+  color: #f5d57b;
+
   font-size: 45px;
   font-weight: bold;
-  color: #f5d57b;
-  text-shadow: 3px 3px 0 #63463d;
+
+  text-shadow:
+    3px 3px 0 #63463d;
+
+  pointer-events: none;
 }
 
 .effect.pop {
-  animation: effect-pop .6s ease-out;
+  animation:
+    effect-pop 0.6s ease-out;
 }
 
 @keyframes effect-pop {
-  0% { opacity: 0; transform: translate(-50%,10px) scale(.5); }
-  40% { opacity: 1; transform: translate(-50%,-10px) scale(1.2); }
-  100% { opacity: 0; transform: translate(-50%,-45px); }
+  0% {
+    opacity: 0;
+
+    transform:
+      translate(-50%, 10px)
+      scale(0.5);
+  }
+
+  40% {
+    opacity: 1;
+
+    transform:
+      translate(-50%, -10px)
+      scale(1.2);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -45px);
+  }
 }
 
-/* V2.4 Update: result sticker falling */
+
+/* ============================================================
+   43. SETTLEMENT PARTICLE LAYER
+   V2.5 Update
+
+   Contains the win / lose pixel stickers.
+   ============================================================ */
+
+.result-particles {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 26;
+
+  overflow: hidden;
+
+  pointer-events: none;
+}
+
+
+/* ============================================================
+   44. RESULT STICKER FALL
+   V2.5 Update
+
+   Falling animation uses forwards fill.
+   At 100%, stickers remain at the final
+   position instead of disappearing.
+   ============================================================ */
 
 .result-sticker {
   position: absolute;
+
   top: -65px;
-  left: var(--x);
+  left: var(--x, 50%);
+
   width: 5px;
   height: 5px;
-  animation: result-fall var(--fall-time)
-    linear var(--delay) both;
-  will-change: transform,opacity;
+
+  opacity: 0;
+
+  image-rendering: pixelated;
+
+  will-change: transform;
+
+  animation-name: result-fall;
+  animation-duration: var(--fall-time, 3s);
+  animation-delay: var(--delay, 0s);
+
+  animation-timing-function:
+    cubic-bezier(0.28, 0.48, 0.56, 1);
+
+  animation-fill-mode: forwards;
+
+  animation-iteration-count: 1;
 }
 
 @keyframes result-fall {
   0% {
     opacity: 0;
-    transform: translate(0,-25px) rotate(0);
+
+    transform:
+      translate(0, -25px)
+      rotate(0deg);
   }
-  8% { opacity: 1; }
-  90% { opacity: 1; }
+
+  8% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  88% {
+    opacity: 1;
+
+    transform:
+      translate(
+        calc(var(--drift, 0px) * 0.88),
+        calc(var(--distance, 450px) * 0.88)
+      )
+      rotate(var(--rotation, 0deg));
+  }
+
+  94% {
+    opacity: 1;
+
+    transform:
+      translate(
+        var(--drift, 0px),
+        calc(var(--distance, 450px) - 13px)
+      )
+      rotate(var(--rotation, 0deg));
+  }
+
   100% {
-    opacity: 0;
-    transform: translate(
-      var(--drift),var(--distance)
-    ) rotate(var(--rotation));
+    opacity: 1;
+
+    transform:
+      translate(
+        var(--drift, 0px),
+        var(--distance, 450px)
+      )
+      rotate(var(--rotation, 0deg));
   }
 }
 
-.result-particles.is-paused *,
-.scene.settlement-paused .result-sticker {
+
+/* ============================================================
+   45. SETTLEMENT ANIMATION PAUSE
+   V2.5 Update
+   ============================================================ */
+
+.result-particles.is-paused
+.result-sticker,
+.scene.settlement-paused
+.result-sticker {
   animation-play-state: paused !important;
 }
 
-.scene.settlement-paused .result-particles {
-  opacity: .9;
-}
 
-/* V2.4 Update: overlay and result cards */
+/* ============================================================
+   46. GAME PAUSE ANIMATION CONTROL
+   V2.5 Update
+   ============================================================ */
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 25;
-  display: grid;
-  place-items: center;
-  background: #1c241baa;
-  padding: 12px;
-}
-
-.overlay-card {
-  width: min(390px,100%);
-  padding: 18px;
-  background: var(--paper);
-  border: 5px solid var(--ink);
-  box-shadow: 7px 7px 0 #9a735e;
-  text-align: center;
-}
-
-.overlay-card h2 {
-  margin: 8px 0;
-  font-size: 26px;
-  color: var(--green);
-}
-
-.overlay-card p {
-  white-space: pre-line;
-  font-size: 13px;
-  line-height: 1.7;
-}
-
-.result-icon {
-  width: 5px;
-  height: 5px;
-  margin: 0 auto 48px;
-  position: relative;
-  left: -25px;
-  top: 8px;
-}
-
-.result-icon:empty { display: none; }
-
-.result-icon.win {
-  animation: trophy-pulse .7s ease-in-out infinite alternate;
-}
-
-.result-icon.lose {
-  opacity: .8;
-}
-
-@keyframes trophy-pulse {
-  to { transform: scale(1.08); }
-}
-
-.primary-button {
-  min-width: 150px;
-  background: #90bc91;
-}
-
-/* V2.4 Update: icon buttons */
-
-.feedback {
-  min-height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  border: 3px solid #ad8b6d;
-  background: #f1e5cd;
-  color: #6f5945;
-  padding: 6px;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.controls {
-  display: grid;
-  grid-template-columns: repeat(3,minmax(0,1fr));
-  gap: 11px;
-  justify-items: stretch;
-}
-
-.control-button {
-  min-width: 0;
-  min-height: 60px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.control-button:nth-child(1) { background: #f1cd73; }
-.control-button:nth-child(2) { background: #aad2a4; }
-.control-button:nth-child(3) { background: #eea0a7; }
-
-.control-button small {
-  font-size: 10px;
-  line-height: 1;
-  letter-spacing: 1px;
-}
-
-/* Only CSS hard-edge shapes; no emoji images */
-
-.control-icon {
-  position: relative;
-  display: block;
-  flex: 0 0 auto;
-  width: 32px;
-  height: 25px;
-  color: var(--ink);
-}
-
-.icon-pause::before,
-.icon-pause::after {
-  content: "";
-  position: absolute;
-  top: 2px;
-  width: 8px;
-  height: 21px;
-  background: var(--ink);
-  box-shadow: inset 2px 2px 0 #fff3ce;
-}
-
-.icon-pause::before { left: 6px; }
-.icon-pause::after { right: 6px; }
-
-.icon-play::before {
-  content: "";
-  position: absolute;
-  left: 7px;
-  top: 2px;
-  width: 0;
-  height: 0;
-  border-top: 11px solid transparent;
-  border-bottom: 11px solid transparent;
-  border-left: 21px solid var(--ink);
-}
-
-.icon-bell::before,
-.icon-bell-muted::before {
-  content: "";
-  position: absolute;
-  left: 6px;
-  top: 3px;
-  width: 20px;
-  height: 17px;
-  background: #efc54b;
-  border: 4px solid var(--ink);
-  border-radius: 6px 6px 2px 2px;
-  box-shadow:
-    0 4px 0 -1px var(--ink),
-    0 8px 0 -4px #b36d48;
-}
-
-.icon-bell::after,
-.icon-bell-muted::after {
-  content: "";
-  position: absolute;
-  left: 14px;
-  top: 1px;
-  width: 4px;
-  height: 5px;
-  background: var(--ink);
-}
-
-.icon-bell-muted {
-  filter: grayscale(1);
-}
-
-.icon-bell-muted {
-  background: linear-gradient(
-    135deg,transparent 45%,
-    #e3626e 45% 55%,
-    transparent 55%
-  );
-}
-
-.icon-restart::before {
-  content: "";
-  position: absolute;
-  inset: 3px 6px;
-  border: 6px solid var(--ink);
-  border-right-color: transparent;
-  border-radius: 3px;
-}
-
-.icon-restart::after {
-  content: "";
-  position: absolute;
-  right: 1px;
-  top: 0;
-  width: 11px;
-  height: 11px;
-  border-right: 6px solid var(--ink);
-  border-bottom: 6px solid var(--ink);
-}
-
-footer {
-  text-align: center;
-  color: #907864;
-  font-size: 9px;
-  font-weight: bold;
-  letter-spacing: 1px;
-}
-
-/* Rules dialog */
-
-.rules-overlay {
-  position: fixed;
-  z-index: 100;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 12px;
-  background: #141f1bdc;
-}
-
-.rules-dialog {
-  width: min(550px,100%);
-  max-height: calc(100dvh - 24px);
-  overflow-y: auto;
-  padding: 18px;
-  color: var(--ink);
-  background: var(--paper);
-  border: 6px solid var(--ink);
-  box-shadow: 8px 8px 0 #a17d5a;
-}
-
-.rules-heading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  border-bottom: 4px solid #c1a27d;
-  padding-bottom: 9px;
-}
-
-.rules-heading h2 {
-  margin: 0;
-  font-size: 24px;
-  color: var(--green);
-}
-
-.rules-heading span { color: #b98547; }
-
-.rules-intro,
-.rules-tip {
-  font-size: 12px;
-  line-height: 1.6;
-  text-align: center;
-}
-
-.rules-tip.subtle { color: #947861; }
-
-.rules-goal {
-  padding: 10px 14px;
-  margin: 12px 0;
-  background: #e4e8ca;
-  border: 3px solid #65876c;
-}
-
-.rules-goal strong {
-  color: var(--green);
-}
-
-.rules-goal p {
-  margin: 5px 0 0;
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-.rules-state-list {
-  display: grid;
-  gap: 8px;
-}
-
-.rules-state {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px;
-  background: #f0e4cf;
-  border: 3px solid #aa9171;
-}
-
-.rules-state strong { font-size: 13px; }
-.rules-state p { margin: 3px 0; font-size: 12px; }
-
-.state-pixel {
-  width: 19px;
-  height: 19px;
-  border: 3px solid var(--ink);
-  box-shadow: 3px 3px 0 #a58a72;
-  flex: 0 0 auto;
-}
-
-.state-pixel.green { background: #7bc57b; }
-.state-pixel.yellow { background: #f3ce60; }
-.state-pixel.red { background: #e87579; }
-
-.rules-actions {
-  margin-top: 15px;
-  display: flex;
-  justify-content: center;
-}
-
-/* One-screen compact scaling */
-
-@media (max-width:700px) {
-  body { padding: 5px; }
-  .game {
-    height: calc(100dvh - 10px);
-    padding: 7px;
-    gap: 5px;
-    border-width: 3px;
-    box-shadow: none;
-  }
-  .eyebrow,.subtitle { font-size: 8px; }
-  .header h1 { font-size: clamp(16px,4vw,24px); letter-spacing: 0; }
-  .help-button { width: 33px; height: 33px; font-size: 20px; }
-  .hud-item { min-height: 45px; border-width: 2px; }
-  .hud-item strong { font-size: 20px; }
-  .hud-item small { display: none; }
-  .teacher-status,.feedback {
-    min-height: 27px;
-    font-size: 10px;
-    padding: 4px;
-    border-width: 2px;
-  }
-  .scene { border-width: 3px; }
-  .board { border-width: 6px; }
-  .window { border-width: 6px; }
-  .student {
-    --character-scale: .74;
-    left: 36%;
-  }
-  .teacher {
-    --character-scale: .73;
-    right: 15%;
-  }
-  .desk { left: 18%; width: 64%; }
-  .class-clock,.wall-note,.side-cabinet { display: none; }
-  .collectible { width: 48px; height: 48px; }
-  .pixel-item,.foreground-prop { width: 44px; height: 44px; }
-  .control-button { min-height: 48px; gap: 5px; }
-  .control-icon { transform: scale(.82); }
-  .control-button small { font-size: 9px; }
-  footer { font-size: 8px; }
-  .rules-dialog { padding: 11px; border-width: 4px; }
-}
-
-@media (max-height:700px) {
-  .game { gap: 4px; padding-top: 5px; padding-bottom: 5px; }
-  .eyebrow,.subtitle { font-size: 8px; }
-  .header h1 { font-size: 22px; }
-  .hud-item { min-height: 43px; }
-  .hud-item small { display: none; }
-  .teacher-status,.feedback { min-height: 25px; padding: 3px; }
-  .control-button { min-height: 43px; gap: 3px; }
-  .control-icon { transform: scale(.75); }
-  .rules-dialog { padding: 9px; }
-  .rules-state { padding: 5px; }
-}
-
-/* V2.4 Update: animation pause */
 .game.game-paused .student,
 .game.game-paused .teacher,
 .game.game-paused .collectible,
@@ -1256,9 +1990,994 @@ footer {
   animation-play-state: paused !important;
 }
 
+
+/* ============================================================
+   47. GAME RESULT / PAUSE OVERLAY
+   ============================================================ */
+
+.overlay {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 30;
+
+  display: grid;
+  place-items: center;
+
+  padding: 12px;
+
+  background: #1c241baa;
+}
+
+.overlay-card {
+  width: min(390px, 100%);
+
+  padding: 18px;
+
+  background: var(--paper);
+
+  border: 5px solid var(--ink);
+
+  box-shadow:
+    7px 7px 0 #9a735e;
+
+  text-align: center;
+}
+
+.overlay-card h2 {
+  margin: 8px 0;
+
+  color: var(--green);
+
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.overlay-card p {
+  margin: 12px 0;
+
+  font-size: 13px;
+  line-height: 1.7;
+
+  white-space: pre-line;
+}
+
+
+/* ============================================================
+   48. RESULT ICON
+   ============================================================ */
+
+.result-icon {
+  position: relative;
+
+  left: -25px;
+  top: 8px;
+
+  width: 5px;
+  height: 5px;
+
+  margin: 0 auto 48px;
+
+  image-rendering: pixelated;
+}
+
+.result-icon:empty {
+  display: none;
+}
+
+.result-icon.win {
+  animation:
+    trophy-pulse 0.7s ease-in-out
+    infinite alternate;
+}
+
+.result-icon.lose {
+  opacity: 0.8;
+}
+
+@keyframes trophy-pulse {
+  to {
+    transform: scale(1.08);
+  }
+}
+
+.primary-button {
+  min-width: 150px;
+
+  background: #90bc91;
+}
+
+.primary-button:not(:disabled):hover {
+  background: #a7d0a7;
+}
+
+
+/* ============================================================
+   49. FEEDBACK STRIP
+   ============================================================ */
+
+.feedback {
+  min-height: 32px;
+
+  padding: 6px 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 3px solid #ad8b6d;
+
+  background: #f1e5cd;
+
+  color: #6f5945;
+
+  font-size: 12px;
+  font-weight: bold;
+
+  line-height: 1.4;
+  text-align: center;
+}
+
+
+/* ============================================================
+   50. CONTROL BUTTON LAYOUT
+   V2.5 Update
+   ============================================================ */
+
+.controls {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 11px;
+
+  justify-items: stretch;
+}
+
+.control-button {
+  min-width: 0;
+  min-height: 62px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+}
+
+.control-button:nth-child(1) {
+  background: #f1cd73;
+}
+
+.control-button:nth-child(2) {
+  background: #aad2a4;
+}
+
+.control-button:nth-child(3) {
+  background: #eea0a7;
+}
+
+.control-button small {
+  font-size: 10px;
+  font-weight: 900;
+
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+
+/* ============================================================
+   51. PIXEL CONTROL ICONS
+   V2.5 Update
+
+   All icons are CSS shapes.
+   No emoji images or external fonts.
+   ============================================================ */
+
+.control-icon {
+  position: relative;
+
+  display: block;
+  flex: 0 0 auto;
+
+  width: 32px;
+  height: 25px;
+
+  color: var(--ink);
+}
+
+
+/* ============================================================
+   52. PAUSE ICON
+   ============================================================ */
+
+.icon-pause::before,
+.icon-pause::after {
+  content: "";
+
+  position: absolute;
+
+  top: 2px;
+
+  width: 8px;
+  height: 21px;
+
+  background: var(--ink);
+
+  box-shadow:
+    inset 2px 2px 0 #fff3ce;
+}
+
+.icon-pause::before {
+  left: 6px;
+}
+
+.icon-pause::after {
+  right: 6px;
+}
+
+
+/* ============================================================
+   53. PLAY ICON
+   ============================================================ */
+
+.icon-play::before {
+  content: "";
+
+  position: absolute;
+
+  left: 7px;
+  top: 2px;
+
+  width: 0;
+  height: 0;
+
+  border-top: 11px solid transparent;
+  border-bottom: 11px solid transparent;
+
+  border-left: 21px solid var(--ink);
+}
+
+
+/* ============================================================
+   54. BELL ICON
+   ============================================================ */
+
+.icon-bell::before,
+.icon-bell-muted::before {
+  content: "";
+
+  position: absolute;
+
+  left: 6px;
+  top: 3px;
+
+  width: 20px;
+  height: 17px;
+
+  background: #efc54b;
+
+  border: 4px solid var(--ink);
+
+  border-radius: 6px 6px 2px 2px;
+
+  box-shadow:
+    0 4px 0 -1px var(--ink),
+    0 8px 0 -4px #b36d48;
+}
+
+.icon-bell::after,
+.icon-bell-muted::after {
+  content: "";
+
+  position: absolute;
+
+  left: 14px;
+  top: 1px;
+
+  width: 4px;
+  height: 5px;
+
+  background: var(--ink);
+}
+
+
+/* ============================================================
+   55. MUTED BELL ICON
+   ============================================================ */
+
+.icon-bell-muted {
+  filter: grayscale(1);
+}
+
+.icon-bell-muted {
+  background:
+    linear-gradient(
+      135deg,
+      transparent 43%,
+      #e3626e 43% 57%,
+      transparent 57%
+    );
+}
+
+
+/* ============================================================
+   56. RESTART ICON
+   ============================================================ */
+
+.icon-restart::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 3px 6px;
+
+  border: 6px solid var(--ink);
+
+  border-right-color: transparent;
+
+  border-radius: 3px;
+}
+
+.icon-restart::after {
+  content: "";
+
+  position: absolute;
+
+  right: 1px;
+  top: 0;
+
+  width: 11px;
+  height: 11px;
+
+  border-right: 6px solid var(--ink);
+  border-bottom: 6px solid var(--ink);
+}
+
+
+/* ============================================================
+   57. FOOTER
+   ============================================================ */
+
+footer {
+  color: #907864;
+
+  font-size: 9px;
+  font-weight: bold;
+
+  letter-spacing: 1px;
+
+  text-align: center;
+}
+
+
+/* ============================================================
+   58. RULES MODAL BACKDROP
+   ============================================================ */
+
+.rules-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 100;
+
+  display: grid;
+  place-items: center;
+
+  padding: 12px;
+
+  background: #141f1bdc;
+}
+
+
+/* ============================================================
+   59. RULES DIALOG
+   ============================================================ */
+
+.rules-dialog {
+  width: min(550px, 100%);
+
+  max-height:
+    calc(100% - 24px);
+
+  overflow-y: auto;
+
+  padding: 18px;
+
+  color: var(--ink);
+  background: var(--paper);
+
+  border: 6px solid var(--ink);
+
+  box-shadow:
+    8px 8px 0 #a17d5a;
+
+  overscroll-behavior: contain;
+}
+
+
+/* ============================================================
+   60. RULES HEADING
+   ============================================================ */
+
+.rules-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  padding-bottom: 9px;
+
+  border-bottom: 4px solid #c1a27d;
+}
+
+.rules-heading h2 {
+  margin: 0;
+
+  color: var(--green);
+
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.rules-heading span {
+  color: #b98547;
+
+  font-size: 20px;
+}
+
+
+/* ============================================================
+   61. RULES TEXT
+   ============================================================ */
+
+.rules-intro,
+.rules-tip {
+  font-size: 12px;
+  line-height: 1.6;
+
+  text-align: center;
+}
+
+.rules-tip.subtle {
+  color: #947861;
+}
+
+
+/* ============================================================
+   62. MISSION PANEL
+   ============================================================ */
+
+.rules-goal {
+  margin: 12px 0;
+
+  padding: 10px 14px;
+
+  background: #e4e8ca;
+
+  border: 3px solid #65876c;
+}
+
+.rules-goal strong {
+  color: var(--green);
+
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.rules-goal p {
+  margin: 5px 0 0;
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+
+/* ============================================================
+   63. THREE-STATE RULES
+   ============================================================ */
+
+.rules-state-list {
+  display: grid;
+
+  gap: 8px;
+}
+
+.rules-state {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 8px;
+
+  background: #f0e4cf;
+
+  border: 3px solid #aa9171;
+}
+
+.rules-state strong {
+  font-size: 13px;
+}
+
+.rules-state p {
+  margin: 3px 0;
+
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+
+/* ============================================================
+   64. PIXEL STATUS INDICATORS
+   ============================================================ */
+
+.state-pixel {
+  flex: 0 0 auto;
+
+  width: 19px;
+  height: 19px;
+
+  border: 3px solid var(--ink);
+
+  box-shadow:
+    3px 3px 0 #a58a72;
+}
+
+.state-pixel.green {
+  background: #7bc57b;
+}
+
+.state-pixel.yellow {
+  background: #f3ce60;
+}
+
+.state-pixel.red {
+  background: #e87579;
+}
+
+
+/* ============================================================
+   65. RULES ACTIONS
+   ============================================================ */
+
+.rules-actions {
+  margin-top: 15px;
+
+  display: flex;
+  justify-content: center;
+}
+
+.rules-actions .pixel-button {
+  min-width: 175px;
+}
+
+
+/* ============================================================
+   66. MOBILE PORTRAIT HINT
+   V2.5 Update
+   ============================================================ */
+
+.portrait-hint {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 200;
+
+  display: none;
+
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 16px;
+
+  padding: 30px;
+
+  color: #fff6df;
+  background: #315746;
+
+  text-align: center;
+}
+
+.portrait-hint > div {
+  font-size: 58px;
+  line-height: 1;
+}
+
+.portrait-hint strong {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.portrait-hint p {
+  max-width: 280px;
+
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+
+/* ============================================================
+   67. TABLET RESPONSIVENESS
+   V2.5 Update
+   ============================================================ */
+
+@media (max-width: 900px) {
+
+  .game {
+    padding: 10px;
+    gap: 5px;
+  }
+
+  .header h1 {
+    font-size: 24px;
+    letter-spacing: 1px;
+  }
+
+  .student {
+    left: 34%;
+  }
+
+  .teacher {
+    right: 17%;
+  }
+
+  .board {
+    width: 46%;
+  }
+
+}
+
+
+/* ============================================================
+   68. MOBILE LANDSCAPE
+   V2.5 Update
+   ============================================================ */
+
+@media (max-width: 700px) {
+
+  body {
+    padding: 5px;
+  }
+
+  .game {
+    width: 100%;
+
+    height:
+      calc(100dvh - 10px);
+
+    padding: 7px;
+
+    gap: 5px;
+
+    border-width: 3px;
+
+    box-shadow: none;
+  }
+
+  .header {
+    min-height: 40px;
+  }
+
+  .header h1 {
+    font-size: clamp(
+      16px,
+      4vw,
+      24px
+    );
+
+    letter-spacing: 0;
+  }
+
+  .eyebrow,
+  .brand p {
+    font-size: 8px;
+    letter-spacing: 0;
+  }
+
+  .help-button {
+    flex-basis: 44px;
+
+    width: 44px;
+    height: 44px;
+
+    font-size: 21px;
+  }
+
+  .hud {
+    gap: 5px;
+  }
+
+  .hud-item {
+    min-height: 45px;
+
+    padding: 3px;
+
+    border-width: 2px;
+  }
+
+  .hud-item span {
+    font-size: 10px;
+  }
+
+  .hud-item strong {
+    font-size: 19px;
+  }
+
+  .hud-item small {
+    display: none;
+  }
+
+  .teacher-status,
+  .feedback {
+    min-height: 28px;
+
+    padding: 4px;
+
+    border-width: 2px;
+
+    font-size: 10px;
+  }
+
+  .scene {
+    border-width: 3px;
+  }
+
+  .window {
+    border-width: 6px;
+  }
+
+  .board {
+    border-width: 6px;
+  }
+
+  .board-content {
+    gap: 4px;
+  }
+
+  .board-content span {
+    font-size: 12px;
+  }
+
+  .board-content b {
+    font-size: 15px;
+  }
+
+  .board-content small {
+    font-size: 8px;
+  }
+
+  .student {
+    --character-scale: 0.74;
+
+    left: 30%;
+    bottom: 67%;
+  }
+
+  .teacher {
+    --character-scale: 0.74;
+
+    right: 20%;
+    bottom: 66%;
+  }
+
+  .desk {
+    left: 18%;
+
+    width: 64%;
+
+    height: clamp(
+      52px,
+      20%,
+      78px
+    );
+  }
+
+  .class-clock,
+  .wall-note,
+  .side-cabinet {
+    display: none;
+  }
+
+  .collectible {
+    width: 48px;
+    height: 48px;
+  }
+
+  .controls {
+    gap: 5px;
+  }
+
+  .control-button {
+    min-height: 48px;
+
+    gap: 5px;
+  }
+
+  .control-icon {
+    transform: scale(0.82);
+  }
+
+  .control-button small {
+    font-size: 9px;
+  }
+
+  footer {
+    font-size: 8px;
+  }
+
+  .rules-dialog {
+    padding: 11px;
+
+    border-width: 4px;
+  }
+
+  .rules-heading h2 {
+    font-size: 20px;
+  }
+
+  .rules-state {
+    padding: 6px;
+  }
+
+}
+
+
+/* ============================================================
+   69. SHORT SCREEN ADAPTATION
+   V2.5 Update
+   ============================================================ */
+
+@media (max-height: 700px) {
+
+  .game {
+    gap: 4px;
+
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .header {
+    min-height: 38px;
+  }
+
+  .header h1 {
+    font-size: 22px;
+  }
+
+  .eyebrow,
+  .brand p {
+    font-size: 8px;
+  }
+
+  .hud-item {
+    min-height: 43px;
+  }
+
+  .hud-item small {
+    display: none;
+  }
+
+  .teacher-status,
+  .feedback {
+    min-height: 25px;
+
+    padding: 3px;
+  }
+
+  .control-button {
+    min-height: 48px;
+
+    gap: 3px;
+  }
+
+  .control-icon {
+    transform: scale(0.75);
+  }
+
+  .rules-dialog {
+    padding: 9px;
+  }
+
+  .rules-state {
+    padding: 5px;
+  }
+
+  .rules-goal {
+    padding: 8px 10px;
+  }
+
+}
+
+
+/* ============================================================
+   70. PORTRAIT MOBILE OVERLAY
+   V2.5 Update
+   ============================================================ */
+
+@media (
+  max-width: 767px
+) and (
+  orientation: portrait
+) {
+
+  .portrait-hint {
+    display: flex !important;
+  }
+
+}
+
+
+/* ============================================================
+   71. PIXEL ART RENDERING
+   V2.5 Update
+   ============================================================ */
+
+.student,
+.teacher,
+.collectible,
+.collectible *,
+.foreground-prop,
+.foreground-doodle-paper *,
+.teacher-emote,
+.result-sticker,
+.result-icon,
+.control-icon {
+  image-rendering: pixelated;
+}
+
+@supports not (image-rendering: pixelated) {
+
+  .student,
+  .teacher,
+  .collectible,
+  .foreground-prop,
+  .teacher-emote,
+  .result-sticker,
+  .result-icon {
+    image-rendering: crisp-edges;
+  }
+
+}
+
+
+/* ============================================================
+   72. PERFORMANCE OPTIMIZATION
+   V2.5 Update
+   ============================================================ */
+
+.student,
+.teacher,
+.collectible,
+.result-sticker {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+
+/* ============================================================
+   73. REDUCED MOTION
+   ============================================================ */
+
 @media (prefers-reduced-motion: reduce) {
-  .student.normal,
+
+  .student.state-safe.normal,
   .collectible {
     animation: none !important;
   }
+
 }
+
+
+/* ============================================================
+   END OF CLASSROOM DAYDREAM V2.5
+   COMPLETE STYLE.CSS
+   ============================================================ */

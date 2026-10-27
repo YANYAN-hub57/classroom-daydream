@@ -1,298 +1,858 @@
+<html lang="en">
 
-<!DOCTYPE html>
-<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#e9ddc8">
-  <meta name="description"
-        content="Classroom Daydream V2.4 - Pixel Guinea Pig Game">
-  <title>Classroom Daydream V2.4</title>
+
+  <!-- V2.5 Update: mobile viewport compatibility -->
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+  >
+
+  <meta
+    name="theme-color"
+    content="#f5e9d1"
+  >
+
+  <meta
+    name="description"
+    content="Classroom Daydream: a cheerful pixel guinea pig classroom game."
+  >
+
+  <title>Classroom Daydream · V2.5</title>
+
+  <!-- Local stylesheet -->
   <link rel="stylesheet" href="style.css">
+
+  <!-- Native JavaScript -->
   <script src="script.js" defer></script>
 </head>
 
 <body>
-  <main id="game" class="game">
 
-    <!-- V2.4 Update: compact single-screen header -->
-    <header class="header">
-      <div class="brand">
-        <span class="eyebrow">
-          SD5913 · INTERACTIVE EXPERIENCE
-        </span>
-        <h1>CLASSROOM DAYDREAM</h1>
-        <p class="subtitle">
-          A LITTLE GUINEA PIG ADVENTURE
-        </p>
-      </div>
+  <!-- =====================================================
+       CLASSROOM DAYDREAM V2.5
 
-      <button id="rules-button"
-              class="pixel-button help-button"
-              type="button"
-              title="游戏规则"
-              aria-label="查看游戏规则">?</button>
-    </header>
+       V2.5 Update:
+       Fixed 1200 × 800 game stage.
+       Proportional scaling without stretching.
+       ===================================================== -->
 
-    <section class="hud" aria-label="游戏数据">
-      <div class="hud-item">
-        <span>TIME</span>
-        <strong id="time-value">60</strong>
-        <small>SECONDS</small>
-      </div>
+  <main
+    id="game"
+    class="game"
+    aria-label="Classroom Daydream game"
+  >
 
-      <div class="hud-item">
-        <span>SCORE</span>
-        <strong id="score-value">0</strong>
-        <small>GOAL: 8</small>
-      </div>
+<!-- =====================================================
+     01. GAME HEADER
+     ===================================================== -->
 
-      <div class="hud-item">
-        <span>CAUGHT</span>
-        <strong id="caught-value">0 / 3</strong>
-        <small>LIMIT: 3</small>
-      </div>
-    </section>
+<header class="header">
 
-    <div id="teacher-status"
-         class="teacher-status safe"
-         role="status"
-         aria-live="polite">
-      SAFE — 老师背对黑板，可以收集！
+  <div class="brand">
+
+    <span class="eyebrow">
+      SD5913 · INTERACTIVE EXPERIENCE
+    </span>
+
+    <h1>
+      CLASSROOM DAYDREAM
+    </h1>
+
+    <p>
+      A LITTLE GUINEA PIG ADVENTURE
+    </p>
+
+  </div>
+
+  <!-- V2.5 Update: persistent rules button -->
+
+  <button
+    id="rules-button"
+    class="pixel-button help-button"
+    type="button"
+    aria-label="How to play"
+    title="How to play"
+  >
+    ?
+  </button>
+
+</header>
+
+
+<!-- =====================================================
+     02. GAME STATISTICS
+
+     Original game mechanics retained:
+     - 60-second timer
+     - Score tracking
+     - Caught counter
+     ===================================================== -->
+
+<section
+  class="hud"
+  aria-label="Game statistics"
+>
+
+  <!-- TIME -->
+
+  <div class="hud-item">
+
+    <span>
+      TIME
+    </span>
+
+    <strong id="time-value">
+      60
+    </strong>
+
+    <small>
+      SECONDS
+    </small>
+
+  </div>
+
+
+  <!-- SCORE -->
+
+  <div class="hud-item">
+
+    <span>
+      SCORE
+    </span>
+
+    <strong id="score-value">
+      0
+    </strong>
+
+    <small>
+      GOAL: 8
+    </small>
+
+  </div>
+
+
+  <!-- CAUGHT -->
+
+  <div class="hud-item">
+
+    <span>
+      CAUGHT
+    </span>
+
+    <strong id="caught-value">
+      0 / 3
+    </strong>
+
+    <small>
+      LIMIT: 3
+    </small>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     03. TEACHER STATUS
+
+     SAFE
+     WARNING
+     DANGER
+     ===================================================== -->
+
+<div
+  id="teacher-status"
+  class="teacher-status safe"
+  role="status"
+  aria-live="polite"
+>
+  SAFE — The teacher is facing the board. Collect items!
+</div>
+
+
+<!-- =====================================================
+     04. PIXEL CLASSROOM SCENE
+
+     V2.5 Update:
+     Retro pixel classroom created with CSS.
+     ===================================================== -->
+
+<section
+  id="scene"
+  class="scene"
+  aria-label="Interactive pixel-art classroom"
+>
+
+  <!-- CLASSROOM WALL -->
+
+  <div
+    class="wall-decoration"
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="wall-rail"
+    aria-hidden="true"
+  ></div>
+
+
+  <!-- =====================================================
+       05. PIXEL WINDOW
+       ===================================================== -->
+
+  <div
+    class="window"
+    aria-hidden="true"
+  >
+
+    <div class="window-glass"></div>
+
+    <div class="window-cross"></div>
+
+    <div class="window-sill"></div>
+
+  </div>
+
+
+  <!-- =====================================================
+       06. DARK GREEN CHALKBOARD
+       ===================================================== -->
+
+  <div
+    class="board"
+    aria-hidden="true"
+  >
+
+    <div class="board-content">
+
+      <span>
+        MONDAY
+      </span>
+
+      <b>
+        2 + 2 = ?
+      </b>
+
+      <small>
+        STAY FOCUSED!
+      </small>
+
     </div>
 
-    <section id="scene"
-             class="scene"
-             aria-label="像素豚鼠教室">
-
-      <!-- V2.4 Update: pure CSS environment -->
-      <div class="wall-decoration"
-           aria-hidden="true"></div>
-
-      <div class="wall-rail"
-           aria-hidden="true"></div>
-
-      <div class="window" aria-hidden="true">
-        <div class="window-glass"></div>
-        <div class="window-cross"></div>
-        <div class="window-sill"></div>
-      </div>
-
-      <div class="board" aria-hidden="true">
-        <div class="board-content">
-          <span class="board-day">MONDAY</span>
-          <span class="board-equation">2 + 2 = ?</span>
-          <small>STAY FOCUSED!</small>
-        </div>
-        <div class="chalk-pieces">
-          <i></i><i></i><i></i>
-        </div>
-      </div>
-
-      <div class="class-clock" aria-hidden="true">
-        <div class="clock-hand"></div>
-      </div>
-
-      <div class="wall-note" aria-hidden="true">
-        A+
-      </div>
-
-      <div class="floor" aria-hidden="true"></div>
-      <div class="back-chair" aria-hidden="true"></div>
-      <div class="side-cabinet"
-           aria-hidden="true"></div>
-
-      <!-- V2.4 Update:
-           One empty element for each box-shadow
-           pixel guinea pig. No child face elements. -->
-
-      <div id="teacher"
-           class="teacher guinea-pig-teacher facing-away"
-           role="img"
-           aria-label="像素豚鼠老师"
-           data-emotion="normal"></div>
-
-      <div id="student"
-           class="student guinea-pig-student state-safe normal"
-           role="img"
-           aria-label="三色像素豚鼠学生"></div>
-
-      <div class="desk" aria-hidden="true">
-        <div class="desk-top"></div>
-        <div class="desk-shine"></div>
-        <div class="desk-panel"></div>
-      </div>
-
-      <!-- V2.4 Update: independent effect layers -->
-      <div id="interaction-layer"
-           class="interaction-layer"
-           aria-hidden="true"></div>
-
-      <div id="teacher-emote"
-           class="teacher-emote"
-           aria-hidden="true"></div>
-
-      <div id="result-particles"
-           class="result-particles"
-           aria-hidden="true"></div>
-
-      <button id="collectible"
-              class="collectible"
-              type="button"
-              aria-label="收集道具"
-              hidden disabled>
-        <span id="collectible-icon"
-              aria-hidden="true"></span>
-      </button>
-
-      <div id="effect"
-           class="effect"
-           aria-hidden="true"></div>
-
-      <!-- Original pause/win/lose overlay -->
-      <div id="overlay"
-           class="overlay"
-           hidden>
-        <div class="overlay-card">
-          <div id="result-icon"
-               class="result-icon"
-               aria-hidden="true"></div>
-          <h2 id="overlay-title">PAUSED</h2>
-          <p id="overlay-message"></p>
-          <button id="start-button"
-                  class="pixel-button primary-button"
-                  type="button">
-            CONTINUE
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <div id="feedback"
-         class="feedback"
-         role="status"
-         aria-live="polite">
-      READY TO PLAY!
+    <div class="chalk-pieces">
+      <i></i>
+      <i></i>
+      <i></i>
     </div>
 
-    <!-- V2.4 Update: icon-based controls -->
-    <nav class="controls" aria-label="游戏控制">
+  </div>
 
-      <button id="pause-button"
-              class="pixel-button control-button"
-              type="button"
-              aria-label="暂停游戏"
-              disabled>
-        <span id="pause-icon"
-              class="control-icon icon-pause"
-              aria-hidden="true"></span>
-        <small id="pause-label">PAUSE</small>
+
+  <!-- =====================================================
+       07. CLASSROOM DECORATIONS
+       ===================================================== -->
+
+  <!-- CLOCK -->
+
+  <div
+    class="class-clock"
+    aria-hidden="true"
+  >
+
+    <div class="clock-hand"></div>
+
+  </div>
+
+
+  <!-- WALL NOTE -->
+
+  <div
+    class="wall-note"
+    aria-hidden="true"
+  >
+    A+
+  </div>
+
+
+  <!-- =====================================================
+       08. FLOOR AND FURNITURE
+       ===================================================== -->
+
+  <div
+    class="floor"
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="back-chair"
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="side-cabinet"
+    aria-hidden="true"
+  ></div>
+
+
+  <!-- =====================================================
+       09. GUINEA PIG TEACHER
+
+       V2.5 Update:
+       A single empty div rendered by CSS box-shadow.
+
+       Teacher states:
+       - facing-away
+       - warning
+       - watching
+       - teacher-happy
+       - teacher-angry
+
+       The JavaScript updates pixel expressions.
+       ===================================================== -->
+
+  <div
+    id="teacher"
+    class="teacher guinea-pig-teacher facing-away"
+    data-emotion="normal"
+    role="img"
+    aria-label="Guinea pig teacher"
+  ></div>
+
+
+  <!-- =====================================================
+       10. GUINEA PIG STUDENT
+
+       V2.5 Update:
+       A single empty div rendered by CSS box-shadow.
+
+       Student expressions:
+       - normal
+       - surprised
+       - happy
+       - scared
+       - sad
+
+       Student game states:
+       - state-safe
+       - state-warning
+       - state-danger
+       - state-win
+       - state-lose
+
+       Item actions:
+       - carrot
+       - cookie
+       - doodle
+       - star
+       - cake
+       - rice ball
+       - orange juice
+       ===================================================== -->
+
+  <div
+    id="student"
+    class="student guinea-pig-student state-safe normal"
+    role="img"
+    aria-label="Tricolour guinea pig student"
+  ></div>
+
+
+  <!-- =====================================================
+       11. TEACHER EMOTION EFFECT
+
+       V2.5 Update:
+       Transparent pixel-art expressions.
+
+       Praise: thumbs-up
+       Anger: angry symbol
+       ===================================================== -->
+
+  <div
+    id="teacher-emote"
+    class="teacher-emote"
+    aria-hidden="true"
+  ></div>
+
+
+  <!-- =====================================================
+       12. CLASSROOM DESK
+
+       Student's face and shoulders remain visible.
+       Desk continues to cover the lower body.
+       ===================================================== -->
+
+  <div
+    class="desk"
+    aria-hidden="true"
+  >
+
+    <div class="desk-top"></div>
+
+    <div class="desk-shine"></div>
+
+    <div class="desk-panel"></div>
+
+  </div>
+
+
+  <!-- =====================================================
+       13. INTERACTION EFFECT LAYER
+
+       Appears above the desk.
+
+       Supports seven item animations:
+       carrot, cookie, doodle, star,
+       cake, rice ball, orange juice.
+       ===================================================== -->
+
+  <div
+    id="interaction-layer"
+    class="interaction-layer"
+    aria-hidden="true"
+  ></div>
+
+
+  <!-- =====================================================
+       14. SETTLEMENT PARTICLES
+
+       V2.5 Update:
+
+       Win:
+       Stars, balloons, confetti,
+       happy faces, celebration bubbles.
+
+       Lose:
+       Grey stars, teardrops, exclamation marks.
+
+       The particles remain on the classroom floor
+       until the player restarts.
+       ===================================================== -->
+
+  <div
+    id="result-particles"
+    class="result-particles"
+    aria-hidden="true"
+  ></div>
+
+
+  <!-- =====================================================
+       15. RANDOM COLLECTIBLE ITEMS
+
+       JavaScript dynamically inserts one of the
+       seven transparent pixel items.
+
+       No external assets required.
+       ===================================================== -->
+
+  <button
+    id="collectible"
+    class="collectible"
+    type="button"
+    aria-label="Collect item"
+    hidden
+    disabled
+  >
+
+    <span
+      id="collectible-icon"
+      aria-hidden="true"
+    ></span>
+
+  </button>
+
+
+  <!-- =====================================================
+       16. SCORE / CAUGHT VISUAL FEEDBACK
+       ===================================================== -->
+
+  <div
+    id="effect"
+    class="effect"
+    aria-hidden="true"
+  ></div>
+
+
+  <!-- =====================================================
+       17. GAME RESULT / PAUSE OVERLAY
+
+       PAUSED
+       YOU WIN!
+       GAME OVER
+
+       V2.5 Update:
+       Settlement icons and music.
+       ===================================================== -->
+
+  <div
+    id="overlay"
+    class="overlay"
+    hidden
+  >
+
+    <div
+      class="overlay-card"
+      role="status"
+    >
+
+      <div
+        id="result-icon"
+        class="result-icon"
+        aria-hidden="true"
+      ></div>
+
+      <h2 id="overlay-title">
+        PAUSED
+      </h2>
+
+      <p id="overlay-message"></p>
+
+      <button
+        id="start-button"
+        class="pixel-button primary-button"
+        type="button"
+      >
+        CONTINUE
       </button>
 
-      <button id="sound-button"
-              class="pixel-button control-button"
-              type="button"
-              aria-label="关闭音效"
-              aria-pressed="true">
-        <span id="sound-icon"
-              class="control-icon icon-bell"
-              aria-hidden="true"></span>
-        <small id="sound-label">SOUND</small>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     18. GAME FEEDBACK
+
+     V2.5 Update:
+     All game feedback is in English.
+     ===================================================== -->
+
+<div
+  id="feedback"
+  class="feedback"
+  role="status"
+  aria-live="polite"
+>
+  READY TO PLAY!
+</div>
+
+
+<!-- =====================================================
+     19. PIXEL ICON CONTROLS
+
+     V2.5 Update:
+     CSS-only pixel icons.
+
+     PAUSE / RESUME
+     SOUND ON / SOUND OFF
+     RESTART
+     ===================================================== -->
+
+<nav
+  class="controls"
+  aria-label="Game controls"
+>
+
+  <!-- PAUSE / RESUME -->
+
+  <button
+    id="pause-button"
+    class="pixel-button control-button"
+    type="button"
+    aria-label="Pause game"
+    disabled
+  >
+
+    <span
+      id="pause-icon"
+      class="control-icon icon-pause"
+      aria-hidden="true"
+    ></span>
+
+    <small id="pause-label">
+      PAUSE
+    </small>
+
+  </button>
+
+
+  <!-- SOUND ON / OFF -->
+
+  <button
+    id="sound-button"
+    class="pixel-button control-button"
+    type="button"
+    aria-label="Mute sound"
+    aria-pressed="true"
+  >
+
+    <span
+      id="sound-icon"
+      class="control-icon icon-bell"
+      aria-hidden="true"
+    ></span>
+
+    <small id="sound-label">
+      SOUND ON
+    </small>
+
+  </button>
+
+
+  <!-- RESTART -->
+
+  <button
+    id="reset-button"
+    class="pixel-button control-button"
+    type="button"
+    aria-label="Restart game"
+  >
+
+    <span
+      class="control-icon icon-restart"
+      aria-hidden="true"
+    ></span>
+
+    <small>
+      RESTART
+    </small>
+
+  </button>
+
+</nav>
+
+
+<!-- =====================================================
+     20. FOOTER
+     ===================================================== -->
+
+<footer>
+  CLASSROOM DAYDREAM · V2.5 · SD5913
+</footer>
+
+
+<!-- =====================================================
+     21. RULES MODAL
+
+     V2.5 Update:
+     English game instructions.
+
+     Automatically shown on initial load.
+     Can be reopened with the question-mark button.
+     ===================================================== -->
+
+<div
+  id="rules-overlay"
+  class="rules-overlay"
+>
+
+  <section
+    class="rules-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="rules-title"
+  >
+
+    <!-- RULES HEADER -->
+
+    <div class="rules-heading">
+
+      <span aria-hidden="true">
+        ✦
+      </span>
+
+      <h2 id="rules-title">
+        HOW TO PLAY
+      </h2>
+
+      <span aria-hidden="true">
+        ✦
+      </span>
+
+    </div>
+
+
+    <!-- INTRODUCTION -->
+
+    <p class="rules-intro">
+      Welcome to guinea pig class!
+      Sneak in a few treats and creative breaks
+      while the teacher faces the chalkboard.
+    </p>
+
+
+    <!-- GAME OBJECTIVE -->
+
+    <div class="rules-goal">
+
+      <strong>
+        YOUR MISSION
+      </strong>
+
+      <p>
+        Earn <b>at least 8 points</b>
+        in <b>60 seconds</b>,
+        get caught <b>fewer than 3 times</b>,
+        and stay in class until the bell!
+      </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         TEACHER THREE-STATE RULES
+         ===================================================== -->
+
+    <div class="rules-state-list">
+
+
+      <!-- SAFE -->
+
+      <div class="rules-state">
+
+        <span
+          class="state-pixel green"
+          aria-hidden="true"
+        ></span>
+
+        <div>
+
+          <strong>
+            SAFE
+          </strong>
+
+          <p>
+            The teacher faces away.
+            Tap an item to score a point.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- WARNING -->
+
+      <div class="rules-state">
+
+        <span
+          class="state-pixel yellow"
+          aria-hidden="true"
+        ></span>
+
+        <div>
+
+          <strong>
+            WARNING
+          </strong>
+
+          <p>
+            The teacher is about to turn around.
+            Stop collecting!
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- DANGER -->
+
+      <div class="rules-state">
+
+        <span
+          class="state-pixel red"
+          aria-hidden="true"
+        ></span>
+
+        <div>
+
+          <strong>
+            DANGER
+          </strong>
+
+          <p>
+            The teacher is watching.
+            Tapping an item gets you caught.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- BASIC INSTRUCTIONS -->
+
+    <p class="rules-tip">
+      CLICK OR TAP the treats, art tools, and stars.
+      Watch the teacher and choose your moment.
+    </p>
+
+
+    <!-- RULES BUTTONS -->
+
+    <div class="rules-actions">
+
+      <button
+        id="rules-start-button"
+        class="pixel-button primary-button"
+        type="button"
+      >
+        START GAME
       </button>
 
-      <button id="reset-button"
-              class="pixel-button control-button"
-              type="button"
-              aria-label="重新开始游戏">
-        <span class="control-icon icon-restart"
-              aria-hidden="true"></span>
-        <small>RESTART</small>
+      <button
+        id="rules-close-button"
+        class="pixel-button primary-button"
+        type="button"
+        hidden
+      >
+        BACK TO GAME
       </button>
-    </nav>
 
-    <footer>
-      CLASSROOM DAYDREAM · V2.4 · SD5913
-    </footer>
+    </div>
+
+  </section>
+
+</div>
   </main>
 
-  <!-- V2.4 Update: initial and persistent rules -->
-  <div id="rules-overlay"
-       class="rules-overlay">
-    <section class="rules-dialog"
-             role="dialog"
-             aria-modal="true"
-             aria-labelledby="rules-title">
 
-      <div class="rules-heading">
-        <span>✦</span>
-        <h2 id="rules-title">HOW TO PLAY</h2>
-        <span>✦</span>
-      </div>
+  <!-- =====================================================
+       22. MOBILE PORTRAIT HINT
 
-      <p class="rules-intro">
-        欢迎来到豚鼠教室！趁老师转身写黑板时，
-        偷偷收集道具，看看小豚鼠的反应。
-      </p>
+       V2.5 Update:
+       This element sits outside the scaled game stage.
 
-      <div class="rules-goal">
-        <strong>MISSION</strong>
-        <p>
-          <b>60 秒</b>内收集至少<b> 8 分</b>，
-          被老师抓到<b>少于 3 次</b>，
-          并坚持到下课！
-        </p>
-      </div>
+       Shown on narrow portrait screens.
+       The player is encouraged to rotate the device.
+       ===================================================== -->
 
-      <div class="rules-state-list">
-        <div class="rules-state safe">
-          <span class="state-pixel green"></span>
-          <div>
-            <strong>SAFE</strong>
-            <p>老师背对黑板，收集道具得分。</p>
-          </div>
-        </div>
+  <div
+    id="portrait-hint"
+    class="portrait-hint"
+    hidden
+    role="status"
+  >
 
-        <div class="rules-state warning">
-          <span class="state-pixel yellow"></span>
-          <div>
-            <strong>WARNING</strong>
-            <p>老师准备回头，停止点击。</p>
-          </div>
-        </div>
+<div aria-hidden="true">
+  ↻
+</div>
 
-        <div class="rules-state danger">
-          <span class="state-pixel red"></span>
-          <div>
-            <strong>DANGER</strong>
-            <p>老师正在检查，点击会增加被抓次数。</p>
-          </div>
-        </div>
-      </div>
+<strong>
+  ROTATE YOUR DEVICE
+</strong>
 
-      <p class="rules-tip">
-        CLICK / TAP 收集道具。
-        观察老师状态，把握时机！
-      </p>
-      <p class="rules-tip subtle">
-        新增像素表情、节奏音乐及胜负彩蛋。
-      </p>
-
-      <div class="rules-actions">
-        <button id="rules-start-button"
-                class="pixel-button primary-button"
-                type="button">
-          START GAME
-        </button>
-
-        <button id="rules-close-button"
-                class="pixel-button primary-button"
-                type="button"
-                hidden>
-          BACK TO GAME
-        </button>
-      </div>
-    </section>
+<p>
+  Landscape mode offers the best
+  classroom experience.
+</p>
   </div>
+
 </body>
 </html>
