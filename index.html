@@ -12,43 +12,31 @@
 
   <meta
     name="description"
-    content="Classroom Daydream V2.0 - An interactive guinea pig classroom game featuring Red Light Green Light and collectible objects."
+    content="Classroom Daydream — A playful interactive classroom game featuring a guinea pig student."
   >
 
   <meta
     name="theme-color"
-    content="#e8dad7"
+    content="#fff9ee"
   >
 
   <title>
-    Classroom Daydream V2.0
+    Classroom Daydream | Guinea Pig Edition
   </title>
 
-  <!-- GAME STYLES -->
   <link
     rel="stylesheet"
     href="style.css"
   >
-
-  <!-- GAME LOGIC -->
-  <script
-    src="script.js"
-    defer
-  ></script>
-
 </head>
 
 <body>
 
-  <!-- ======================================
-       MAIN GAME CONTAINER
-       ====================================== -->
-
   <main class="game">
 
-    <!-- ====================================
+    <!-- =====================================
          1. GAME HEADER
-         ==================================== -->
+         ===================================== -->
 
     <header class="header">
 
@@ -57,76 +45,79 @@
       </p>
 
       <h1>
-        CLASSROOM<br>
-        DAYDREAM
+        CLASSROOM DAYDREAM
       </h1>
 
       <p class="subtitle">
-        🐹 豚鼠的课堂开小差
+        🐹 教室开小差 · A Tiny Guinea Pig Game
       </p>
 
     </header>
 
 
-    <!-- ====================================
+    <!-- =====================================
          2. GAME INSTRUCTIONS
-         ==================================== -->
+         ===================================== -->
 
     <section
       class="instructions"
-      aria-label="游戏规则"
+      aria-labelledby="instructions-title"
     >
 
-      <h2>
-        HOW TO PLAY
+      <h2 id="instructions-title">
+        ✨ HOW TO PLAY ✨
       </h2>
 
       <p>
-        欢迎来到小豚鼠的教室！
-        老师背对你时，偷偷收集桌面出现的零食和涂鸦。
+        欢迎来到小豚鼠的课堂！
       </p>
 
       <p>
-        🟢 绿色：安全，可以收集道具。
+        趁老师背对教室时，
+        偷偷吃零食、画画、收集星星！
       </p>
 
       <p>
-        🟡 黄色：老师准备转身，请停止行动。
+        小心！老师随时可能回头！
       </p>
 
       <p>
-        🔴 红色：老师正在观察，点击道具会被发现！
+        🟢 SAFE：可以行动
+        · 🟡 WARNING：准备停止
+        · 🔴 DANGER：不要点击
       </p>
 
       <p>
-        在 60 秒内获得至少 8 分，
-        并且被老师发现少于 3 次，
-        坚持到下课即可获胜！
+        <strong>
+          60 秒内获得至少 8 分，
+          并且被老师发现少于 3 次，
+          坚持到下课即可获胜！
+        </strong>
       </p>
 
     </section>
 
 
-    <!-- ====================================
+    <!-- =====================================
          3. GAME HUD
-         ==================================== -->
+         ===================================== -->
 
     <section
       class="hud"
-      aria-label="游戏实时状态"
+      aria-label="Game statistics"
     >
 
-      <!-- TIME -->
+      <!-- TIMER -->
 
       <div class="hud-item">
 
         <span>
-          ⏱ TIME
+          ⏰ TIME
         </span>
 
         <strong
           id="time-value"
-          aria-label="剩余时间"
+          aria-label="Remaining seconds"
         >
           60
         </strong>
@@ -144,7 +135,7 @@
 
         <strong
           id="score-value"
-          aria-label="当前分数"
+          aria-label="Current score"
         >
           0
         </strong>
@@ -162,7 +153,7 @@
 
         <strong
           id="caught-value"
-          aria-label="被老师发现的次数"
+          aria-label="Times caught"
         >
           0 / 3
         </strong>
@@ -172,9 +163,9 @@
     </section>
 
 
-    <!-- ====================================
-         4. TEACHER STATUS INDICATOR
-         ==================================== -->
+    <!-- =====================================
+         4. TEACHER STATUS
+         ===================================== -->
 
     <div
       id="teacher-status"
@@ -183,25 +174,21 @@
       aria-live="polite"
       aria-atomic="true"
     >
-
       🟢 SAFE！老师正在写黑板，可以偷偷行动！
-
     </div>
 
 
-    <!-- ====================================
-         5. CLASSROOM GAME SCENE
-         ==================================== -->
+    <!-- =====================================
+         5. CLASSROOM SCENE
+         ===================================== -->
 
     <section
-      id="scene"
       class="scene"
-      aria-label="小豚鼠教室交互游戏场景"
+      id="scene"
+      aria-label="Interactive classroom scene"
     >
 
-      <!-- ================================
-           CLASSROOM WALL
-           ================================ -->
+      <!-- BACKGROUND WALL -->
 
       <div
         class="wall-decoration"
@@ -209,9 +196,7 @@
       ></div>
 
 
-      <!-- ================================
-           CLASSROOM FLOOR
-           ================================ -->
+      <!-- CLASSROOM FLOOR -->
 
       <div
         class="floor"
@@ -219,9 +204,7 @@
       ></div>
 
 
-      <!-- ================================
-           CLASSROOM WINDOW
-           ================================ -->
+      <!-- WINDOW -->
 
       <div
         class="window"
@@ -229,9 +212,9 @@
       ></div>
 
 
-      <!-- ================================
-           BLACKBOARD
-           ================================ -->
+      <!-- =================================
+           6. CLASSROOM BLACKBOARD
+           ================================= -->
 
       <div
         class="board"
@@ -254,48 +237,32 @@
 
 
       <!-- =================================
-           6. TEACHER CHARACTER
+           7. TEACHER CHARACTER
            ================================= -->
 
       <div
         id="teacher"
         class="teacher facing-away"
-        aria-hidden="true"
+        aria-label="Teacher"
+        role="img"
       >
 
-        <!-- LEFT EAR -->
+        <!-- EARS -->
 
-        <div
-          class="teacher-ear left"
-        ></div>
+        <div class="teacher-ear left"></div>
 
-
-        <!-- RIGHT EAR -->
-
-        <div
-          class="teacher-ear right"
-        ></div>
+        <div class="teacher-ear right"></div>
 
 
         <!-- HEAD -->
 
         <div class="teacher-head">
 
-          <!-- FACE -->
-
           <div class="teacher-face">
 
-            <!-- EYES -->
+            <div class="teacher-eyes"></div>
 
-            <span
-              class="teacher-eyes"
-            ></span>
-
-            <!-- NOSE -->
-
-            <span
-              class="teacher-nose"
-            ></span>
+            <div class="teacher-nose"></div>
 
           </div>
 
@@ -304,110 +271,78 @@
 
         <!-- BODY -->
 
-        <div
-          class="teacher-body"
-        ></div>
+        <div class="teacher-body"></div>
 
 
         <!-- FEET -->
 
-        <div
-          class="teacher-feet"
-        ></div>
+        <div class="teacher-feet"></div>
 
       </div>
 
 
       <!-- =================================
-           7. GUINEA PIG STUDENT
+           8. GUINEA PIG STUDENT
            ================================= -->
 
       <div
         id="student"
         class="student"
-        aria-hidden="true"
+        role="img"
+        aria-label="Tricolor pixel guinea pig student"
       >
 
-        <!-- LEFT EAR -->
+        <!-- SMALL ROUND EARS -->
 
-        <div
-          class="gp-ear left"
-        ></div>
+        <div class="gp-ear left"></div>
 
-
-        <!-- RIGHT EAR -->
-
-        <div
-          class="gp-ear right"
-        ></div>
+        <div class="gp-ear right"></div>
 
 
-        <!-- BODY -->
+        <!-- CHUBBY BODY -->
 
-        <div
-          class="gp-body"
-        ></div>
+        <div class="gp-body"></div>
 
 
-        <!-- HEAD -->
+        <!-- WIDE TRICOLOR HEAD -->
 
         <div class="gp-head">
 
-          <!-- BROWN FUR PATCH -->
+          <!-- ASYMMETRIC BROWN FUR -->
 
-          <div
-            class="gp-patch"
-          ></div>
+          <div class="gp-patch"></div>
 
 
-          <!-- LEFT EYE -->
+          <!-- TINY EYES -->
 
-          <div
-            class="gp-eye left"
-          ></div>
+          <div class="gp-eye left"></div>
 
-
-          <!-- RIGHT EYE -->
-
-          <div
-            class="gp-eye right"
-          ></div>
+          <div class="gp-eye right"></div>
 
 
-          <!-- NOSE -->
+          <!-- SMALL NOSE AND MOUTH -->
 
-          <div
-            class="gp-nose"
-          ></div>
+          <div class="gp-nose"></div>
 
 
-          <!-- LEFT CHEEK -->
+          <!-- PINK CHEEKS -->
 
-          <div
-            class="gp-cheek left"
-          ></div>
+          <div class="gp-cheek left"></div>
 
-
-          <!-- RIGHT CHEEK -->
-
-          <div
-            class="gp-cheek right"
-          ></div>
+          <div class="gp-cheek right"></div>
 
         </div>
 
 
-        <!-- FRONT PAWS -->
+        <!-- LITTLE PAWS -->
 
-        <div
-          class="gp-paws"
-        ></div>
+        <div class="gp-paws"></div>
 
       </div>
 
 
       <!-- =================================
-           8. CLASSROOM DESK
+           9. CLASSROOM DESK
            ================================= -->
 
       <div
@@ -415,23 +350,38 @@
         aria-hidden="true"
       >
 
-        <div
-          class="desk-shine"
-        ></div>
+        <div class="desk-shine"></div>
 
       </div>
 
 
       <!-- =================================
-           9. RANDOM COLLECTIBLE OBJECT
+           10. FOREGROUND INTERACTION LAYER
+
+           This layer is intentionally placed
+           outside the guinea pig and desk.
+
+           JavaScript inserts reaction props
+           here so they can appear above
+           the desk.
+           ================================= -->
+
+      <div
+        id="interaction-layer"
+        class="interaction-layer"
+        aria-hidden="true"
+      ></div>
+
+
+      <!-- =================================
+           11. RANDOM COLLECTIBLE OBJECT
            ================================= -->
 
       <button
         id="collectible"
         class="collectible"
         type="button"
-        aria-label="收集桌面道具"
-        title="点击收集道具"
+        aria-label="Collect item"
         hidden
         disabled
       >
@@ -447,7 +397,10 @@
 
 
       <!-- =================================
-           10. VISUAL FEEDBACK EFFECT
+           12. GENERAL FLOATING EFFECT
+
+           Used for +1, warnings,
+           stars and caught effects.
            ================================= -->
 
       <div
@@ -458,8 +411,9 @@
 
 
       <!-- =================================
-           11. GAME OVERLAY
-           START / PAUSE / GAME OVER
+           13. GAME OVERLAY
+
+           Start / Pause / Win / Lose
            ================================= -->
 
       <div
@@ -467,36 +421,29 @@
         class="overlay"
       >
 
-        <div class="overlay-card">
+        <div
+          class="overlay-card"
+          role="group"
+          aria-labelledby="overlay-title"
+        >
 
-          <!-- OVERLAY TITLE -->
-
-          <h2
-            id="overlay-title"
-          >
+          <h2 id="overlay-title">
             READY TO PLAY?
           </h2>
 
+          <p id="overlay-message">
+            帮助小豚鼠度过快乐的课堂！
 
-          <!-- OVERLAY MESSAGE -->
-
-          <p
-            id="overlay-message"
-          >
-            收集零食，躲避老师的目光！
+            收集至少 8 分，
+            小心不要被老师发现 3 次！
           </p>
-
-
-          <!-- START / RESUME / REPLAY -->
 
           <button
             id="start-button"
             class="primary-button"
             type="button"
           >
-
             ▶ 开始游戏
-
           </button>
 
         </div>
@@ -506,9 +453,9 @@
     </section>
 
 
-    <!-- ====================================
-         12. GAME FEEDBACK
-         ==================================== -->
+    <!-- =====================================
+         14. GAME FEEDBACK
+         ===================================== -->
 
     <div
       id="feedback"
@@ -517,47 +464,38 @@
       aria-live="polite"
       aria-atomic="true"
     >
-
-      🐹 小豚鼠准备好了！
-      点击开始游戏，老师背对时收集桌面道具！
-
+      🐹 点击开始游戏，帮助小豚鼠偷偷收集道具！
     </div>
 
 
-    <!-- ====================================
-         13. GAME CONTROL BUTTONS
-         ==================================== -->
+    <!-- =====================================
+         15. GAME CONTROLS
+         ===================================== -->
 
-    <section
+    <nav
       class="controls"
-      aria-label="游戏控制"
+      aria-label="Game controls"
     >
 
-      <!-- PAUSE / RESUME -->
+      <!-- PAUSE -->
 
       <button
         id="pause-button"
         type="button"
-        aria-label="暂停或继续游戏"
         disabled
       >
-
         ⏸ 暂停
-
       </button>
 
 
-      <!-- SOUND ON / OFF -->
+      <!-- SOUND -->
 
       <button
         id="sound-button"
         type="button"
-        aria-label="开启或关闭游戏音效"
         aria-pressed="true"
       >
-
         🔊 音效开启
-
       </button>
 
 
@@ -566,33 +504,46 @@
       <button
         id="reset-button"
         type="button"
-        aria-label="重新开始游戏"
       >
-
         ↻ 重新开始
-
       </button>
 
-    </section>
+    </nav>
 
 
-    <!-- ====================================
-         14. GAME FOOTER
-         ==================================== -->
+    <!-- =====================================
+         16. FOOTER
+         ===================================== -->
 
     <footer>
 
       <p>
-        CLASSROOM DAYDREAM · VERSION 2.0
+        🐹 CLASSROOM DAYDREAM
       </p>
 
       <p>
-        SD5913 · Programming for Art & Design
+        SD5913 · Assignment 3
+      </p>
+
+      <p>
+        HTML · CSS · JavaScript
+      </p>
+
+      <p>
+        Made with creativity, curiosity
+        and a little classroom mischief.
       </p>
 
     </footer>
 
   </main>
+
+
+  <!-- =====================================
+       17. JAVASCRIPT
+       ===================================== -->
+
+  <script src="script.js"></script>
 
 </body>
 

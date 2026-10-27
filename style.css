@@ -1,65 +1,30 @@
 
-/* =====================================================
-   CLASSROOM DAYDREAM V2.3
-   SD5913 - INTERACTIVE EXPERIENCE
-
-   LOVELY GUINEA PIG EDITION
-
-   Complete Style Sheet
-   - Retro pixel-inspired interface
-   - Tricolor guinea pig character
-   - Classroom scene
-   - Teacher observation system
-   - Four unique item reactions
-   - Game controls and overlays
-   - Responsive mobile layout
-   ===================================================== */
-
-
-/* =====================================================
-   1. DESIGN SYSTEM
-   ===================================================== */
+/* =========================================================
+   CLASSROOM DAYDREAM V2.6
+   COMPLETE STYLE.CSS
+   Pixel Guinea Pig Classroom Game
+   ========================================================= */
 
 :root {
-  --ink: #51424d;
-  --ink-light: #76616c;
-
-  --cream: #fff9ed;
-  --background: #e8dad7;
-
-  --pink: #eaa5af;
-  --pink-light: #f6dbe0;
-  --rose: #ad718c;
-
-  --peach: #f3c7a9;
-  --yellow: #efd089;
-
-  --wood: #b98262;
-  --wood-dark: #815d57;
-
-  --green: #739789;
-  --mint: #c8e0c7;
-
-  --danger: #d56b78;
-  --warning: #e7bd62;
-  --success: #79b68c;
-
-  --shadow: #baa3a8;
-
-  --gp-outline: #695047;
-  --gp-white: #fff8ec;
-  --gp-cream: #f6e8d2;
-  --gp-orange: #d9a16a;
-  --gp-brown: #9b755f;
-  --gp-pink: #e4ada6;
-
-  color-scheme: light;
+  --ink: #55434f;
+  --cream: #fff9ee;
+  --background: #eadbd8;
+  --rose: #a76b86;
+  --pink: #edb0bb;
+  --wood-dark: #88635a;
+  --green: #78998c;
+  --danger: #d96e7c;
+  --shadow: #c4acb0;
+  --gp-outline: #71544e;
+  --gp-white: #fffaf0;
+  --gp-cream: #f7ead5;
+  --gp-brown: #9c7a6a;
+  --gp-orange: #dda36a;
+  --gp-pink: #e8afa8;
+  --gp-eye: #57403e;
 }
 
-
-/* =====================================================
-   2. GLOBAL RESET
-   ===================================================== */
+/* GLOBAL */
 
 *,
 *::before,
@@ -73,68 +38,46 @@ html {
 
 body {
   margin: 0;
-  padding: 24px 12px;
   min-height: 100vh;
-
+  padding: 24px 12px;
   background:
-    radial-gradient(
-      circle at 20% 15%,
-      #f5e8df 0%,
-      transparent 42%
-    ),
-    radial-gradient(
-      circle at 85% 80%,
-      #e1cfda 0%,
-      transparent 40%
-    ),
+    radial-gradient(circle at 15% 10%, #fae9e0, transparent 45%),
+    radial-gradient(circle at 90% 90%, #e3d3df, transparent 45%),
     var(--background);
-
   color: var(--ink);
-  font-family: "Courier New", monospace;
+  font-family: "Courier New", "PingFang SC", monospace;
 }
 
 button {
   font: inherit;
   cursor: pointer;
   touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-button:focus-visible {
-  outline: 4px solid #557bbe;
-  outline-offset: 3px;
 }
 
 button:disabled {
-  opacity: 0.5;
+  opacity: 0.55;
   cursor: not-allowed;
+}
+
+button:focus-visible {
+  outline: 4px solid #628cc5;
+  outline-offset: 3px;
 }
 
 [hidden] {
   display: none !important;
 }
 
-
-/* =====================================================
-   3. MAIN GAME CONTAINER
-   ===================================================== */
+/* GAME CONTAINER */
 
 .game {
   width: min(100%, 860px);
   margin: 0 auto;
   padding: 24px;
-
   background: var(--cream);
-
   border: 5px solid var(--ink);
-
   box-shadow: 9px 9px 0 var(--shadow);
 }
-
-
-/* =====================================================
-   4. HEADER
-   ===================================================== */
 
 .header {
   text-align: center;
@@ -144,7 +87,6 @@ button:disabled {
 .eyebrow {
   margin: 0 0 12px;
   color: var(--rose);
-
   font-size: 11px;
   font-weight: bold;
   letter-spacing: 2px;
@@ -152,66 +94,47 @@ button:disabled {
 
 .header h1 {
   margin: 12px 0;
-
   color: var(--rose);
-
-  font-size: clamp(28px, 6vw, 48px);
-  line-height: 1.08;
-  font-weight: 900;
+  font-size: clamp(27px, 6vw, 48px);
+  line-height: 1.1;
   letter-spacing: 3px;
-
   text-shadow: 4px 4px 0 #efd9dc;
 }
 
 .subtitle {
-  margin-top: 16px;
-
+  margin: 16px 0 0;
   color: #9e7287;
   font-size: 15px;
   font-weight: bold;
-  letter-spacing: 1px;
 }
 
-
-/* =====================================================
-   5. GAME INSTRUCTIONS
-   ===================================================== */
+/* INSTRUCTIONS */
 
 .instructions {
   margin: 20px 0;
   padding: 16px;
-
-  background: #f6e9dc;
+  background: #f7eadd;
   border: 3px dashed #cdaaa4;
-
   text-align: center;
 }
 
 .instructions h2 {
   margin: 0 0 12px;
-
   color: var(--rose);
-
   font-size: 15px;
-  letter-spacing: 2px;
 }
 
 .instructions p {
   margin: 8px 0;
-
   font-size: 12px;
   line-height: 1.85;
 }
 
-
-/* =====================================================
-   6. GAME HUD
-   ===================================================== */
+/* HUD */
 
 .hud {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-
   gap: 12px;
   margin: 20px 0;
 }
@@ -221,187 +144,121 @@ button:disabled {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   gap: 10px;
   padding: 14px 8px;
-
   background: #f6e8e2;
-
   border: 3px solid #cdaeb5;
-
   box-shadow: 3px 3px 0 #e7d3d5;
 }
 
 .hud-item span {
-  color: var(--ink-light);
-
+  color: #806c77;
   font-size: 12px;
   font-weight: bold;
-  letter-spacing: 1px;
 }
 
 .hud-item strong {
   color: var(--rose);
-
   font-size: 30px;
   line-height: 1;
-  font-weight: 900;
-
-  transition: color 0.2s ease;
 }
 
-
-/* =====================================================
-   7. TEACHER STATUS
-   ===================================================== */
+/* TEACHER STATUS */
 
 .teacher-status {
-  min-height: 50px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
+  min-height: 50px;
   margin-bottom: 14px;
-  padding: 12px 16px;
-
+  padding: 12px;
   border: 3px solid var(--ink);
-
-  text-align: center;
   font-size: 13px;
   font-weight: bold;
   line-height: 1.6;
-
-  transition: background-color 0.2s ease;
+  text-align: center;
 }
 
 .teacher-status.safe {
-  background: #d6ead3;
-  color: #456c4e;
+  background: #d8ead5;
+  color: #436c4e;
 }
 
 .teacher-status.warning {
-  background: #f6e2a3;
+  background: #f7e1a1;
   color: #94641d;
-
-  animation: status-pulse 0.6s infinite alternate;
+  animation: status-pulse 0.6s alternate infinite;
 }
 
 .teacher-status.danger {
-  background: #efb5b5;
+  background: #f0bbbb;
   color: #9c3441;
-
-  animation: status-pulse 0.35s infinite alternate;
+  animation: status-pulse 0.35s alternate infinite;
 }
 
 @keyframes status-pulse {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0.72;
-  }
+  to { opacity: 0.75; }
 }
 
-
-/* =====================================================
-   8. CLASSROOM SCENE
-   ===================================================== */
+/* CLASSROOM BACKGROUND */
 
 .scene {
   position: relative;
-
+  isolation: isolate;
   width: 100%;
   height: 390px;
-
   overflow: hidden;
-  isolation: isolate;
-
-  background: #efdcba;
-
+  background: #f0ddbb;
   border: 5px solid var(--ink);
-
-  image-rendering: pixelated;
 }
 
 .wall-decoration {
   position: absolute;
-
   inset: 0 0 28%;
-
-  background:
-    repeating-linear-gradient(
-      90deg,
-      transparent 0 78px,
-      rgba(255, 255, 255, 0.14) 78px 80px
-    );
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 78px,
+    #ffffff24 78px 80px
+  );
 }
-
-
-/* =====================================================
-   9. FLOOR
-   ===================================================== */
 
 .floor {
   position: absolute;
-
   bottom: 0;
   left: 0;
-
   width: 100%;
   height: 29%;
-
-  background:
-    repeating-linear-gradient(
-      90deg,
-      #cda789 0 55px,
-      #ad846f 55px 60px
-    );
-
+  background: repeating-linear-gradient(
+    90deg,
+    #cda789 0 55px,
+    #ad846f 55px 60px
+  );
   border-top: 8px solid #906e62;
 }
 
-
-/* =====================================================
-   10. WINDOW
-   ===================================================== */
+/* WINDOW */
 
 .window {
   position: absolute;
-
   top: 10%;
   left: 7%;
-
   width: 24%;
   height: 39%;
-
-  background:
-    linear-gradient(
-      to bottom,
-      #9dcddd,
-      #d1ebef
-    );
-
-  border: 10px solid #a67d72;
-
-  box-shadow:
-    6px 6px 0 #d5bca1,
-    inset 0 0 0 3px #e2c9ae;
+  background: linear-gradient(#9dcddd, #d1ebef);
+  border: 10px solid #aa8176;
+  box-shadow: 6px 6px 0 #d5bca1;
 }
 
 .window::before,
 .window::after {
   content: "";
-
   position: absolute;
-  background: #a67d72;
+  background: #aa8176;
 }
 
 .window::before {
-  left: 46%;
   top: 0;
-
+  left: 46%;
   width: 9px;
   height: 100%;
 }
@@ -409,46 +266,29 @@ button:disabled {
 .window::after {
   top: 46%;
   left: 0;
-
   width: 100%;
   height: 9px;
 }
 
-
-/* =====================================================
-   11. BLACKBOARD
-   ===================================================== */
+/* BLACKBOARD */
 
 .board {
   position: absolute;
-
   top: 10%;
   right: 8%;
-
-  width: 41%;
-  height: 35%;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   gap: 11px;
-
+  width: 41%;
+  height: 35%;
   background: var(--green);
-
   border: 10px solid #a87f65;
-
-  box-shadow:
-    5px 5px 0 #c7ae91,
-    inset 0 0 0 3px #658476;
-
+  box-shadow: 5px 5px 0 #c7ae91;
   color: #eff6e6;
-
   font-size: 15px;
   font-weight: bold;
-  letter-spacing: 1px;
-
   text-align: center;
 }
 
@@ -459,149 +299,95 @@ button:disabled {
 .board small {
   color: #f7e3b8;
   font-size: 10px;
-  letter-spacing: 1px;
 }
 
-
-/* =====================================================
-   12. TEACHER CHARACTER
-   ===================================================== */
+/* TEACHER */
 
 .teacher {
   position: absolute;
-
   right: 14%;
   bottom: 24%;
-
   z-index: 3;
-
   width: 94px;
   height: 131px;
-
   transform-origin: bottom center;
-
-  transition:
-    transform 0.25s ease,
-    filter 0.25s ease;
+  transition: transform 0.25s, filter 0.25s;
 }
 
 .teacher-ear {
   position: absolute;
-
   top: 2px;
-
   width: 29px;
   height: 35px;
-
   background: #d9b18f;
-
   border: 5px solid var(--ink);
   border-radius: 9px;
 }
 
-.teacher-ear.left {
-  left: 9px;
-}
-
-.teacher-ear.right {
-  right: 9px;
-}
+.teacher-ear.left { left: 9px; }
+.teacher-ear.right { right: 9px; }
 
 .teacher-head {
   position: absolute;
-
   top: 13px;
   left: 15px;
-
   z-index: 2;
-
   width: 65px;
   height: 65px;
-
   background: #ddba91;
-
   border: 6px solid var(--ink);
   border-radius: 16px 16px 20px 20px;
 }
 
 .teacher-face {
   position: absolute;
-
   inset: 0;
-
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity 0.2s;
 }
 
 .teacher-eyes::before,
 .teacher-eyes::after {
   content: "";
-
   position: absolute;
-
   top: 25px;
-
   width: 7px;
   height: 9px;
-
   background: var(--ink);
 }
 
-.teacher-eyes::before {
-  left: 13px;
-}
-
-.teacher-eyes::after {
-  right: 13px;
-}
+.teacher-eyes::before { left: 13px; }
+.teacher-eyes::after { right: 13px; }
 
 .teacher-nose {
   position: absolute;
-
   top: 36px;
   left: 23px;
-
   width: 9px;
   height: 7px;
-
   background: #9b6267;
-  border-radius: 2px;
 }
 
 .teacher-body {
   position: absolute;
-
   left: 8px;
   bottom: 5px;
-
   width: 80px;
   height: 65px;
-
   background: #8ba8a1;
-
   border: 6px solid var(--ink);
   border-radius: 14px 14px 4px 4px;
-
-  box-shadow: inset 0 -10px 0 #75958e;
 }
 
 .teacher-feet {
   position: absolute;
-
   bottom: 0;
   left: 20px;
-
   width: 20px;
   height: 12px;
-
   background: var(--ink);
   box-shadow: 36px 0 var(--ink);
 }
-
-
-/* =====================================================
-   13. TEACHER STATES
-   ===================================================== */
 
 .teacher.facing-away .teacher-head {
   background: #a67a61;
@@ -612,7 +398,7 @@ button:disabled {
 }
 
 .teacher.warning {
-  animation: teacher-shake 0.25s infinite alternate;
+  animation: teacher-shake 0.25s alternate infinite;
 }
 
 .teacher.warning .teacher-head {
@@ -621,427 +407,280 @@ button:disabled {
 
 .teacher.watching {
   transform: translateX(-12px) scale(1.07);
-
   filter: drop-shadow(0 0 10px #e97c79);
-}
-
-.teacher.watching .teacher-face {
-  opacity: 1;
 }
 
 .teacher.watching .teacher-head {
   background: #ddba91;
 }
 
-@keyframes teacher-shake {
-  from {
-    transform: rotate(-3deg);
-  }
-
-  to {
-    transform: rotate(3deg);
-  }
+.teacher.watching .teacher-face {
+  opacity: 1;
 }
 
+@keyframes teacher-shake {
+  from { transform: rotate(-3deg); }
+  to { transform: rotate(3deg); }
+}
 
-/* =====================================================
-   14. NEW GUINEA PIG CHARACTER
-   ===================================================== */
+/* THREE-COLOR GUINEA PIG */
 
 .student {
   --gp-scale: 1;
-
   position: absolute;
-
   left: 38%;
-  bottom: 31%;
-
-  width: 140px;
-  height: 125px;
-
+  bottom: 30%;
   z-index: 4;
-
+  width: 140px;
+  height: 128px;
   transform-origin: bottom center;
-
   image-rendering: pixelated;
-
-  filter:
-    drop-shadow(
-      4px 5px 0 rgba(91, 62, 56, 0.13)
-    );
+  filter: drop-shadow(4px 5px 0 #5b3e381f);
 }
 
+.student::before,
+.student::after {
+  content: none;
+}
 
-/* =====================================================
-   15. SHORT ROUND EARS
-   ===================================================== */
+/* ROUND EARS */
 
 .student .gp-ear {
   position: absolute;
-
-  top: 13px;
-
-  width: 29px;
-  height: 33px;
-
-  background: #e7b99f;
-
-  border: 5px solid var(--gp-outline);
-
-  border-radius: 12px 12px 8px 8px;
-
-  box-shadow: inset 4px 3px 0 #f6d0b8;
-
+  top: 14px;
   z-index: 1;
+  width: 27px;
+  height: 26px;
+  background: #e8b8a3;
+  border: 4px solid var(--gp-outline);
+  border-radius: 10px 10px 7px 7px;
+  box-shadow: inset 4px 3px 0 #f7d3bd;
 }
 
 .student .gp-ear.left {
-  left: 5px;
-  transform: rotate(-10deg);
+  left: 12px;
+  transform: rotate(-6deg);
 }
 
 .student .gp-ear.right {
-  right: 5px;
-  transform: rotate(10deg);
+  right: 12px;
+  transform: rotate(6deg);
 }
 
+/* BODY */
 
-/* =====================================================
-   16. WIDE CHUBBY HEAD
-   ===================================================== */
+.student .gp-body {
+  position: absolute;
+  left: 18px;
+  bottom: 0;
+  z-index: 2;
+  width: 105px;
+  height: 68px;
+  background: var(--gp-cream);
+  border: 5px solid var(--gp-outline);
+  clip-path: polygon(
+    15% 0, 85% 0, 85% 10%, 95% 10%,
+    95% 85%, 85% 85%, 85% 100%,
+    15% 100%, 15% 85%, 5% 85%,
+    5% 10%, 15% 10%
+  );
+}
+
+/* WIDE HEAD */
 
 .student .gp-head {
   position: absolute;
-
-  top: 23px;
+  top: 24px;
   left: 4px;
-
-  width: 132px;
-  height: 96px;
-
-  background:
-    linear-gradient(
-      90deg,
-      var(--gp-brown) 0%,
-      var(--gp-brown) 26%,
-      var(--gp-white) 26%,
-      var(--gp-white) 75%,
-      var(--gp-orange) 75%,
-      var(--gp-orange) 100%
-    );
-
-  border: 5px solid var(--gp-outline);
-
-  border-radius: 0;
-
-  overflow: hidden;
-
-  clip-path: polygon(
-    12% 0,
-    88% 0,
-    88% 6%,
-    95% 6%,
-    95% 18%,
-    100% 18%,
-    100% 83%,
-    94% 83%,
-    94% 94%,
-    84% 94%,
-    84% 100%,
-    16% 100%,
-    16% 94%,
-    6% 94%,
-    6% 83%,
-    0 83%,
-    0 18%,
-    5% 18%,
-    5% 6%,
-    12% 6%
-  );
-
-  box-shadow: none;
-
   z-index: 3;
+  width: 132px;
+  height: 100px;
+  overflow: hidden;
+  border: 5px solid var(--gp-outline);
+  background: linear-gradient(
+    90deg,
+    var(--gp-brown) 0 25%,
+    var(--gp-white) 25% 73%,
+    var(--gp-orange) 73% 100%
+  );
+  clip-path: polygon(
+    12% 0, 88% 0, 88% 5%, 95% 5%,
+    95% 15%, 100% 15%, 100% 81%,
+    95% 81%, 95% 92%, 84% 92%,
+    84% 100%, 16% 100%, 16% 92%,
+    5% 92%, 5% 81%, 0 81%,
+    0 15%, 5% 15%, 5% 5%, 12% 5%
+  );
 }
-
-
-/* =====================================================
-   17. ASYMMETRIC FUR PATCH
-   ===================================================== */
 
 .student .gp-patch {
   position: absolute;
-
   top: 0;
-  left: 0;
-  right: auto;
-
-  width: 42px;
-  height: 36px;
-
-  background: #8e7268;
-
-  border-radius: 0;
-
+  left: 1px;
+  width: 39px;
+  height: 39px;
+  background: #897168;
   clip-path: polygon(
-    0 0,
-    100% 0,
-    100% 48%,
-    72% 48%,
-    72% 75%,
-    45% 75%,
-    45% 100%,
-    0 100%
+    0 0, 100% 0, 100% 45%,
+    76% 45%, 76% 70%,
+    47% 70%, 47% 100%, 0 100%
   );
 }
 
-
-/* =====================================================
-   18. SMALL PIXEL EYES
-   ===================================================== */
+/* EYES */
 
 .student .gp-eye {
   position: absolute;
-
-  top: 43px;
-
+  top: 44px;
+  z-index: 4;
   width: 7px;
   height: 9px;
-
-  background: #62443e;
-
+  background: var(--gp-eye);
   border-radius: 0;
-  box-shadow: none;
-
-  z-index: 5;
 }
 
-.student .gp-eye.left {
-  left: 41px;
-}
+.student .gp-eye.left { left: 39px; }
+.student .gp-eye.right { right: 39px; }
 
-.student .gp-eye.right {
-  right: 41px;
-}
-
-.student .gp-eye::after {
-  display: none;
-}
-
-
-/* =====================================================
-   19. TINY NOSE AND MOUTH
-   ===================================================== */
+/* NOSE AND MOUTH */
 
 .student .gp-nose {
   position: absolute;
-
-  top: 52px;
-  left: 56px;
-
+  top: 53px;
+  left: 57px;
+  z-index: 5;
   width: 9px;
   height: 6px;
-
-  background: #91645d;
-
-  border-radius: 0;
-
-  z-index: 6;
+  background: #906963;
 }
 
 .student .gp-nose::after {
   content: "";
-
   position: absolute;
-
   top: 6px;
   left: 3px;
-
   width: 3px;
-  height: 12px;
-
-  background: #76524a;
+  height: 11px;
+  background: #76534e;
 }
 
 .student .gp-nose::before {
   content: "";
-
   position: absolute;
-
-  top: 10px;
+  top: 12px;
   left: -3px;
-
   width: 15px;
-  height: 8px;
-
-  border-bottom: 3px solid #76524a;
-  border-radius: 0 0 7px 7px;
+  height: 6px;
+  border-bottom: 3px solid #76534e;
+  border-radius: 0 0 6px 6px;
 }
 
-
-/* =====================================================
-   20. SOFT PINK CHEEKS
-   ===================================================== */
+/* CHEEKS */
 
 .student .gp-cheek {
   position: absolute;
-
-  top: 58px;
-
+  top: 62px;
+  z-index: 4;
   width: 15px;
   height: 9px;
-
   background: var(--gp-pink);
-
-  opacity: 0.55;
-
-  border-radius: 0;
-
-  z-index: 4;
-
-  transition: transform 0.15s ease;
+  opacity: 0.65;
+  transform-origin: center;
 }
 
-.student .gp-cheek.left {
-  left: 26px;
-}
+.student .gp-cheek.left { left: 25px; }
+.student .gp-cheek.right { right: 25px; }
 
-.student .gp-cheek.right {
-  right: 26px;
-}
-
-
-/* =====================================================
-   21. CHUBBY BODY
-   ===================================================== */
-
-.student .gp-body {
-  position: absolute;
-
-  left: 17px;
-  bottom: 0;
-
-  width: 108px;
-  height: 65px;
-
-  background: var(--gp-cream);
-
-  border: 5px solid var(--gp-outline);
-  border-radius: 0;
-
-  box-shadow: none;
-
-  clip-path: polygon(
-    15% 0,
-    85% 0,
-    85% 12%,
-    95% 12%,
-    95% 85%,
-    85% 85%,
-    85% 100%,
-    15% 100%,
-    15% 85%,
-    5% 85%,
-    5% 12%,
-    15% 12%
-  );
-}
-
-
-/* =====================================================
-   22. SMALL PAWS
-   ===================================================== */
+/* PAWS */
 
 .student .gp-paws {
   position: absolute;
-
-  left: 28px;
   bottom: 0;
-
+  left: 28px;
+  z-index: 6;
   width: 21px;
   height: 13px;
-
   background: #f3dfc5;
-
   border: 3px solid var(--gp-outline);
-  border-radius: 0;
-
   box-shadow:
     57px 0 0 -1px #f3dfc5,
     57px 0 0 2px var(--gp-outline);
-
-  z-index: 6;
 }
 
-
-/* =====================================================
-   23. BASIC CHARACTER REACTIONS
-   ===================================================== */
+/* CHARACTER STATES */
 
 .student.happy {
-  animation: gp-happy-jump 0.35s ease;
+  animation: gp-happy-jump 0.4s ease;
 }
 
 .student.scared {
-  animation: gp-shock 0.38s ease-in-out 2;
+  animation: gp-shock 0.35s ease-in-out 2;
+}
+
+.student.scared::after {
+  content: "!";
+  position: absolute;
+  right: -12px;
+  top: -16px;
+  z-index: 16;
+  font-size: 36px;
+  font-weight: bold;
+  color: var(--danger);
+}
+
+.student.scared .gp-eye {
+  top: 37px;
+  width: 11px;
+  height: 16px;
+}
+
+.student.scared .gp-nose::after {
+  left: 0;
+  top: 9px;
+  width: 9px;
+  height: 13px;
+}
+
+.student.scared .gp-nose::before {
+  display: none;
 }
 
 @keyframes gp-happy-jump {
   0%, 100% {
-    transform:
-      scale(var(--gp-scale))
-      translateY(0);
+    transform: scale(var(--gp-scale)) translateY(0);
   }
-
   50% {
-    transform:
-      scale(var(--gp-scale))
-      translateY(-17px);
+    transform: scale(var(--gp-scale)) translateY(-18px);
   }
 }
 
 @keyframes gp-shock {
   0%, 100% {
-    transform:
-      scale(var(--gp-scale))
-      translateX(0);
+    transform: scale(var(--gp-scale));
   }
-
   25% {
     transform:
       scale(var(--gp-scale))
-      translateX(-10px)
-      rotate(-7deg);
+      translateX(-9px) rotate(-6deg);
   }
-
   75% {
     transform:
       scale(var(--gp-scale))
-      translateX(10px)
-      rotate(7deg);
+      translateX(9px) rotate(6deg);
   }
 }
 
-
-/* =====================================================
-   24. CLASSROOM DESK
-   ===================================================== */
+/* DESK - IN FRONT OF BODY */
 
 .desk {
   position: absolute;
-
   bottom: 11%;
   left: 22%;
-
   z-index: 5;
-
   width: 56%;
   height: 80px;
-
   background: #c48f70;
-
   border: 8px solid var(--wood-dark);
-
   box-shadow:
     0 14px 0 #a47360,
     0 19px 0 #805d56;
@@ -1049,535 +688,440 @@ button:disabled {
 
 .desk-shine {
   position: absolute;
-
   top: 12px;
   left: 10px;
   right: 10px;
-
   height: 5px;
-
-  background:
-    rgba(255, 235, 196, 0.35);
+  background: #ffebc459;
 }
 
-
-/* =====================================================
-   25. COLLECTIBLE ITEMS
-   ===================================================== */
+/* =========================================================
+   TRANSPARENT PIXEL COLLECTIBLE
+   ========================================================= */
 
 .collectible {
   position: absolute;
-
-  z-index: 9;
-
-  width: 65px;
-  height: 65px;
-
+  z-index: 15;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  padding: 5px;
-
-  border: 4px solid var(--ink);
-  border-radius: 5px;
-
-  background: #fff0c9;
-
-  box-shadow: 4px 4px 0 #9e786b;
-
-  font-size: 34px;
-
-  animation: collectible-pop 0.22s ease-out;
-
-  transition:
-    background 0.15s ease,
-    transform 0.15s ease;
-}
-
-.collectible span {
-  pointer-events: none;
-}
-
-.collectible[hidden] {
-  display: none !important;
+  width: 66px;
+  height: 66px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  appearance: none;
+  -webkit-appearance: none;
+  animation: pixel-item-idle 1.1s ease-in-out infinite;
 }
 
 .collectible:not(:disabled):hover {
-  transform: scale(1.1);
-  background: #fff9db;
+  background: transparent;
+  filter: drop-shadow(0 5px 0 #b48a7255);
+  scale: 1.13;
 }
 
 .collectible:not(:disabled):active {
-  transform: scale(0.95);
+  scale: 0.9;
 }
 
-@keyframes collectible-pop {
-  from {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+#collectible-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
-
-/* =====================================================
-   26. ITEM REACTION ELEMENTS
-   ===================================================== */
-
-.reaction-prop,
-.reaction-decoration {
-  position: absolute;
-
-  z-index: 15;
-
+.pixel-item {
   display: block;
-
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  image-rendering: pixelated;
   pointer-events: none;
   user-select: none;
 }
 
-.reaction-prop {
-  top: 35%;
-  right: -4%;
+@keyframes pixel-item-idle {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -6px; }
+}
 
-  font-size: 32px;
-  line-height: 1;
+/* =========================================================
+   FOREGROUND INTERACTION LAYER
+   ABOVE THE DESK
+   ========================================================= */
 
+.interaction-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.foreground-prop {
+  position: absolute;
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  pointer-events: none;
   transform-origin: center;
 }
 
-.reaction-decoration {
-  top: -24%;
-  right: -20%;
-
+.foreground-sparkle {
+  position: absolute;
   font-size: 28px;
   line-height: 1;
-
-  filter: drop-shadow(2px 2px 0 #fff1e4);
+  pointer-events: none;
+  animation: sparkle-rise 1.1s ease-out forwards;
 }
 
+@keyframes sparkle-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.4);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-12px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-47px) scale(0.6);
+  }
+}
 
-/* =====================================================
-   27. CARROT INTERACTION
-   ===================================================== */
+/* CARROT FLIES TO MOUTH */
+
+.interaction-layer[data-item="carrot"] .foreground-prop {
+  animation: carrot-to-mouth 0.9s ease-in forwards;
+}
+
+@keyframes carrot-to-mouth {
+  0% {
+    opacity: 1;
+    transform: translate(55px, -50px) rotate(38deg) scale(1.1);
+  }
+  65% {
+    opacity: 1;
+    transform: translate(-20px, 0) rotate(-20deg) scale(0.85);
+  }
+  85% {
+    opacity: 1;
+    transform: translate(-27px, 8px) scale(0.55);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-30px, 8px) scale(0.1);
+  }
+}
+
+/* CARROT CHEWING */
 
 .student.gp-eat-carrot {
-  animation: gp-carrot-bounce 0.3s ease-in-out 5;
+  animation: gp-carrot-chew 0.26s ease-in-out 6;
 }
 
-.student.gp-eat-carrot .gp-cheek {
-  transform: scale(1.5);
+.student.gp-eat-carrot .gp-cheek.left {
+  animation: cheek-left-puff 0.36s ease-in-out 4;
+}
 
-  background: #ee999b;
-  opacity: 0.9;
+.student.gp-eat-carrot .gp-cheek.right {
+  animation: cheek-right-puff 0.36s ease-in-out 4;
+  animation-delay: 0.18s;
 }
 
 .student.gp-eat-carrot .gp-nose::after {
-  top: 7px;
-  left: 1px;
-
   width: 8px;
   height: 9px;
-
-  background: #814e4d;
+  top: 8px;
+  left: 1px;
 }
 
-.student.gp-eat-carrot .reaction-prop {
-  animation:
-    gp-food-to-mouth 0.6s ease-in forwards;
-}
-
-.student.gp-eat-carrot .reaction-decoration {
-  animation:
-    gp-heart-float 1.3s ease-out forwards;
-}
-
-@keyframes gp-carrot-bounce {
+@keyframes gp-carrot-chew {
   0%, 100% {
-    transform:
-      scale(var(--gp-scale))
-      translateY(0);
+    transform: scale(var(--gp-scale));
   }
-
   50% {
     transform:
       scale(var(--gp-scale))
-      translateY(-7px);
+      translateY(3px);
   }
 }
 
-@keyframes gp-food-to-mouth {
+@keyframes cheek-left-puff {
+  0%, 100% {
+    transform: translateX(0) scale(1);
+  }
+  50% {
+    transform: translateX(-8px) scale(2.1, 1.7);
+    background: #f19caa;
+    opacity: 1;
+  }
+}
+
+@keyframes cheek-right-puff {
+  0%, 100% {
+    transform: translateX(0) scale(1);
+  }
+  50% {
+    transform: translateX(8px) scale(2.1, 1.7);
+    background: #f19caa;
+    opacity: 1;
+  }
+}
+
+/* COOKIE MOVEMENT */
+
+.interaction-layer[data-item="cookie"] .foreground-prop {
+  animation: cookie-to-mouth 0.7s ease-in forwards;
+}
+
+@keyframes cookie-to-mouth {
   0% {
     opacity: 1;
-
-    transform:
-      translate(30px, -25px)
-      rotate(30deg);
+    transform: translate(50px, -22px) scale(1);
   }
-
-  75% {
+  80% {
     opacity: 1;
-
-    transform:
-      translate(-35px, 12px)
-      scale(0.8);
+    transform: translate(-27px, 6px) scale(0.65);
   }
-
   100% {
     opacity: 0;
-
-    transform:
-      translate(-38px, 13px)
-      scale(0.2);
+    transform: translate(-30px, 8px) scale(0.1);
   }
 }
-
-@keyframes gp-heart-float {
-  0% {
-    opacity: 0;
-
-    transform:
-      translateY(15px)
-      scale(0.5);
-  }
-
-  40% {
-    opacity: 1;
-
-    transform:
-      translateY(-10px)
-      scale(1.2);
-  }
-
-  100% {
-    opacity: 0;
-
-    transform:
-      translateY(-35px)
-      scale(1);
-  }
-}
-
-
-/* =====================================================
-   28. COOKIE INTERACTION
-   ===================================================== */
 
 .student.gp-eat-cookie {
-  animation:
-    gp-cookie-wiggle 0.22s ease-in-out 6;
-}
-
-.student.gp-eat-cookie .gp-cheek {
-  transform: scale(1.5);
-
-  background: #ee999b;
-  opacity: 0.9;
-}
-
-.student.gp-eat-cookie .gp-nose::after {
-  top: 7px;
-  left: 1px;
-
-  width: 8px;
-  height: 9px;
-
-  background: #814e4d;
-}
-
-.student.gp-eat-cookie .reaction-prop {
-  animation:
-    gp-cookie-bite 0.65s ease-in forwards;
-}
-
-.student.gp-eat-cookie .reaction-decoration {
-  animation:
-    gp-cookie-crumbs 1.3s ease-out forwards;
+  animation: gp-cookie-wiggle 0.19s ease-in-out 8;
 }
 
 @keyframes gp-cookie-wiggle {
   0%, 100% {
     transform:
       scale(var(--gp-scale))
-      rotate(-4deg);
+      rotate(-5deg);
   }
-
   50% {
     transform:
       scale(var(--gp-scale))
-      rotate(4deg);
+      rotate(5deg);
   }
 }
 
-@keyframes gp-cookie-bite {
-  0% {
-    opacity: 1;
+.student.gp-eat-cookie .gp-eye {
+  top: 47px;
+  width: 13px;
+  height: 4px;
+}
 
-    transform:
-      translate(24px, -15px)
-      scale(1);
+.student.gp-eat-cookie .gp-eye.left {
+  left: 36px;
+}
+
+.student.gp-eat-cookie .gp-eye.right {
+  right: 36px;
+}
+
+.student.gp-eat-cookie .gp-cheek {
+  animation: cookie-cheek-puff 0.3s ease-in-out 5;
+}
+
+@keyframes cookie-cheek-puff {
+  0%, 100% {
+    transform: scale(1);
   }
-
-  70% {
-    opacity: 1;
-
-    transform:
-      translate(-30px, 12px)
-      scale(0.7);
-  }
-
-  100% {
-    opacity: 0;
-
-    transform:
-      translate(-32px, 12px)
-      scale(0.2);
+  50% {
+    transform: scale(1.7, 1.5);
   }
 }
 
-@keyframes gp-cookie-crumbs {
-  0% {
-    opacity: 0;
+.pixel-crumb {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #d89747;
+  border: 2px solid #98603b;
+  pointer-events: none;
+  animation: crumb-burst 0.8s ease-out forwards;
+}
 
-    transform: translate(0, 0);
-  }
-
-  35% {
+@keyframes crumb-burst {
+  from {
     opacity: 1;
-
-    transform: translate(-24px, 10px);
+    transform: translate(0, 0) rotate(0);
   }
-
-  100% {
+  to {
     opacity: 0;
-
     transform:
-      translate(-35px, 75px)
-      rotate(90deg);
+      translate(var(--dx), var(--dy))
+      rotate(100deg);
   }
 }
 
-
-/* =====================================================
-   29. DOODLE INTERACTION
-   ===================================================== */
+/* DOODLE */
 
 .student.gp-draw {
-  animation:
-    gp-drawing-body 0.4s ease-in-out 4;
+  animation: gp-drawing-body 0.32s ease-in-out 5;
 }
 
 .student.gp-draw .gp-eye {
-  top: 46px;
+  top: 47px;
   height: 5px;
-}
-
-.student.gp-draw .gp-paws {
-  animation:
-    gp-pencil-paw 0.18s alternate infinite;
-}
-
-.student.gp-draw .reaction-prop {
-  right: 2%;
-  top: 47%;
-
-  animation:
-    gp-pencil-move 0.25s alternate infinite;
-}
-
-.student.gp-draw .reaction-decoration {
-  top: 60%;
-  right: -30%;
-
-  animation:
-    gp-doodle-appear 1.4s ease-out forwards;
 }
 
 @keyframes gp-drawing-body {
   0%, 100% {
     transform:
       scale(var(--gp-scale))
-      rotate(-3deg);
+      rotate(-2deg);
   }
-
   50% {
     transform:
       scale(var(--gp-scale))
-      rotate(3deg);
+      rotate(2deg);
   }
 }
 
-@keyframes gp-pencil-paw {
+.interaction-layer[data-item="doodle"] .foreground-prop {
+  animation: pencil-writing 0.18s ease-in-out alternate infinite;
+}
+
+@keyframes pencil-writing {
   from {
-    transform: translateY(-5px);
+    transform: translate(-50%, -50%) rotate(-28deg) translateY(-5px);
   }
-
   to {
-    transform: translateY(5px);
+    transform: translate(-50%, -50%) rotate(16deg) translateY(5px);
   }
 }
 
-@keyframes gp-pencil-move {
+.foreground-doodle-paper {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 102px;
+  height: 82px;
+  padding: 7px;
+  background: #fff8e8;
+  border: 4px solid #8b6861;
+  box-shadow: 4px 4px 0 #a9806e;
+  transform: translate(-50%, -50%) rotate(-6deg);
+  overflow: hidden;
+}
+
+.foreground-doodle-paper img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  animation: draw-pixel-flower 1.5s steps(12, end) both;
+}
+
+@keyframes draw-pixel-flower {
   from {
-    transform:
-      rotate(-32deg)
-      translateY(-7px);
+    clip-path: inset(0 100% 0 0);
   }
-
   to {
-    transform:
-      rotate(20deg)
-      translateY(5px);
+    clip-path: inset(0 0 0 0);
   }
 }
 
-@keyframes gp-doodle-appear {
-  0% {
-    opacity: 0;
-
-    transform:
-      scale(0.2)
-      rotate(-25deg);
-  }
-
-  45% {
-    opacity: 1;
-
-    transform:
-      scale(1.4)
-      rotate(10deg);
-  }
-
-  85% {
-    opacity: 1;
-    transform: scale(1.1);
-  }
-
-  100% {
-    opacity: 0;
-    transform: scale(1);
-  }
-}
-
-
-/* =====================================================
-   30. STAR INTERACTION
-   ===================================================== */
+/* STAR JUMP */
 
 .student.gp-star {
-  animation:
-    gp-star-jump 0.45s ease-in-out 3;
+  animation: gp-star-jump 0.5s ease-in-out 3;
 }
 
 .student.gp-star .gp-eye {
-  top: 46px;
-  height: 5px;
-}
-
-.student.gp-star .gp-nose::after {
-  top: 8px;
-  left: -2px;
-
-  width: 14px;
-  height: 7px;
-
-  background: #9a6262;
-}
-
-.student.gp-star .reaction-prop {
-  top: -35%;
-  right: -5%;
-
-  font-size: 40px;
-
-  animation:
-    gp-star-spin 1.2s ease-out forwards;
-}
-
-.student.gp-star .reaction-decoration {
-  left: -25%;
-  right: auto;
-  top: -28%;
-
-  font-size: 36px;
-
-  animation:
-    gp-star-sparkle 0.45s alternate 3;
+  top: 47px;
+  width: 12px;
+  height: 4px;
 }
 
 @keyframes gp-star-jump {
   0%, 100% {
-    transform:
-      scale(var(--gp-scale))
-      translateY(0);
+    transform: scale(var(--gp-scale)) translateY(0);
   }
-
   45% {
     transform:
       scale(var(--gp-scale))
-      translateY(-28px);
+      translateY(-35px);
   }
 }
 
-@keyframes gp-star-spin {
+.interaction-layer[data-item="star"] .foreground-prop {
+  animation: star-orbit 1.3s ease-out forwards;
+}
+
+@keyframes star-orbit {
   0% {
     opacity: 0;
-
     transform:
-      rotate(0deg)
-      scale(0.3);
+      translate(-50%, -50%)
+      scale(0.3) rotate(0);
   }
-
   35% {
     opacity: 1;
-
     transform:
-      rotate(150deg)
-      scale(1.35);
+      translate(-80%, -100%)
+      scale(1.35) rotate(140deg);
   }
-
-  85% {
+  75% {
     opacity: 1;
-
     transform:
-      rotate(320deg)
-      scale(1);
+      translate(20%, -150%)
+      scale(1.1) rotate(260deg);
   }
-
   100% {
     opacity: 0;
-
     transform:
-      rotate(360deg)
-      scale(0.5);
+      translate(-50%, -210%)
+      scale(0.5) rotate(360deg);
   }
 }
 
-@keyframes gp-star-sparkle {
-  from {
-    opacity: 0.2;
-    transform: scale(0.6);
-  }
+.pixel-twinkle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #ffe994;
+  box-shadow:
+    0 -8px 0 -2px #fff1b5,
+    0 8px 0 -2px #fff1b5,
+    -8px 0 0 -2px #fff1b5,
+    8px 0 0 -2px #fff1b5;
+  animation: twinkle-out 1.2s ease-out forwards;
+}
 
-  to {
+@keyframes twinkle-out {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) rotate(0);
+  }
+  40% {
     opacity: 1;
-    transform: scale(1.5);
+    transform: scale(1.25) rotate(45deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.3) rotate(90deg);
   }
 }
 
-
-/* =====================================================
-   31. WARNING / HIDING INTERACTION
-   ===================================================== */
+/* WARNING AND HIDING */
 
 .student.gp-hide {
-  animation:
-    gp-hide-action 0.4s ease-in-out;
+  animation: gp-hide 0.4s ease-in-out;
 }
 
 .student.gp-hide .gp-eye {
@@ -1585,13 +1129,10 @@ button:disabled {
   height: 4px;
 }
 
-@keyframes gp-hide-action {
+@keyframes gp-hide {
   0%, 100% {
-    transform:
-      scale(var(--gp-scale))
-      translateY(0);
+    transform: scale(var(--gp-scale));
   }
-
   50% {
     transform:
       scale(var(--gp-scale))
@@ -1599,68 +1140,17 @@ button:disabled {
   }
 }
 
-
-/* =====================================================
-   32. CAUGHT / SCARED EXPRESSION
-   ===================================================== */
-
-.student.scared .gp-eye {
-  top: 37px;
-
-  width: 11px;
-  height: 16px;
-}
-
-.student.scared .gp-nose::after {
-  top: 9px;
-  left: 0;
-
-  width: 9px;
-  height: 13px;
-
-  background: #7e4d50;
-}
-
-.student.scared .gp-nose::before {
-  display: none;
-}
-
-.student.scared::after {
-  content: "!";
-
-  position: absolute;
-
-  right: -17px;
-  top: -20px;
-
-  z-index: 16;
-
-  font-size: 42px;
-  font-weight: bold;
-
-  color: #d95f6d;
-}
-
-
-/* =====================================================
-   33. FLOATING FEEDBACK EFFECT
-   ===================================================== */
+/* SCORE EFFECT */
 
 .effect {
   position: absolute;
-
-  z-index: 15;
-
-  left: 50%;
+  z-index: 18;
   top: 45%;
-
+  left: 50%;
+  opacity: 0;
+  pointer-events: none;
   font-size: 54px;
   font-weight: bold;
-
-  pointer-events: none;
-  opacity: 0;
-
-  transform: translate(-50%, 0);
 }
 
 .effect.pop {
@@ -1670,193 +1160,93 @@ button:disabled {
 @keyframes effect-pop {
   0% {
     opacity: 0;
-
-    transform:
-      translate(-50%, 12px)
-      scale(0.5);
+    transform: translate(-50%, 12px) scale(0.5);
   }
-
   40% {
     opacity: 1;
-
-    transform:
-      translate(-50%, -15px)
-      scale(1.2);
+    transform: translate(-50%, -15px) scale(1.2);
   }
-
-  75% {
-    opacity: 1;
-
-    transform:
-      translate(-50%, -30px)
-      scale(1.1);
-  }
-
   100% {
     opacity: 0;
-
-    transform:
-      translate(-50%, -50px)
-      scale(1);
+    transform: translate(-50%, -50px) scale(1);
   }
 }
 
-
-/* =====================================================
-   34. GAME OVERLAY
-   ===================================================== */
+/* GAME OVERLAY */
 
 .overlay {
   position: absolute;
-
   inset: 0;
-
   z-index: 25;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   padding: 12px;
-
-  background: rgba(50, 39, 45, 0.68);
-}
-
-.overlay[hidden] {
-  display: none !important;
+  background: #32272dae;
 }
 
 .overlay-card {
   width: min(100%, 370px);
-
   padding: 26px 18px;
-
   background: var(--cream);
-
   border: 5px solid var(--ink);
-
   box-shadow: 6px 6px 0 #c39ba3;
-
   text-align: center;
-
-  animation: overlay-appear 0.25s ease-out;
 }
 
 .overlay-card h2 {
   margin: 0 0 15px;
-
   color: var(--rose);
-
   font-size: 24px;
-  font-weight: 900;
-  letter-spacing: 1px;
 }
 
 .overlay-card p {
   margin: 12px 0;
-
   font-size: 13px;
   line-height: 1.8;
-
   white-space: pre-line;
 }
-
-@keyframes overlay-appear {
-  from {
-    opacity: 0;
-
-    transform:
-      translateY(18px)
-      scale(0.95);
-  }
-
-  to {
-    opacity: 1;
-
-    transform:
-      translateY(0)
-      scale(1);
-  }
-}
-
-
-/* =====================================================
-   35. PRIMARY BUTTON
-   ===================================================== */
 
 .primary-button {
   min-width: 160px;
   min-height: 52px;
-
   margin-top: 12px;
   padding: 13px 24px;
-
   background: #efb5bd;
   color: var(--ink);
-
   border: 4px solid var(--ink);
-
   box-shadow: 4px 4px 0 #9e7988;
-
   font-size: 14px;
   font-weight: bold;
-
-  transition:
-    background 0.15s ease,
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
 }
 
 .primary-button:hover {
   background: #f8cad0;
-
-  transform: translateY(-2px);
-
-  box-shadow: 4px 6px 0 #9e7988;
 }
 
-.primary-button:active {
-  transform: translate(4px, 4px);
-  box-shadow: none;
-}
-
-
-/* =====================================================
-   36. GAME FEEDBACK MESSAGE
-   ===================================================== */
+/* FEEDBACK */
 
 .feedback {
   display: flex;
   align-items: center;
   justify-content: center;
-
   min-height: 78px;
-
   margin-top: 18px;
   padding: 18px;
-
   background: #f6e5d3;
-
   border: 3px dashed #b79190;
-
-  color: #745b66;
-
   text-align: center;
   font-size: 13px;
   font-weight: bold;
   line-height: 1.8;
 }
 
-
-/* =====================================================
-   37. CONTROL BUTTONS
-   ===================================================== */
+/* CONTROLS */
 
 .controls {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-
   gap: 12px;
   margin-top: 18px;
 }
@@ -1864,103 +1254,47 @@ button:disabled {
 .controls button {
   min-width: 140px;
   min-height: 48px;
-
   padding: 11px 15px;
-
   background: #d7dce9;
   color: var(--ink);
-
   border: 3px solid var(--ink);
-
   box-shadow: 3px 3px 0 #a9a0ae;
-
   font-size: 13px;
   font-weight: bold;
-
-  transition:
-    background 0.15s ease,
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
 }
 
 .controls button:not(:disabled):hover {
   background: #e6e8f3;
-
-  transform: translateY(-2px);
-
-  box-shadow: 3px 5px 0 #a9a0ae;
 }
 
-.controls button:not(:disabled):active {
-  transform: translate(3px, 3px);
-  box-shadow: none;
-}
-
-
-/* =====================================================
-   38. FOOTER
-   ===================================================== */
+/* FOOTER */
 
 footer {
   margin-top: 26px;
   padding-top: 12px;
-
   border-top: 2px dashed #e0c9cc;
-
   text-align: center;
-
   color: #aa8596;
-
   font-size: 10px;
   line-height: 1.6;
-  letter-spacing: 1px;
 }
 
-footer p {
-  margin: 6px 0;
-}
-
-
-/* =====================================================
-   39. TABLET RESPONSIVENESS
-   ===================================================== */
+/* RESPONSIVE */
 
 @media (max-width: 800px) {
-  .game {
-    padding: 18px;
-  }
-
-  .scene {
-    height: 350px;
-  }
-
-  .teacher {
-    right: 11%;
-  }
-
-  .student {
-    left: 35%;
-  }
-
-  .board {
-    font-size: 13px;
-  }
+  .game { padding: 18px; }
+  .scene { height: 350px; }
+  .teacher { right: 11%; }
+  .student { left: 35%; }
+  .board { font-size: 13px; }
 }
 
-
-/* =====================================================
-   40. MOBILE RESPONSIVENESS
-   ===================================================== */
-
 @media (max-width: 600px) {
-  body {
-    padding: 10px;
-  }
+  body { padding: 10px; }
 
   .game {
     padding: 12px;
     border-width: 4px;
-
     box-shadow: 4px 4px 0 var(--shadow);
   }
 
@@ -1969,105 +1303,49 @@ footer p {
     letter-spacing: 1px;
   }
 
-  .eyebrow {
-    font-size: 10px;
-  }
+  .eyebrow { font-size: 10px; }
+  .subtitle { font-size: 12px; }
+  .instructions { padding: 12px 9px; }
+  .instructions p { font-size: 11px; }
 
-  .subtitle {
-    font-size: 12px;
-  }
-
-  .instructions {
-    padding: 12px 9px;
-  }
-
-  .instructions h2 {
-    font-size: 13px;
-  }
-
-  .instructions p {
-    font-size: 11px;
-  }
-
-  .hud {
-    gap: 6px;
-    margin: 15px 0;
-  }
-
-  .hud-item {
-    padding: 9px 3px;
-    gap: 7px;
-  }
-
-  .hud-item span {
-    font-size: 10px;
-    letter-spacing: 0;
-  }
-
-  .hud-item strong {
-    font-size: 22px;
-  }
+  .hud { gap: 6px; }
+  .hud-item { padding: 9px 3px; gap: 7px; }
+  .hud-item span { font-size: 10px; }
+  .hud-item strong { font-size: 22px; }
 
   .teacher-status {
     padding: 10px 8px;
     font-size: 11px;
   }
 
-  .scene {
-    height: 300px;
-  }
+  .scene { height: 300px; }
 
-  .window {
-    border-width: 6px;
-  }
-
-  .window::before {
-    width: 6px;
-  }
-
-  .window::after {
-    height: 6px;
-  }
+  .window { border-width: 6px; }
+  .window::before { width: 6px; }
+  .window::after { height: 6px; }
 
   .board {
-    font-size: 11px;
     gap: 7px;
     border-width: 6px;
+    font-size: 11px;
   }
 
-  .board small {
-    font-size: 8px;
-  }
+  .board small { font-size: 8px; }
 
   .teacher {
     right: 7%;
     transform: scale(0.72);
-
-    transform-origin: bottom center;
   }
 
   .teacher.watching {
-    transform:
-      translateX(-8px)
-      scale(0.77);
+    transform: translateX(-8px) scale(0.77);
   }
 
   .student {
     --gp-scale: 0.72;
-
-    left: 27%;
-    bottom: 31%;
-
+    left: 28%;
+    bottom: 30%;
     transform: scale(0.72);
-    transform-origin: bottom center;
-  }
-
-  .reaction-prop {
-    font-size: 28px;
-  }
-
-  .reaction-decoration {
-    font-size: 25px;
   }
 
   .desk {
@@ -2078,102 +1356,50 @@ footer p {
   .collectible {
     width: 54px;
     height: 54px;
-
-    padding: 3px;
-    font-size: 27px;
   }
 
-  .effect {
-    font-size: 40px;
+  .pixel-item {
+    width: 46px;
+    height: 46px;
   }
 
-  .overlay-card {
-    padding: 18px 12px;
+  .foreground-prop {
+    width: 45px;
+    height: 45px;
   }
 
-  .overlay-card h2 {
-    font-size: 20px;
+  .foreground-doodle-paper {
+    width: 79px;
+    height: 66px;
   }
 
-  .overlay-card p {
-    font-size: 11px;
-  }
+  .effect { font-size: 40px; }
 
-  .primary-button {
-    min-width: 130px;
-    min-height: 46px;
-
-    font-size: 12px;
-  }
+  .overlay-card { padding: 18px 12px; }
+  .overlay-card h2 { font-size: 20px; }
+  .overlay-card p { font-size: 11px; }
 
   .feedback {
     min-height: 72px;
     padding: 12px;
-
     font-size: 12px;
   }
 
-  .controls {
-    gap: 8px;
-  }
+  .controls { gap: 8px; }
 
   .controls button {
     flex: 1;
-
     min-width: 90px;
-    min-height: 46px;
-
     padding: 8px 5px;
     font-size: 11px;
   }
-
-  footer {
-    font-size: 9px;
-  }
 }
-
-
-/* =====================================================
-   41. VERY SMALL SCREENS
-   ===================================================== */
 
 @media (max-width: 380px) {
-  .header h1 {
-    font-size: 24px;
-  }
-
-  .scene {
-    height: 270px;
-  }
-
-  .board {
-    font-size: 9px;
-  }
-
-  .board small {
-    font-size: 7px;
-  }
-
-  .hud-item strong {
-    font-size: 19px;
-  }
-
-  .student {
-    left: 23%;
-  }
-
-  .collectible {
-    width: 48px;
-    height: 48px;
-
-    font-size: 24px;
-  }
+  .header h1 { font-size: 24px; }
+  .scene { height: 270px; }
+  .student { left: 23%; }
 }
-
-
-/* =====================================================
-   42. ACCESSIBILITY
-   ===================================================== */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -2182,6 +1408,9 @@ footer p {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  }
+
+  .foreground-doodle-paper img {
+    clip-path: none !important;
   }
 }

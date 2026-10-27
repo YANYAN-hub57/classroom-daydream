@@ -1,1967 +1,1142 @@
 
 "use strict";
 
-/*
-====================================================
- CLASSROOM DAYDREAM V2.1
- SD5913 - Assignment 3
+/* =========================================================
+   CLASSROOM DAYDREAM V2.6
+   COMPLETE SCRIPT.JS
+   Pixel items and expressive character reactions
+   ========================================================= */
 
- EXPRESSIVE GUINEA PIG EDITION
-
- Main features:
- - 60-second classroom challenge
- - Red Light / Green Light mechanics
- - Random collectible objects
- - Four unique character reactions
- - Teacher warning and hiding
- - Caught detection
- - Sound effects
- - Pause / Resume / Restart
- - Keyboard accessibility
- - Interruption handling
-====================================================
-*/
-
-
-// ==================================================
-// 1. GAME CONFIGURATION
-// ==================================================
+/* CONFIGURATION */
 
 const CONFIG = {
-
   duration: 60,
-
   targetScore: 8,
-
   maxCaught: 3,
-
   tickRate: 50,
-
   itemLifetime: 1900,
-
-  itemSpawnMin: 250,
-
-  itemSpawnMax: 650,
-
+  itemSpawnMin: 350,
+  itemSpawnMax: 750,
   safeMin: 2800,
-
   safeMax: 4600,
-
   warningMin: 900,
-
   warningMax: 1400,
-
   watchingMin: 1400,
-
   watchingMax: 2200
-
 };
 
+/* =========================================================
+   1. PIXEL ART
+   "." = transparent
+   Other letters = palette colors
+   ========================================================= */
 
-// ==================================================
-// 2. COLLECTIBLE ITEMS
-// ==================================================
+const PALETTE = {
+  K: "#68493e",
+  O: "#e78a35",
+  L: "#f8b84c",
+  G: "#5c9a43",
+  D: "#376e47",
+  C: "#f6d2a1",
+  B: "#b97142",
+  H: "#fff2ca",
+  W: "#fffaf1",
+  Y: "#ffd65e",
+  P: "#e893ac",
+  R: "#e97172",
+  V: "#9d75ba",
+  T: "#75b9ac"
+};
+
+const PIXEL_ART = {
+  carrot: [
+    "......GG.......",
+    ".....GDDG......",
+    "......GGG......",
+    ".....KKOO......",
+    "....KLOOOK.....",
+    "....KLOOOLK....",
+    ".....KLOOOK....",
+    ".....KLOOOK....",
+    "......KLOK.....",
+    "......KLOK.....",
+    ".......KK......",
+    ".......KK......",
+    "........K......"
+  ],
+
+  cookie: [
+    ".....KKKK......",
+    "...KKLLLLKK....",
+    "..KLLLCLLLLK...",
+    ".KLLLBLLLLLLK..",
+    ".KLLLLLKLLLLK..",
+    "KLLLCLLLLLBLK..",
+    "KLLLLLBLCCCCK..",
+    "KLLLBLLLLLLLK..",
+    ".KLLLCLLBLCLK..",
+    ".KLLLLLLLLLK...",
+    "..KLLBLLLLK....",
+    "...KKLLLLKK....",
+    ".....KKKK......"
+  ],
+
+  doodle: [
+    "...........KK..",
+    "..........KPK..",
+    ".........KPPK..",
+    "........KPPK...",
+    ".......KPPK....",
+    "......KPPK.....",
+    ".....KPPK......",
+    "....KPPK.......",
+    "...KPPK........",
+    "..KPPK.........",
+    ".KBBK..........",
+    ".KBBK..........",
+    "..KK..........."
+  ],
+
+  star: [
+    ".......YY......",
+    "......YYYY.....",
+    "......YYYY.....",
+    ".YYY.YYYY.YYY..",
+    ".KYYYYYYYYYYK..",
+    "..KYYYYYYYYK...",
+    "...KYYYYYYK....",
+    "....YYYYYY.....",
+    "...YYYYYYYY....",
+    "..YYYY..YYYY...",
+    ".YYY......YYY.."
+  ],
+
+  flower: [
+    "......PP.......",
+    "....PPPPPP.....",
+    "....PPYYPP.....",
+    "..PPYYYYYYPP...",
+    "..PPYYYYYYPP...",
+    "....PPYYPP.....",
+    "....PPPPPP.....",
+    "......DD.......",
+    "......DD.......",
+    "...GG.DD.GG....",
+    "..GGG.DD.GGG...",
+    "......DD.......",
+    "......DD......."
+  ]
+};
+
+function pixelSprite(name) {
+  const rows = PIXEL_ART[name];
+
+  if (!rows) return "";
+
+  const width = Math.max(
+    ...rows.map(row => row.length)
+  );
+
+  const height = rows.length;
+  let rectangles = "";
+
+  rows.forEach((row, y) => {
+    Array.from(row).forEach((key, x) => {
+      const color = PALETTE[key];
+
+      if (!color) return;
+
+      rectangles +=
+        `<rect x="${x}" y="${y}" ` +
+        `width="1" height="1" ` +
+        `fill="${color}"/>`;
+    });
+  });
+
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" ` +
+    `viewBox="0 0 ${width} ${height}" ` +
+    `shape-rendering="crispEdges">` +
+    rectangles +
+    `</svg>`;
+
+  return "data:image/svg+xml;charset=utf-8," +
+    encodeURIComponent(svg);
+}
+
+const SPRITES = {};
+
+Object.keys(PIXEL_ART).forEach(name => {
+  SPRITES[name] = pixelSprite(name);
+});
+
+/* =========================================================
+   2. GAME ITEMS
+   ========================================================= */
 
 const ITEMS = [
-
   {
     id: "carrot",
     name: "胡萝卜",
-    icon: "🥕",
     points: 1,
-    sound: 650
+    sound: 650,
+    animation: "gp-eat-carrot",
+    duration: 1600,
+    message: "🥕 小豚鼠左右鼓起脸颊，正在咀嚼胡萝卜！"
   },
 
   {
     id: "cookie",
     name: "饼干",
-    icon: "🍪",
     points: 1,
-    sound: 550
+    sound: 550,
+    animation: "gp-eat-cookie",
+    duration: 1600,
+    message: "🍪 咔嚓！小豚鼠闭上眼睛开心地摇晃！"
   },
 
   {
     id: "doodle",
     name: "涂鸦",
-    icon: "🎨",
     points: 1,
-    sound: 750
+    sound: 750,
+    animation: "gp-draw",
+    duration: 1800,
+    message: "🎨 小豚鼠正在偷偷画一朵像素小花！"
   },
 
   {
     id: "star",
     name: "星星",
-    icon: "⭐",
     points: 1,
-    sound: 880
+    sound: 880,
+    animation: "gp-star",
+    duration: 1500,
+    message: "⭐ 小豚鼠高兴地跳起来，周围闪闪发光！"
   }
-
 ];
 
+/* =========================================================
+   3. HTML REFERENCES
+   ========================================================= */
 
-// ==================================================
-// 3. UNIQUE CHARACTER REACTIONS
-// ==================================================
-
-const ITEM_REACTIONS = {
-
-  carrot: {
-
-    animation: "gp-eat-carrot",
-
-    prop: "🥕",
-
-    effect: "💕",
-
-    message: "小豚鼠正在开心地吃胡萝卜！",
-
-    duration: 1500
-
-  },
-
-  cookie: {
-
-    animation: "gp-eat-cookie",
-
-    prop: "🍪",
-
-    effect: "✦",
-
-    message: "咔嚓咔嚓！小豚鼠鼓起脸颊吃饼干！",
-
-    duration: 1500
-
-  },
-
-  doodle: {
-
-    animation: "gp-draw",
-
-    prop: "✏️",
-
-    effect: "🌸",
-
-    message: "小豚鼠正在偷偷画一张可爱的涂鸦！",
-
-    duration: 1800
-
-  },
-
-  star: {
-
-    animation: "gp-star",
-
-    prop: "⭐",
-
-    effect: "✨",
-
-    message: "小豚鼠获得了幸运星，开心地跳起来！",
-
-    duration: 1500
-
-  }
-
+const el = {
+  time: document.getElementById("time-value"),
+  score: document.getElementById("score-value"),
+  caught: document.getElementById("caught-value"),
+  status: document.getElementById("teacher-status"),
+  teacher: document.getElementById("teacher"),
+  student: document.getElementById("student"),
+  collectible: document.getElementById("collectible"),
+  itemIcon: document.getElementById("collectible-icon"),
+  layer: document.getElementById("interaction-layer"),
+  effect: document.getElementById("effect"),
+  feedback: document.getElementById("feedback"),
+  overlay: document.getElementById("overlay"),
+  overlayTitle: document.getElementById("overlay-title"),
+  overlayMessage: document.getElementById("overlay-message"),
+  startButton: document.getElementById("start-button"),
+  pauseButton: document.getElementById("pause-button"),
+  resetButton: document.getElementById("reset-button"),
+  soundButton: document.getElementById("sound-button")
 };
 
-
-// ==================================================
-// 4. CREATE INITIAL GAME STATE
-// ==================================================
-
-function createInitialState() {
-
-  return {
-
-    mode: "ready",
-
-    timeLeft: CONFIG.duration * 1000,
-
-    score: 0,
-
-    caught: 0,
-
-    teacherState: "safe",
-
-    teacherTimeLeft: 3500,
-
-    activeItem: null,
-
-    itemTimeLeft: 0,
-
-    nextItemTime: 0,
-
-    collectedCount: 0,
-
-    missedCount: 0,
-
-    lastCollectedItem: null
-
-  };
-
+for (const [name, element] of Object.entries(el)) {
+  if (!element) {
+    throw new Error("Missing HTML element: " + name);
+  }
 }
 
+/* =========================================================
+   4. STATE
+   ========================================================= */
 
-let gameState = createInitialState();
+function initialState() {
+  return {
+    mode: "ready",
+    timeLeft: CONFIG.duration * 1000,
+    score: 0,
+    caught: 0,
+    teacherState: "safe",
+    teacherTimeLeft: 3500,
+    activeItem: null,
+    itemTimeLeft: 0,
+    nextItemTime: 0,
+    collectedCount: 0
+  };
+}
+
+let state = initialState();
 
 let timerId = null;
-
 let lastTick = 0;
+let reactionTimer = null;
+let reactionToken = 0;
 
 let soundEnabled = true;
-
 let audioContext = null;
 
-let reactionTimer = null;
+const random = (min, max) =>
+  min + Math.random() * (max - min);
 
-let reactionId = 0;
+const playing = () => state.mode === "playing";
 
-
-// ==================================================
-// 5. GET HTML ELEMENTS
-// ==================================================
-
-const elements = {
-
-  time: document.getElementById("time-value"),
-
-  score: document.getElementById("score-value"),
-
-  caught: document.getElementById("caught-value"),
-
-  status: document.getElementById("teacher-status"),
-
-  teacher: document.getElementById("teacher"),
-
-  student: document.getElementById("student"),
-
-  collectible: document.getElementById("collectible"),
-
-  itemIcon: document.getElementById("collectible-icon"),
-
-  effect: document.getElementById("effect"),
-
-  feedback: document.getElementById("feedback"),
-
-  overlay: document.getElementById("overlay"),
-
-  overlayTitle: document.getElementById("overlay-title"),
-
-  overlayMessage: document.getElementById("overlay-message"),
-
-  startButton: document.getElementById("start-button"),
-
-  pauseButton: document.getElementById("pause-button"),
-
-  resetButton: document.getElementById("reset-button"),
-
-  soundButton: document.getElementById("sound-button")
-
-};
-
-
-// ==================================================
-// 6. VALIDATE REQUIRED ELEMENTS
-// ==================================================
-
-function validateElements() {
-
-  const missing = Object.entries(elements)
-
-    .filter(function(entry) {
-
-      return entry[1] === null;
-
-    })
-
-    .map(function(entry) {
-
-      return entry[0];
-
-    });
-
-
-  if (missing.length > 0) {
-
-    throw new Error(
-
-      "Missing HTML elements: " +
-
-      missing.join(", ")
-
-    );
-
-  }
-
-}
-
-
-validateElements();
-
-
-// ==================================================
-// 7. HELPER FUNCTIONS
-// ==================================================
-
-function randomBetween(min, max) {
-
-  return min + Math.random() * (max - min);
-
-}
-
-
-function randomInt(min, max) {
-
-  return Math.floor(
-
-    Math.random() * (max - min + 1)
-
-  ) + min;
-
-}
-
-
-function isPlaying() {
-
-  return gameState.mode === "playing";
-
-}
-
-
-function showFeedback(message) {
-
-  elements.feedback.textContent = message;
-
-}
-
-
-// ==================================================
-// 8. UPDATE GAME HUD
-// ==================================================
-
-function updateHUD() {
-
-  const seconds = Math.ceil(
-
-    gameState.timeLeft / 1000
-
-  );
-
-
-  elements.time.textContent = seconds;
-
-  elements.score.textContent = gameState.score;
-
-  elements.caught.textContent =
-
-    gameState.caught +
-
-    " / " +
-
-    CONFIG.maxCaught;
-
-
-  elements.time.style.color =
-
-    seconds <= 10 ? "#d56b78" : "";
-
-
-  elements.caught.style.color =
-
-    gameState.caught >= 2 ? "#d56b78" : "";
-
-
-  elements.score.style.color =
-
-    gameState.score >= CONFIG.targetScore
-
-      ? "#559c72"
-
-      : "";
-
-}
-
-
-// ==================================================
-// 9. SOUND ENGINE
-// ==================================================
+/* =========================================================
+   5. SOUND
+   ========================================================= */
 
 function playSound(frequency, duration = 0.13) {
-
-  if (!soundEnabled) {
-
-    return;
-
-  }
-
+  if (!soundEnabled) return;
 
   try {
-
     const AudioClass =
-
       window.AudioContext ||
-
       window.webkitAudioContext;
 
-
-    if (!AudioClass) {
-
-      return;
-
-    }
-
+    if (!AudioClass) return;
 
     if (!audioContext) {
-
       audioContext = new AudioClass();
-
     }
-
 
     if (audioContext.state === "suspended") {
-
-      audioContext.resume().catch(function() {});
-
+      audioContext.resume().catch(() => {});
     }
 
-
-    const oscillator =
-
-      audioContext.createOscillator();
-
-
-    const gain =
-
-      audioContext.createGain();
-
-
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
     const now = audioContext.currentTime;
 
-
     oscillator.type = "square";
-
     oscillator.frequency.value = frequency;
 
-
-    gain.gain.setValueAtTime(
-
-      0.025,
-
-      now
-
-    );
-
-
+    gain.gain.setValueAtTime(0.022, now);
     gain.gain.exponentialRampToValueAtTime(
-
       0.001,
-
       now + duration
-
     );
-
 
     oscillator.connect(gain);
-
     gain.connect(audioContext.destination);
 
-
     oscillator.start(now);
-
     oscillator.stop(now + duration);
-
-
   } catch (error) {
-
-    console.warn(
-
-      "Sound unavailable:",
-
-      error
-
-    );
-
+    console.warn("Audio unavailable:", error);
   }
-
 }
 
+/* =========================================================
+   6. INTERFACE
+   ========================================================= */
 
-// ==================================================
-// 10. GENERAL VISUAL EFFECT
-// ==================================================
+function updateHUD() {
+  const seconds = Math.ceil(state.timeLeft / 1000);
 
-function showEffect(symbol) {
+  el.time.textContent = String(seconds);
+  el.score.textContent = String(state.score);
 
-  elements.effect.textContent = symbol;
+  el.caught.textContent =
+    `${state.caught} / ${CONFIG.maxCaught}`;
 
-  elements.effect.classList.remove("pop");
+  el.time.style.color =
+    seconds <= 10 ? "#d96e7c" : "";
 
-  void elements.effect.offsetWidth;
+  el.caught.style.color =
+    state.caught >= 2 ? "#d96e7c" : "";
 
-  elements.effect.classList.add("pop");
-
+  el.score.style.color =
+    state.score >= CONFIG.targetScore
+      ? "#559c72"
+      : "";
 }
 
-
-// ==================================================
-// 11. BASIC STUDENT ANIMATION
-// ==================================================
-
-function animateStudent(animationType) {
-
-  elements.student.classList.remove(
-
-    "happy",
-
-    "scared"
-
-  );
-
-
-  void elements.student.offsetWidth;
-
-
-  elements.student.classList.add(
-
-    animationType
-
-  );
-
+function feedback(message) {
+  el.feedback.textContent = message;
 }
 
+function showEffect(message) {
+  el.effect.textContent = message;
+  el.effect.classList.remove("pop");
 
-// ==================================================
-// 12. CLEAR CHARACTER REACTIONS
-// ==================================================
+  void el.effect.offsetWidth;
 
-function clearItemReaction() {
+  el.effect.classList.add("pop");
+}
 
-  reactionId += 1;
+function showOverlay(title, message, buttonText) {
+  el.overlayTitle.textContent = title;
+  el.overlayMessage.textContent = message;
+  el.startButton.textContent = buttonText;
+  el.overlay.hidden = false;
+}
 
+function hideOverlay() {
+  el.overlay.hidden = true;
+}
+
+/* =========================================================
+   7. PIXEL SPRITE ELEMENTS
+   ========================================================= */
+
+function makePixelImage(name, className) {
+  const img = document.createElement("img");
+
+  img.src = SPRITES[name];
+  img.alt = "";
+  img.className = className;
+  img.draggable = false;
+
+  img.setAttribute("aria-hidden", "true");
+
+  return img;
+}
+
+function placePixelImage(name, className, x, y) {
+  const img = makePixelImage(name, className);
+
+  img.style.left = x + "px";
+  img.style.top = y + "px";
+
+  el.layer.appendChild(img);
+
+  return img;
+}
+
+function getStudentPosition() {
+  const scene = el.layer.getBoundingClientRect();
+  const pig = el.student.getBoundingClientRect();
+
+  return {
+    x: pig.left + pig.width / 2 - scene.left,
+    y: pig.top + pig.height * 0.59 - scene.top
+  };
+}
+
+function makeDecoration(symbol, x, y) {
+  const span = document.createElement("span");
+
+  span.className = "foreground-sparkle";
+  span.textContent = symbol;
+
+  span.style.left = x + "px";
+  span.style.top = y + "px";
+
+  el.layer.appendChild(span);
+}
+
+/* =========================================================
+   8. CLEAR REACTIONS
+   ========================================================= */
+
+function clearReaction() {
+  reactionToken += 1;
 
   if (reactionTimer !== null) {
-
     clearTimeout(reactionTimer);
-
     reactionTimer = null;
-
   }
 
-
-  elements.student.classList.remove(
-
+  el.student.classList.remove(
     "gp-eat-carrot",
-
     "gp-eat-cookie",
-
     "gp-draw",
-
     "gp-star",
-
     "gp-hide",
-
     "happy",
-
     "scared"
-
   );
 
-
-  const oldProp =
-
-    elements.student.querySelector(
-
-      ".reaction-prop"
-
-    );
-
-
-  if (oldProp) {
-
-    oldProp.remove();
-
-  }
-
-
-  const oldDecoration =
-
-    elements.student.querySelector(
-
-      ".reaction-decoration"
-
-    );
-
-
-  if (oldDecoration) {
-
-    oldDecoration.remove();
-
-  }
-
+  el.layer.replaceChildren();
+  delete el.layer.dataset.item;
 }
 
+/* =========================================================
+   9. COOKIE CRUMBS
+   ========================================================= */
 
-// ==================================================
-// 13. UNIQUE ITEM REACTION
-// ==================================================
+function makeCookieCrumbs(x, y) {
+  for (let i = 0; i < 9; i++) {
+    const crumb = document.createElement("span");
+
+    crumb.className = "pixel-crumb";
+
+    crumb.style.left = x + random(-8, 8) + "px";
+    crumb.style.top = y + random(-8, 8) + "px";
+
+    crumb.style.setProperty(
+      "--dx",
+      random(-55, 55) + "px"
+    );
+
+    crumb.style.setProperty(
+      "--dy",
+      random(-42, 50) + "px"
+    );
+
+    crumb.style.animationDelay =
+      random(0.12, 0.38) + "s";
+
+    el.layer.appendChild(crumb);
+  }
+}
+
+/* =========================================================
+   10. STAR PARTICLES
+   ========================================================= */
+
+function makeStarParticles(x, y) {
+  for (let i = 0; i < 10; i++) {
+    const star = document.createElement("span");
+
+    star.className = "pixel-twinkle";
+
+    const angle = i * Math.PI * 2 / 10;
+    const radius = random(30, 88);
+
+    star.style.left =
+      x + Math.cos(angle) * radius + "px";
+
+    star.style.top =
+      y + Math.sin(angle) * radius + "px";
+
+    star.style.animationDelay =
+      random(0, 0.4) + "s";
+
+    el.layer.appendChild(star);
+  }
+}
+
+/* =========================================================
+   11. FOUR UNIQUE INTERACTIONS
+   ========================================================= */
 
 function playItemReaction(item) {
+  clearReaction();
 
-  const reaction = ITEM_REACTIONS[item.id];
+  const token = reactionToken;
+  const { x, y } = getStudentPosition();
 
+  el.layer.dataset.item = item.id;
 
-  if (!reaction) {
+  void el.student.offsetWidth;
+  el.student.classList.add(item.animation);
 
-    animateStudent("happy");
+  // CARROT
+  if (item.id === "carrot") {
+    placePixelImage(
+      "carrot",
+      "foreground-prop",
+      x + 22,
+      y
+    );
 
-    return;
-
+    makeDecoration("♥", x - 45, y - 65);
+    makeDecoration("♥", x + 32, y - 80);
   }
 
+  // COOKIE
+  if (item.id === "cookie") {
+    placePixelImage(
+      "cookie",
+      "foreground-prop",
+      x + 24,
+      y
+    );
 
-  clearItemReaction();
+    makeCookieCrumbs(x + 15, y + 10);
+  }
 
+  // DOODLE
+  if (item.id === "doodle") {
+    const paper = document.createElement("div");
 
-  const currentReaction = reactionId;
+    paper.className = "foreground-doodle-paper";
 
+    const sceneRect = el.layer.getBoundingClientRect();
+    const deskRect =
+      document.querySelector(".desk").getBoundingClientRect();
 
-  const prop = document.createElement("span");
+    const paperX = Math.min(
+      x + 72,
+      sceneRect.width - 55
+    );
 
-  prop.className = "reaction-prop";
+    const paperY = Math.min(
+      y + 62,
+      deskRect.top - sceneRect.top + 42
+    );
 
-  prop.textContent = reaction.prop;
+    paper.style.left = paperX + "px";
+    paper.style.top = paperY + "px";
 
-  prop.setAttribute(
+    paper.appendChild(
+      makePixelImage("flower", "pixel-item")
+    );
 
-    "aria-hidden",
+    el.layer.appendChild(paper);
 
-    "true"
+    placePixelImage(
+      "doodle",
+      "foreground-prop",
+      paperX - 14,
+      paperY - 19
+    );
+  }
 
-  );
+  // STAR
+  if (item.id === "star") {
+    placePixelImage(
+      "star",
+      "foreground-prop",
+      x + 8,
+      y - 58
+    );
 
-
-  const decoration = document.createElement("span");
-
-  decoration.className = "reaction-decoration";
-
-  decoration.textContent = reaction.effect;
-
-  decoration.setAttribute(
-
-    "aria-hidden",
-
-    "true"
-
-  );
-
-
-  elements.student.appendChild(prop);
-
-  elements.student.appendChild(decoration);
-
-
-  void elements.student.offsetWidth;
-
-
-  elements.student.classList.add(
-
-    reaction.animation
-
-  );
-
+    makeStarParticles(x, y - 35);
+  }
 
   showEffect("+1");
 
-
-  reactionTimer = setTimeout(function() {
-
-    if (currentReaction !== reactionId) {
-
-      return;
-
-    }
-
-    clearItemReaction();
-
-  }, reaction.duration);
-
+  reactionTimer = setTimeout(() => {
+    if (token !== reactionToken) return;
+    clearReaction();
+  }, item.duration);
 }
 
-
-// ==================================================
-// 14. TEACHER VISUAL APPEARANCE
-// ==================================================
+/* =========================================================
+   12. TEACHER APPEARANCE
+   ========================================================= */
 
 function updateTeacherAppearance() {
-
-  const teacherState = gameState.teacherState;
-
-
-  elements.teacher.classList.remove(
-
+  el.teacher.classList.remove(
     "facing-away",
-
     "warning",
-
     "watching"
-
   );
 
-
-  elements.status.classList.remove(
-
+  el.status.classList.remove(
     "safe",
-
     "warning",
-
     "danger"
-
   );
 
+  if (state.teacherState === "safe") {
+    el.teacher.classList.add("facing-away");
+    el.status.classList.add("safe");
 
-  if (teacherState === "safe") {
-
-    elements.teacher.classList.add(
-
-      "facing-away"
-
-    );
-
-    elements.status.classList.add("safe");
-
-    elements.status.textContent =
-
+    el.status.textContent =
       "🟢 SAFE！老师正在写黑板，可以偷偷行动！";
-
   }
 
+  else if (state.teacherState === "warning") {
+    el.teacher.classList.add("warning");
+    el.status.classList.add("warning");
 
-  else if (teacherState === "warning") {
-
-    elements.teacher.classList.add("warning");
-
-    elements.status.classList.add("warning");
-
-    elements.status.textContent =
-
+    el.status.textContent =
       "🟡 WARNING！老师准备回头了！";
-
   }
-
 
   else {
+    el.teacher.classList.add("watching");
+    el.status.classList.add("danger");
 
-    elements.teacher.classList.add("watching");
-
-    elements.status.classList.add("danger");
-
-    elements.status.textContent =
-
+    el.status.textContent =
       "🔴 STOP！老师正在看你！不要点击！";
-
   }
-
 }
 
+/* =========================================================
+   13. TEACHER STATE TRANSITIONS
+   ========================================================= */
 
-// ==================================================
-// 15. ADVANCE TEACHER STATE
-// ==================================================
+function advanceTeacher() {
+  if (state.teacherState === "safe") {
+    state.teacherState = "warning";
 
-function advanceTeacherState() {
-
-  if (gameState.teacherState === "safe") {
-
-    gameState.teacherState = "warning";
-
-
-    gameState.teacherTimeLeft =
-
-      randomBetween(
-
-        CONFIG.warningMin,
-
-        CONFIG.warningMax
-
-      );
-
-
-    // Guinea pig hides the current activity.
-    clearItemReaction();
-
-    elements.student.classList.add("gp-hide");
-
-
-    showFeedback(
-
-      "⚠️ 老师停下了粉笔！小豚鼠赶紧藏起东西！"
-
+    state.teacherTimeLeft = random(
+      CONFIG.warningMin,
+      CONFIG.warningMax
     );
 
+    clearReaction();
+    el.student.classList.add("gp-hide");
 
-    playSound(350, 0.12);
-
+    feedback("⚠️ 老师准备回头！赶快藏好东西！");
+    playSound(350);
   }
 
+  else if (state.teacherState === "warning") {
+    state.teacherState = "watching";
 
-  else if (gameState.teacherState === "warning") {
-
-    gameState.teacherState = "watching";
-
-
-    gameState.teacherTimeLeft =
-
-      randomBetween(
-
-        CONFIG.watchingMin,
-
-        CONFIG.watchingMax
-
-      );
-
-
-    elements.student.classList.remove("gp-hide");
-
-
-    showFeedback(
-
-      "👀 老师回头了！现在不要点击道具！"
-
+    state.teacherTimeLeft = random(
+      CONFIG.watchingMin,
+      CONFIG.watchingMax
     );
 
+    el.student.classList.remove("gp-hide");
 
+    feedback("👀 老师正在看你！不要点击！");
     playSound(240, 0.2);
-
   }
-
 
   else {
+    state.teacherState = "safe";
 
-    gameState.teacherState = "safe";
-
-
-    gameState.teacherTimeLeft =
-
-      randomBetween(
-
-        CONFIG.safeMin,
-
-        CONFIG.safeMax
-
-      );
-
-
-    elements.student.classList.remove("gp-hide");
-
-
-    showFeedback(
-
-      "🌿 老师转回黑板了！可以继续行动！"
-
+    state.teacherTimeLeft = random(
+      CONFIG.safeMin,
+      CONFIG.safeMax
     );
 
-  }
+    clearReaction();
 
+    feedback("🌿 老师回去写黑板了，可以继续！");
+  }
 
   updateTeacherAppearance();
-
 }
-
-
-// ==================================================
-// 16. UPDATE TEACHER TIMER
-// ==================================================
 
 function updateTeacher(delta) {
+  state.teacherTimeLeft -= delta;
 
-  gameState.teacherTimeLeft -= delta;
+  while (state.teacherTimeLeft <= 0) {
+    const overflow = -state.teacherTimeLeft;
 
+    advanceTeacher();
 
-  while (gameState.teacherTimeLeft <= 0) {
-
-    const overshoot =
-
-      -gameState.teacherTimeLeft;
-
-
-    advanceTeacherState();
-
-
-    gameState.teacherTimeLeft -= overshoot;
-
+    state.teacherTimeLeft -= overflow;
   }
-
 }
 
-
-// ==================================================
-// 17. HIDE COLLECTIBLE
-// ==================================================
+/* =========================================================
+   14. ITEM SPAWNING
+   ========================================================= */
 
 function hideItem() {
+  state.activeItem = null;
+  state.itemTimeLeft = 0;
 
-  gameState.activeItem = null;
-
-  gameState.itemTimeLeft = 0;
-
-
-  elements.collectible.hidden = true;
-
-  elements.collectible.disabled = true;
-
+  el.collectible.hidden = true;
+  el.collectible.disabled = true;
 }
 
-
-// ==================================================
-// 18. SCHEDULE NEXT COLLECTIBLE
-// ==================================================
-
-function scheduleNextItem() {
-
-  gameState.nextItemTime =
-
-    randomBetween(
-
-      CONFIG.itemSpawnMin,
-
-      CONFIG.itemSpawnMax
-
-    );
-
+function scheduleItem() {
+  state.nextItemTime = random(
+    CONFIG.itemSpawnMin,
+    CONFIG.itemSpawnMax
+  );
 }
-
-
-// ==================================================
-// 19. SPAWN RANDOM COLLECTIBLE
-// ==================================================
 
 function spawnItem() {
+  if (!playing() || state.activeItem) return;
 
-  if (!isPlaying()) {
+  const item = ITEMS[
+    Math.floor(Math.random() * ITEMS.length)
+  ];
 
-    return;
+  state.activeItem = item;
+  state.itemTimeLeft = CONFIG.itemLifetime;
 
-  }
-
-
-  if (gameState.activeItem !== null) {
-
-    return;
-
-  }
-
-
-  const index = randomInt(
-
-    0,
-
-    ITEMS.length - 1
-
+  // Transparent pixel image instead of emoji.
+  el.itemIcon.replaceChildren(
+    makePixelImage(item.id, "pixel-item")
   );
-
-
-  const item = ITEMS[index];
-
-
-  gameState.activeItem = item;
-
-  gameState.itemTimeLeft = CONFIG.itemLifetime;
-
-  gameState.nextItemTime = 0;
-
-
-  elements.itemIcon.textContent = item.icon;
-
 
   const positions = [
-
     { left: 27, bottom: 31 },
-
     { left: 39, bottom: 35 },
-
     { left: 51, bottom: 31 },
-
     { left: 63, bottom: 35 }
-
   ];
 
-
-  const position = positions[
-
-    randomInt(
-
-      0,
-
-      positions.length - 1
-
-    )
-
+  const pos = positions[
+    Math.floor(Math.random() * positions.length)
   ];
 
+  el.collectible.style.left = pos.left + "%";
+  el.collectible.style.bottom = pos.bottom + "%";
 
-  elements.collectible.style.left =
-
-    position.left + "%";
-
-
-  elements.collectible.style.bottom =
-
-    position.bottom + "%";
-
-
-  elements.collectible.setAttribute(
-
+  el.collectible.setAttribute(
     "aria-label",
-
     "收集" + item.name
-
   );
 
-
-  elements.collectible.hidden = false;
-
-  elements.collectible.disabled = false;
-
+  el.collectible.hidden = false;
+  el.collectible.disabled = false;
 }
-
-
-// ==================================================
-// 20. UPDATE COLLECTIBLE TIMER
-// ==================================================
 
 function updateItems(delta) {
+  if (state.activeItem) {
+    state.itemTimeLeft -= delta;
 
-  if (gameState.activeItem !== null) {
-
-    gameState.itemTimeLeft -= delta;
-
-
-    if (gameState.itemTimeLeft <= 0) {
-
-      gameState.missedCount += 1;
-
+    if (state.itemTimeLeft <= 0) {
       hideItem();
-
-      scheduleNextItem();
-
+      scheduleItem();
     }
+  } else {
+    state.nextItemTime -= delta;
 
-  }
-
-
-  else {
-
-    gameState.nextItemTime -= delta;
-
-
-    if (gameState.nextItemTime <= 0) {
-
+    if (state.nextItemTime <= 0) {
       spawnItem();
-
     }
-
   }
-
 }
 
-
-// ==================================================
-// 21. MAIN COLLECTIBLE INTERACTION
-// ==================================================
+/* =========================================================
+   15. COLLECT ITEM
+   ========================================================= */
 
 function collectItem() {
+  if (!playing() || !state.activeItem) return;
 
-  if (!isPlaying()) {
+  const item = state.activeItem;
 
-    return;
-
-  }
-
-
-  if (gameState.activeItem === null) {
-
-    return;
-
-  }
-
-
-  const item = gameState.activeItem;
-
-
-  // Remove immediately to prevent repeated points.
+  // Prevent repeated scoring from rapid clicks.
   hideItem();
+  scheduleItem();
 
-  scheduleNextItem();
+  // RED STATE
+  if (state.teacherState === "watching") {
+    state.caught += 1;
 
+    clearReaction();
+    el.student.classList.add("scared");
 
-  // ------------------------------------------
-  // RED: TEACHER WATCHING
-  // ------------------------------------------
-
-  if (gameState.teacherState === "watching") {
-
-    gameState.caught += 1;
-
-
-    clearItemReaction();
-
-    showEffect("💥");
-
-    animateStudent("scared");
-
+    showEffect("!");
     playSound(170, 0.25);
 
-
-    showFeedback(
-
-      "🚨 被老师抓到了！已被发现 " +
-
-      gameState.caught +
-
-      " / " +
-
-      CONFIG.maxCaught +
-
-      " 次。"
-
+    feedback(
+      `🚨 被老师发现！${state.caught}/${CONFIG.maxCaught}`
     );
-
 
     updateHUD();
 
-
-    if (gameState.caught >= CONFIG.maxCaught) {
-
-      finishGame(
-
-        false,
-
-        "你被老师发现了 3 次！"
-
-      );
-
+    if (state.caught >= CONFIG.maxCaught) {
+      finishGame(false, "被老师发现了 3 次！");
     }
 
-
     return;
-
   }
 
+  // YELLOW STATE
+  if (state.teacherState === "warning") {
+    clearReaction();
+    el.student.classList.add("gp-hide");
 
-  // ------------------------------------------
-  // YELLOW: TEACHER WARNING
-  // ------------------------------------------
-
-  if (gameState.teacherState === "warning") {
-
-    clearItemReaction();
-
-
-    elements.student.classList.add(
-
-      "gp-hide"
-
-    );
-
-
-    showEffect("⚠️");
-
+    showEffect("!");
     playSound(300);
 
-
-    showFeedback(
-
-      "⚠️ 老师正要转身！小豚鼠赶紧藏起来！" +
-
-      "本次没有获得分数。"
-
-    );
-
-
+    feedback("⚠️ 老师快回头了！本次不加分。");
     return;
-
   }
 
+  // GREEN STATE
+  state.score += item.points;
+  state.collectedCount += 1;
 
-  // ------------------------------------------
-  // GREEN: SAFE COLLECTION
-  // ------------------------------------------
-
-  gameState.score += item.points;
-
-  gameState.collectedCount += 1;
-
-  gameState.lastCollectedItem = item.id;
-
+  playItemReaction(item);
+  playSound(item.sound);
 
   updateHUD();
 
-
-  // Unique animation for each item.
-  playItemReaction(item);
-
-
-  // Unique sound for each item.
-  playSound(item.sound);
-
-
-  const reaction = ITEM_REACTIONS[item.id];
-
-
-  const characterMessage = reaction
-
-    ? reaction.message
-
-    : "小豚鼠成功收集了道具！";
-
-
-  if (gameState.score >= CONFIG.targetScore) {
-
-    showFeedback(
-
-      "⭐ " +
-
-      gameState.score +
-
-      " 分！ " +
-
-      characterMessage +
-
-      " 已达到目标，坚持到下课！"
-
-    );
-
-  }
-
-
-  else {
-
-    showFeedback(
-
-      "⭐ " +
-
-      gameState.score +
-
-      " / " +
-
-      CONFIG.targetScore +
-
-      " 分。 " +
-
-      characterMessage
-
-    );
-
-  }
-
+  feedback(
+    `${item.message} 当前 ${state.score}/${CONFIG.targetScore} 分。`
+  );
 }
 
-
-// ==================================================
-// 22. STOP GAME TIMER
-// ==================================================
+/* =========================================================
+   16. TIMER
+   ========================================================= */
 
 function stopTimer() {
-
   if (timerId !== null) {
-
     clearInterval(timerId);
-
     timerId = null;
-
   }
-
 }
 
-
-// ==================================================
-// 23. MAIN GAME LOOP
-// ==================================================
-
-function gameTick() {
-
-  if (!isPlaying()) {
-
-    return;
-
-  }
-
+function tick() {
+  if (!playing()) return;
 
   const now = performance.now();
-
-
-  const delta = Math.max(
-
-    0,
-
-    now - lastTick
-
-  );
-
+  const delta = Math.max(0, now - lastTick);
 
   lastTick = now;
 
-
-  gameState.timeLeft = Math.max(
-
+  state.timeLeft = Math.max(
     0,
-
-    gameState.timeLeft - delta
-
+    state.timeLeft - delta
   );
 
-
-  if (gameState.timeLeft <= 0) {
-
-    gameState.timeLeft = 0;
-
-    updateHUD();
-
+  if (state.timeLeft <= 0) {
+    state.timeLeft = 0;
 
     const won =
+      state.score >= CONFIG.targetScore &&
+      state.caught < CONFIG.maxCaught;
 
-      gameState.score >= CONFIG.targetScore &&
-
-      gameState.caught < CONFIG.maxCaught;
-
-
-    if (won) {
-
-      finishGame(
-
-        true,
-
-        "你成功坚持到了下课！"
-
-      );
-
-    }
-
-
-    else {
-
-      finishGame(
-
-        false,
-
-        "下课了，但快乐分数还不够！"
-
-      );
-
-    }
-
+    finishGame(
+      won,
+      won
+        ? "成功坚持到下课！"
+        : "下课了，但分数还不够！"
+    );
 
     return;
-
   }
 
-
   updateTeacher(delta);
-
   updateItems(delta);
-
   updateHUD();
-
 }
 
-
-// ==================================================
-// 24. START GAME TIMER
-// ==================================================
-
 function startTimer() {
-
   stopTimer();
-
 
   lastTick = performance.now();
 
-
   timerId = setInterval(
-
-    gameTick,
-
+    tick,
     CONFIG.tickRate
-
   );
-
 }
 
-
-// ==================================================
-// 25. SHOW OVERLAY
-// ==================================================
-
-function showOverlay(title, message, buttonText) {
-
-  elements.overlayTitle.textContent = title;
-
-  elements.overlayMessage.textContent = message;
-
-  elements.startButton.textContent = buttonText;
-
-  elements.overlay.hidden = false;
-
-}
-
-
-// ==================================================
-// 26. HIDE OVERLAY
-// ==================================================
-
-function hideOverlay() {
-
-  elements.overlay.hidden = true;
-
-}
-
-
-// ==================================================
-// 27. START GAME
-// ==================================================
+/* =========================================================
+   17. START / PAUSE / RESUME
+   ========================================================= */
 
 function startGame() {
+  if (playing()) return;
 
-  if (gameState.mode === "playing") {
-
-    return;
-
-  }
-
-
-  if (gameState.mode === "finished") {
-
-    resetGame();
-
-  }
-
-
-  if (gameState.mode === "paused") {
-
+  if (state.mode === "paused") {
     resumeGame();
-
     return;
-
   }
 
+  if (state.mode === "finished") {
+    resetGame();
+  }
 
-  gameState.mode = "playing";
+  clearReaction();
 
+  state.mode = "playing";
+  state.teacherState = "safe";
+  state.teacherTimeLeft = 3500;
 
   hideOverlay();
 
-
-  elements.pauseButton.disabled = false;
-
-  elements.pauseButton.textContent = "⏸ 暂停";
-
-
-  gameState.teacherState = "safe";
-
-  gameState.teacherTimeLeft = 3500;
-
+  el.pauseButton.disabled = false;
+  el.pauseButton.textContent = "⏸ 暂停";
 
   updateTeacherAppearance();
 
-
-  scheduleNextItem();
-
+  scheduleItem();
   startTimer();
 
-
-  showFeedback(
-
-    "🎮 游戏开始！观察老师的方向，" +
-
-    "安全时点击桌面道具！"
-
-  );
-
-
+  feedback("🎮 游戏开始！安全时点击像素道具！");
   playSound(700);
-
 }
-
-
-// ==================================================
-// 28. PAUSE GAME
-// ==================================================
 
 function pauseGame() {
+  if (!playing()) return;
 
-  if (gameState.mode !== "playing") {
-
-    return;
-
-  }
-
-
-  gameState.mode = "paused";
-
+  state.mode = "paused";
 
   stopTimer();
+  clearReaction();
 
+  el.collectible.hidden = true;
+  el.collectible.disabled = true;
 
-  elements.collectible.hidden = true;
-
-  elements.collectible.disabled = true;
-
-
-  elements.pauseButton.textContent = "▶ 继续";
-
+  el.pauseButton.textContent = "▶ 继续";
 
   showOverlay(
-
     "PAUSED",
-
-    "游戏已经暂停，点击继续恢复游戏。",
-
+    "游戏已暂停。点击继续恢复。",
     "▶ 继续游戏"
-
   );
 
-
-  showFeedback("⏸ 游戏已暂停。");
-
+  feedback("⏸ 游戏暂停中。");
 }
 
-
-// ==================================================
-// 29. RESUME GAME
-// ==================================================
-
 function resumeGame() {
+  if (state.mode !== "paused") return;
 
-  if (gameState.mode !== "paused") {
-
-    return;
-
-  }
-
-
-  gameState.mode = "playing";
-
+  state.mode = "playing";
 
   hideOverlay();
 
+  el.pauseButton.textContent = "⏸ 暂停";
 
-  elements.pauseButton.textContent = "⏸ 暂停";
-
-
-  if (gameState.activeItem !== null) {
-
-    elements.collectible.hidden = false;
-
-    elements.collectible.disabled = false;
-
+  if (state.activeItem) {
+    el.collectible.hidden = false;
+    el.collectible.disabled = false;
   }
 
-
+  updateTeacherAppearance();
   startTimer();
 
-  updateTeacherAppearance();
-
-
-  showFeedback("▶ 游戏继续！小心老师！");
-
+  feedback("▶ 游戏继续！");
 }
 
-
-// ==================================================
-// 30. FINISH GAME
-// ==================================================
+/* =========================================================
+   18. END GAME
+   ========================================================= */
 
 function finishGame(won, reason) {
+  if (state.mode === "finished") return;
 
-  if (gameState.mode === "finished") {
-
-    return;
-
-  }
-
-
-  gameState.mode = "finished";
-
+  state.mode = "finished";
 
   stopTimer();
-
-  clearItemReaction();
-
+  clearReaction();
   hideItem();
 
-
-  elements.pauseButton.disabled = true;
-
-  elements.pauseButton.textContent = "⏸ 暂停";
-
+  el.pauseButton.disabled = true;
+  el.pauseButton.textContent = "⏸ 暂停";
 
   const summary =
-
-    reason +
-
-    "\n最终分数：" +
-
-    gameState.score +
-
-    " 分。" +
-
-    "\n成功收集：" +
-
-    gameState.collectedCount +
-
-    " 个道具。" +
-
-    "\n被老师发现：" +
-
-    gameState.caught +
-
-    " 次。";
-
+    `${reason}\n` +
+    `最终分数：${state.score}\n` +
+    `成功收集：${state.collectedCount}\n` +
+    `被老师发现：${state.caught} 次`;
 
   if (won) {
-
-    showEffect("🏆");
-
-    animateStudent("happy");
-
+    el.student.classList.add("happy");
     playSound(950, 0.3);
 
-
     showOverlay(
-
       "YOU WIN! 🏆",
-
       summary,
-
       "↻ 再玩一次"
-
     );
 
-
-    showFeedback(
-
-      "🎉 恭喜！小豚鼠成功度过了快乐的课堂！"
-
-    );
-
-  }
-
-
-  else {
-
-    showEffect("💔");
-
-    animateStudent("scared");
-
+    feedback("🎉 小豚鼠成功坚持到了下课！");
+  } else {
+    el.student.classList.add("scared");
     playSound(180, 0.3);
 
-
     showOverlay(
-
       "GAME OVER",
-
       summary,
-
       "↻ 再试一次"
-
     );
 
-
-    showFeedback(
-
-      "💔 挑战失败！观察老师回头的时机，" +
-
-      "再试一次吧！"
-
-    );
-
+    feedback("💔 挑战失败！下次注意老师的方向。");
   }
 
-
   updateHUD();
-
 }
 
-
-// ==================================================
-// 31. RESET GAME
-// ==================================================
+/* =========================================================
+   19. RESET
+   ========================================================= */
 
 function resetGame() {
-
   stopTimer();
+  clearReaction();
 
-  clearItemReaction();
-
-
-  gameState = createInitialState();
-
+  state = initialState();
 
   hideItem();
 
+  el.effect.classList.remove("pop");
+  el.effect.textContent = "";
 
-  elements.effect.classList.remove("pop");
-
-  elements.effect.textContent = "";
-
-
-  elements.pauseButton.disabled = true;
-
-  elements.pauseButton.textContent = "⏸ 暂停";
-
+  el.pauseButton.disabled = true;
+  el.pauseButton.textContent = "⏸ 暂停";
 
   updateHUD();
-
   updateTeacherAppearance();
 
-
   showOverlay(
-
     "READY TO PLAY?",
-
-    "60 秒内获得至少 8 分，" +
-
-    "最多只能被老师发现 2 次！" +
-
-    " 点击道具时要注意老师的方向。",
-
+    "60 秒内收集至少 8 分，\n" +
+    "被老师发现不能达到 3 次！",
     "▶ 开始游戏"
-
   );
 
-
-  showFeedback(
-
-    "🐹 小豚鼠准备好了！点击开始游戏，" +
-
-    "老师背对时收集桌面道具！"
-
-  );
-
+  feedback("🐹 小豚鼠准备好了！点击开始游戏。");
 }
 
+/* =========================================================
+   20. EVENTS
+   ========================================================= */
 
-// ==================================================
-// 32. START BUTTON
-// ==================================================
-
-elements.startButton.addEventListener(
-
-  "click",
-
-  function() {
-
-    if (gameState.mode === "paused") {
-
-      resumeGame();
-
-    }
-
-    else {
-
-      startGame();
-
-    }
-
+el.startButton.addEventListener("click", () => {
+  if (state.mode === "paused") {
+    resumeGame();
+  } else {
+    startGame();
   }
+});
 
-);
-
-
-// ==================================================
-// 33. COLLECTIBLE BUTTON
-// ==================================================
-
-elements.collectible.addEventListener(
-
+el.collectible.addEventListener(
   "click",
-
   collectItem
-
 );
 
-
-// ==================================================
-// 34. PAUSE BUTTON
-// ==================================================
-
-elements.pauseButton.addEventListener(
-
-  "click",
-
-  function() {
-
-    if (gameState.mode === "playing") {
-
-      pauseGame();
-
-    }
-
-    else if (gameState.mode === "paused") {
-
-      resumeGame();
-
-    }
-
+el.pauseButton.addEventListener("click", () => {
+  if (playing()) {
+    pauseGame();
+  } else if (state.mode === "paused") {
+    resumeGame();
   }
+});
 
-);
-
-
-// ==================================================
-// 35. RESET BUTTON
-// ==================================================
-
-elements.resetButton.addEventListener(
-
+el.resetButton.addEventListener(
   "click",
-
   resetGame
-
 );
 
+el.soundButton.addEventListener("click", () => {
+  soundEnabled = !soundEnabled;
 
-// ==================================================
-// 36. SOUND CONTROL
-// ==================================================
+  el.soundButton.textContent = soundEnabled
+    ? "🔊 音效开启"
+    : "🔇 音效关闭";
 
-elements.soundButton.addEventListener(
+  el.soundButton.setAttribute(
+    "aria-pressed",
+    String(soundEnabled)
+  );
 
-  "click",
+  if (soundEnabled) playSound(700);
+});
 
-  function() {
+/* Keyboard: Space to pause or resume. */
 
-    soundEnabled = !soundEnabled;
-
-
-    elements.soundButton.textContent =
-
-      soundEnabled
-
-        ? "🔊 音效开启"
-
-        : "🔇 音效关闭";
-
-
-    elements.soundButton.setAttribute(
-
-      "aria-pressed",
-
-      String(soundEnabled)
-
-    );
-
-
-    if (soundEnabled) {
-
-      showFeedback("🔊 音效已经开启！");
-
-      playSound(700);
-
-    }
-
-    else {
-
-      showFeedback("🔇 音效已经关闭！");
-
-    }
-
-  }
-
-);
-
-
-// ==================================================
-// 37. KEYBOARD CONTROLS
-// ==================================================
-
-document.addEventListener(
-
-  "keydown",
-
-  function(event) {
-
-    if (
-
-      event.code === "Space" &&
-
-      event.target === document.body
-
-    ) {
-
-      if (gameState.mode === "playing") {
-
-        event.preventDefault();
-
-        pauseGame();
-
-      }
-
-
-      else if (gameState.mode === "paused") {
-
-        event.preventDefault();
-
-        resumeGame();
-
-      }
-
-    }
-
-  }
-
-);
-
-
-// ==================================================
-// 38. HANDLE BROWSER TAB INTERRUPTIONS
-// ==================================================
-
-document.addEventListener(
-
-  "visibilitychange",
-
-  function() {
-
-    if (
-
-      document.hidden &&
-
-      gameState.mode === "playing"
-
-    ) {
-
+document.addEventListener("keydown", event => {
+  if (
+    event.code === "Space" &&
+    event.target === document.body
+  ) {
+    if (playing()) {
+      event.preventDefault();
       pauseGame();
-
+    } else if (state.mode === "paused") {
+      event.preventDefault();
+      resumeGame();
     }
-
   }
+});
 
-);
+/* Pause automatically when leaving the page. */
 
-
-// ==================================================
-// 39. HANDLE WINDOW INTERRUPTIONS
-// ==================================================
-
-window.addEventListener(
-
-  "blur",
-
-  function() {
-
-    if (gameState.mode === "playing") {
-
-      pauseGame();
-
-    }
-
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && playing()) {
+    pauseGame();
   }
+});
 
-);
+window.addEventListener("blur", () => {
+  if (playing()) {
+    pauseGame();
+  }
+});
 
-
-// ==================================================
-// 40. INITIALIZE GAME
-// ==================================================
+/* =========================================================
+   21. INITIALIZE
+   ========================================================= */
 
 resetGame();
