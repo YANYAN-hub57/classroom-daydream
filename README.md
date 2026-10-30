@@ -1,441 +1,542 @@
+# Classroom Daydream
 
-# Classroom Daydream — V2.1 Development
+**A Little Guinea Pig Adventure**
 
-### A Guinea Pig Classroom Interactive Game
+**Version:** 3.0  
+**Course:** SD5913 — Programming for Art & Design  
+**Programme:** MSc in Innovative Multimedia Entertainment, School of Design, The Hong Kong Polytechnic University  
+**Project Type:** Individual Interactive Experience  
+**Technologies:** HTML, CSS, JavaScript, Web Audio API
 
-> **Release status (27 October 2026):** The published GitHub Pages site may still reflect the earlier game implementation. The V2.1 pixel-item interaction prototype has been previewed locally, but the latest local `index.html`, `style.css`, and `script.js` must be committed and pushed before this documentation can describe the live game as updated.
+**Play the Game:** https://yanyan-hub57.github.io/classroom-daydream/
 
-**Course:** SD5913 – Programming for Art & Design  
-**Assignment:** Assignment 3 – An Interactive Experience  
-**Project Type:** Individual Interactive Browser Game
+**GitHub Repository:** https://github.com/YANYAN-hub57/classroom-daydream
 
 ---
 
 ## 1. Project Overview
 
-Classroom Daydream is a small interactive browser game
-about a guinea pig student who wants to enjoy little
-distractions during class without being caught by
-the teacher.
+*Classroom Daydream* is a browser-based pixel-art mini-game inspired by the familiar experience of getting distracted during class.
 
-The experience explores the relationship between
-observation, timing, risk, and playful decision-making.
+The player controls a small guinea pig student who secretly collects snacks, draws pictures, and catches stars while the guinea pig teacher is facing the blackboard.
 
-The player must collect objects while the teacher is
-facing the blackboard and stop interacting when
-the teacher turns around.
+The challenge is simple: **collect enough points before class ends without getting caught too many times.**
 
-The game combines two familiar mechanics:
+The game combines two familiar gameplay ideas:
 
-- Red Light, Green Light: observe the teacher and
-  act only when it is safe.
-- Whac-A-Mole: respond to randomly appearing
-  collectible objects.
+- **Red Light, Green Light:** Players must observe the teacher's changing states and decide when to act.
+- **Whac-A-Mole:** Collectible items appear at different positions for a limited time, encouraging quick decisions and reactions.
 
-The project was developed as an individual interactive
-experience for SD5913 Assignment 3.
+The interaction is built around a clear **input → response → feedback** loop.
+
+The project aims to transform an everyday classroom experience into a playful interactive world through pixel art, character animation, procedural sound, and responsive game mechanics.
 
 ---
 
-## 2. Intended Users
+## 2. Target Audience
 
-The game is designed for students and casual players
-who enjoy short, accessible, and playful experiences.
+The game is designed for:
 
-No previous gaming experience is required.
+- Students who can relate to daydreaming during class.
+- Casual players who enjoy short, light-hearted mini-games.
+- People interested in pixel-art games and expressive character animation.
+- Players who prefer accessible browser-based interactions without installation.
 
-The experience is intended to be understandable
-through visual cues, simple mouse or touch
-interactions, and immediate feedback.
-
----
-
-## 3. Play Online
-
-Live game:
-
-https://yanyan-hub57.github.io/classroom-daydream/
-
-Source code:
-
-https://github.com/YANYAN-hub57/classroom-daydream
+Each round takes approximately 45–90 seconds, depending on the selected difficulty.
 
 ---
 
-## 4. How to Play
+## 3. How to Play
 
 ### Objective
 
-Survive a 60-second classroom session while
-collecting at least 8 points.
+Collect enough points before the countdown reaches zero, while staying below the maximum number of times caught.
 
-The player loses immediately if caught by
-the teacher 3 times.
+There are three difficulty levels:
+
+| Setting | EASY | NORMAL | HARD |
+|---|---|---|---|
+| Duration | 90 seconds | 60 seconds | 45 seconds |
+| Minimum score | 12 | 10 | 10 |
+| Maximum times caught | 5 | 3 | 2 |
+| SAFE duration | 4–6 seconds | 2.5–4 seconds | 1.5–2.5 seconds |
+| WARNING duration | 1.2 seconds | 1 second | 0.8 seconds |
+| DANGER duration | 1.5–2 seconds | 2–3 seconds | 2.5–3.5 seconds |
+| Fake turn probability | 10% | 30% | 50% |
+| Item spawn interval | 0.8 seconds | 1.2 seconds | 1.8 seconds |
+| Item lifetime | 3.5 seconds | 2.5 seconds | 1.8 seconds |
+| Maximum simultaneous items | 8 | 6 | 4 |
 
 ### Teacher States
 
-GREEN – SAFE
+**SAFE — Green**
 
-The teacher is facing the blackboard.
+The teacher is facing the blackboard. Players can collect items and earn points.
 
-Click the collectible objects to earn points.
+**WARNING — Yellow**
 
-YELLOW – WARNING
+The teacher is preparing to turn around. Players should stop collecting. Normal item clicks during this state do not award points.
 
-The teacher is about to turn around.
+**DANGER — Red**
 
-Stop clicking and prepare to wait.
+The teacher is watching the classroom. Collecting an item within the active detection area can result in being caught.
 
-RED – DANGER
+In HARD mode, a visible vision cone introduces spatial risk: some items may be outside the teacher's field of view.
 
-The teacher is watching the classroom.
+### Winning and Losing
 
-Clicking an object will increase the caught counter.
+The player wins if:
 
-### Collectible Objects
+1. The countdown reaches zero.
+2. The required score has been achieved.
+3. The number of times caught is below the selected difficulty's limit.
 
-Random objects appear in the classroom:
+The player loses if:
 
-- Carrot
-- Cookie
-- Doodle
-- Star
-
-Each successfully collected object gives 1 point.
-
-Objects disappear after a short period.
-
-The same object cannot be collected repeatedly
-after it has already been clicked.
-
-### Winning
-
-Reach at least 8 points and survive until
-the 60-second timer reaches zero.
-
-### Losing
-
-Getting caught 3 times ends the game immediately.
-
-If the timer ends before the player reaches
-8 points, the game also ends in failure.
+- The maximum number of times caught is reached, or
+- The countdown ends before the minimum score is achieved.
 
 ---
 
-## 5. Main Interaction
+## 4. Collectible Items
 
-The project is based on an input-response-feedback loop.
+Seven ordinary collectible items are available.
 
-### Input
+| Item | Base Points | Interaction |
+|---|---:|---|
+| Carrot | 1 | Puffy-cheek chewing |
+| Rice Ball | 1 | Big-bite chewing and body movement |
+| Cookie | 2 | Crunching, crumbs, and happy swaying |
+| Cake | 2 | Happy eating, cream detail, and melody |
+| Doodle | 2 | Pencil movement and a progressively drawn flower |
+| Orange Juice | 2 | Drinking and gulping effects |
+| Star | 3 | Jumping, sparkling, and metallic chime |
 
-The player observes the teacher and deliberately
-clicks a collectible object.
+Items appear randomly and disappear after a limited time.
 
-### Response
+Their spawning probabilities are weighted:
 
-JavaScript checks the teacher's current state.
+- Carrot: 25%
+- Rice Ball: 25%
+- Cookie: 15%
+- Cake: 12%
+- Doodle: 10%
+- Orange Juice: 10%
+- Star: 3%
 
-If the teacher is facing away, the player earns a point.
+This creates different levels of reward and encourages players to make quick decisions about which items to collect.
 
-If the teacher is about to turn around, no point is earned.
+### Special Items
 
-If the teacher is watching, the caught counter increases.
+V3.0 introduces four special items.
 
-### Feedback
+**Shield**
 
-The game communicates the result through:
+Provides five seconds of protection against ordinary DANGER-state collection penalties. It does not prevent a trap from triggering.
 
-- Score and caught counters
-- Teacher status colours
-- Character animations
-- Visual effects
-- Sound effects
-- Text messages
-- Win and loss screens
+**Freeze**
 
-The player uses this feedback to decide
-whether to act or wait.
+Temporarily freezes the teacher state, game countdown, and collectible expiration timers for three seconds.
 
----
+**Clear**
 
-## 6. Game Controls
+Automatically collects all ordinary items currently visible and adds their base points to the score without increasing the combo counter.
 
-- Start Game: begins the 60-second session.
-- Click Object: attempts to collect the object.
-- Pause: freezes the game state and timer.
-- Resume: continues the paused game.
-- Sound On/Off: enables or disables audio effects.
-- Restart: resets the game to its initial state.
+**Trap**
 
-The game supports mouse and touch input.
+A misleading collectible that causes the player to be caught and breaks the current combo.
 
-Keyboard users can navigate the buttons using Tab
-and activate focused buttons using Enter or Space.
-
----
-
-## 7. Run Locally
-
-### Requirements
-
-- A modern web browser
-- Python 3, if using the local server method
-
-The game uses plain HTML, CSS, and JavaScript.
-
-No external JavaScript packages, paid services,
-API keys, or machine learning models are required.
-
-### Instructions
-
-Clone the repository:
-
-```bash
-git clone https://github.com/YANYAN-hub57/classroom-daydream.git
-```
-
-Enter the project directory:
-
-```bash
-cd classroom-daydream
-```
-
-Start a local server:
-
-```bash
-python3 -m http.server 8001
-```
-
-Open the following address:
-
-http://localhost:8001
-
-To stop the server, press Ctrl+C in the terminal.
-
-If port 8001 is already occupied, use another
-available port, such as 8002.
+The EASY difficulty does not generate traps. Traps are more likely to appear at higher difficulty levels.
 
 ---
 
-## 8. Project Structure
+## 5. Combo and Scoring System
+
+V3.0 introduces a combo mechanism to reward consecutive successful collections.
+
+- **1–4 consecutive items:** No bonus.
+- **5–9 consecutive items:** +1 bonus point per collection.
+- **10 or more consecutive items:** +2 bonus points per collection.
+
+A combo ends when the player gets caught, triggers a trap, or allows a normal item to expire.
+
+Special items do not increase the combo.
+
+The game also records the highest combo achieved during a round.
+
+---
+
+## 6. Additional Gameplay Mechanics
+
+### Fake Teacher Turns
+
+During WARNING, the teacher may occasionally make a fake turn and return directly to SAFE.
+
+Fake turns use difficulty-dependent probability and distinct audio feedback.
+
+The system prevents two consecutive fake turns.
+
+### Dynamic Difficulty
+
+Each round has three stages:
+
+**Phase 1 — Beginning**
+
+The game uses the selected difficulty's base parameters.
+
+**Phase 2 — Middle**
+
+Teacher turning frequency increases, while item duration and spawning intervals decrease.
+
+**Phase 3 — Final**
+
+The game becomes faster and more demanding, synchronized with the most intense background music stage.
+
+### Progressive Caught Penalties
+
+Getting caught triggers visual and audio feedback and temporarily prevents interaction.
+
+Repeated mistakes increase the penalty, creating additional tension near the end of a round.
+
+---
+
+## 7. Visual Design
+
+### Pixel-Art Direction
+
+The game uses a warm retro classroom aesthetic inspired by classic pixel games.
+
+Main visual elements include:
+
+- Cream-coloured classroom walls.
+- Dark green chalkboard.
+- Warm wooden desks and flooring.
+- Pixel-art windows and classroom decorations.
+- Rounded guinea pig characters.
+- Pixel buttons, speech bubbles, and animated collectibles.
+
+### Guinea Pig Characters
+
+The student guinea pig uses a rounded three-colour design with expressive eyes, soft cheeks, and small ears.
+
+Available student appearances:
+
+- Classic tricolour.
+- Grey-brown duo.
+- Cream.
+
+Teacher appearances:
+
+- Glasses.
+- Beret.
+
+Character expressions respond to changes in teacher state, item collection, success, and failure.
+
+### Dynamic Classroom
+
+Additional visual details include moving clouds, a classroom clock, an animated plant, and blackboard messages that change as the game progresses.
+
+The game supports two colour themes:
+
+- Classic Cream.
+- Autumn Caramel.
+
+### Victory and Defeat
+
+At the end of each round, pixel-art elements fall into the classroom and remain near the floor.
+
+Victory effects include stars, balloons, hearts, smiley faces, and confetti.
+
+Defeat effects include grey stars, teardrops, exclamation marks, and clouds.
+
+---
+
+## 8. Sound Design
+
+All game sounds are generated programmatically using the **Web Audio API**.
+
+No external audio files are required.
+
+The sound system includes:
+
+- A looping 8-bit background melody.
+- Faster musical pacing during later gameplay stages.
+- Distinct sound effects for individual collectibles.
+- Teacher-state warning sounds.
+- Feedback when the player gets caught.
+- Special-item sound effects.
+- Victory and defeat melodies.
+- Combo and achievement sounds.
+
+The game also provides independent controls for background music and sound-effect volume.
+
+Audio playback is initiated through user interaction to accommodate browser autoplay restrictions.
+
+---
+
+## 9. Interaction Design
+
+The main interaction loop is:
+
+**Input → Response → Feedback → Decision**
+
+**Input**
+
+The player clicks or taps a collectible item.
+
+**Response**
+
+The game checks the teacher's current state, item type, active buffs, and selected difficulty.
+
+**Feedback**
+
+The interface responds through:
+
+- Score updates.
+- Character expressions.
+- Movement animations.
+- Sound effects.
+- Pixel speech bubbles.
+- Floating score text.
+- Teacher reactions.
+- Combo and status indicators.
+
+**Decision**
+
+The player decides whether to continue collecting, wait for a safer moment, or use a special item.
+
+This repeated loop forms the central interactive experience.
+
+---
+
+## 10. Controls
+
+### Mouse and Touch
+
+- Click or tap collectible items.
+- Use the bottom buttons to pause, toggle sound, or restart.
+- Open the question-mark button to view the rules.
+- Open the settings button to customize the experience.
+
+### Keyboard
+
+| Key | Function |
+|---|---|
+| Space | Pause / Resume |
+| R | Restart |
+| M | Toggle Sound |
+| H | Open Rules |
+| Escape | Close a modal or pause |
+
+### Accessibility and Responsive Behaviour
+
+The interface includes keyboard-accessible controls, visible focus indicators, mobile touch support, and a landscape recommendation for smaller devices.
+
+The game automatically pauses when the browser tab or application loses focus.
+
+---
+
+## 11. Settings and Local Data
+
+V3.0 uses browser `localStorage` to save selected preferences and progress.
+
+Saved information includes:
+
+- Difficulty preference.
+- Student and teacher appearances.
+- Visual theme.
+- Background music volume.
+- Sound-effect volume.
+- Vibration preference.
+- Scene-effect preference.
+- Personal best scores.
+- Highest combo records.
+- Unlocked achievements.
+
+The game does not require a user account or backend server.
+
+---
+
+## 12. Achievements
+
+V3.0 includes five achievements.
+
+| Achievement | Requirement |
+|---|---|
+| Perfect Grade | Win without getting caught |
+| Collector | Collect at least 20 items in one round |
+| Combo Master | Reach a combo of 10 |
+| Speedrunner | Win on HARD difficulty |
+| Lucky Star | Collect 3 stars in one round |
+
+Unlocked achievements are saved locally and displayed in the settings panel.
+
+---
+
+## 13. Technical Implementation
+
+The project uses three core files:
+
+**`index.html`**
+
+Defines the page structure, game interface, buttons, overlays, difficulty options, and settings.
+
+**`style.css`**
+
+Controls the pixel-art classroom, layout, character animations, visual effects, and responsive behaviour.
+
+**`script.js`**
+
+Controls gameplay logic, teacher states, timers, item generation, scoring, sound synthesis, settings, achievements, and local records.
+
+### Key Technologies
+
+- HTML5
+- CSS3
+- Vanilla JavaScript
+- CSS `box-shadow` pixel drawing
+- CSS keyframe animations
+- Web Audio API
+- Browser `localStorage`
+- DOM events
+- Responsive CSS media queries
+
+The project does not use any JavaScript frameworks, external image files, hosted fonts, or third-party libraries.
+
+---
+
+## 14. Project Structure
 
 ```text
 classroom-daydream/
 ├── index.html
 ├── style.css
 ├── script.js
-├── assets/
-│   ├── screenshot.png
-│   ├── teacher-warning.png
-│   ├── teacher-look back.png
-│   ├── game-result.png
-│   └── game-result（failure）.png
 ├── README.md
 └── PROCESS.md
 ```
 
-### File Descriptions
-
-- index.html: interface and classroom scene structure
-- style.css: visual design, characters, and animations
-- script.js: game state, timing, interactions, and audio
-- assets/: screenshots documenting the experience
-- README.md: project description and running instructions
-- PROCESS.md: design decisions and user testing
+All required game assets are implemented through code.
 
 ---
 
-## 9. Screenshots
+## 15. How to Run Locally
 
-### Main Game Screen
+### Method 1 — Python Local Server
 
-![Classroom Daydream](assets/screenshot.png)
+Open the project folder in Visual Studio Code.
 
-### Teacher Warning State
+Open the integrated Terminal and run:
 
-![Teacher Warning](assets/teacher-warning.png)
+```bash
+python3 -m http.server 8010 --bind 127.0.0.1
+```
 
-### Teacher Observation Scene
+Then visit:
 
-![Teacher State](<assets/teacher-look back.png>)
+http://localhost:8010/
 
-### Game Result
+### Method 2 — GitHub Pages
 
-![Game Result](assets/game-result.png)
+The project can be deployed as a static website using GitHub Pages.
 
-### Failure Screen
+Repository settings:
 
-![Game Failure](<assets/game-result（failure）.png>)
+- Source: Deploy from a branch.
+- Branch: `main`.
+- Directory: `/ (root)`.
 
----
+Published address:
 
-## 10. Design Features
+https://yanyan-hub57.github.io/classroom-daydream/
 
-### Guinea Pig Character
-
-The student character was redesigned as a guinea pig
-in response to user feedback.
-
-This character gives the experience a playful
-and recognisable visual identity.
-
-### Teacher Observation
-
-The teacher changes between safe, warning,
-and watching states.
-
-These changes make timing an essential part
-of the interaction.
-
-### Random Collectibles
-
-Objects appear in different positions and disappear
-after a short period.
-
-The player must observe and respond rather
-than repeatedly click a fixed button.
-
-### Audio and Visual Feedback
-
-Successful collection, warnings, and failure
-produce different feedback.
-
-The game remains playable when audio is unavailable.
+The deployed version depends on the latest files pushed to the repository.
 
 ---
 
-## 11. Error and Interruption Handling
+## 16. User Testing and Iteration
 
-The program handles several common situations:
+The game was developed through several iterations based on feedback from informal user testing.
 
-- A collected item is immediately removed,
-  preventing repeated scoring.
-- Clicking while the game is paused or finished
-  cannot collect objects.
-- The timer is stopped before a new one is started.
-- The game pauses when the browser tab becomes hidden.
-- The game continues when audio is unsupported.
-- Restart returns the game to its initial state.
+### Early Testing
 
----
+Testing identified problems involving score validation, limited character feedback, and insufficiently expressive visual presentation.
 
-## 12. Known Limitations
+### Visual Improvements
 
-- The game is designed for one player.
-- Progress is not saved after refreshing the browser.
-- Collectible icons are displayed using emoji,
-  which can look different across operating systems.
-- The guinea pig character uses CSS shapes
-  rather than an external sprite sheet.
-- The experience depends on browser JavaScript support.
-- The current game has one level and a fixed
-  60-second duration.
+The original character design was developed into a more recognizable guinea pig, with improved pixel styling, expressive faces, and more detailed classroom scenery.
 
----
+### Interaction Improvements
 
-## 13. Development and Iteration
+Different collectibles were given distinct animations and sound effects.
 
-Version 1.0 used mood and risk values to determine
-the result of repeated classroom actions.
+Speech bubbles were added to make the teacher and student feel more responsive.
 
-User testing revealed problems with the game balance
-and visual consistency.
+### Gameplay Improvements
 
-Version 2.0 introduced:
+V3.0 expands the original game with difficulty selection, weighted item scoring, special items, combo rewards, fake teacher turns, and local progress tracking.
 
-- A 60-second classroom challenge
-- Random collectible objects
-- Three teacher observation states
-- A caught counter
-- A guinea pig student character
-- Updated visual and audio feedback
+The new V3.0 systems require additional regression testing to evaluate balance and stability across different browsers and devices.
 
-The development and user testing process
-is documented in PROCESS.md.
+For more details, see [PROCESS.md](PROCESS.md).
 
 ---
 
-## 14. Credits
+## 17. Testing Checklist
 
-**Concept and game direction:** Project author
+The following checks should be completed before the final submission:
 
-**Design and implementation:** Project author,
-with AI-assisted coding and design support
-
-**AI tool:** ChatGPT, used for code drafting,
-debugging guidance, game mechanics, documentation,
-and design exploration
-
-**Artwork:** CSS-created classroom and character
-elements, with system emoji used for collectible icons
-
-**Sound effects:** Generated programmatically
-using the browser Web Audio API
-
-**User testing:** Four volunteer participants
-identified anonymously as A, B, C, and D
-
-No externally hosted API or paid asset service
-is required to run the game.
-
-Additional borrowed materials, if added later,
-will be credited with their original source
-and relevant permissions.
+- [ ] All three difficulty modes launch with the correct values.
+- [ ] SAFE, WARNING, and DANGER transitions work correctly.
+- [ ] Fake turns cannot occur twice consecutively.
+- [ ] Ordinary collectible scores match their configured values.
+- [ ] Shield, Freeze, Clear, and Trap work as intended.
+- [ ] Combo bonuses and interruptions are calculated correctly.
+- [ ] The doodle flower appears progressively.
+- [ ] Item-specific sounds play correctly.
+- [ ] Pause and resume preserve timers and temporary effects.
+- [ ] Restart clears temporary gameplay state.
+- [ ] Win and lose conditions work for each difficulty.
+- [ ] Settings and achievements persist after reloading.
+- [ ] The layout remains usable on desktop and mobile.
+- [ ] GitHub Pages matches the tested local version.
 
 ---
 
-## 15. Reflection
+## 18. Credits
 
-Classroom Daydream demonstrates how a small
-interactive experience can create meaningful
-player decisions through timing and feedback.
+**Concept, interaction design, visual direction, implementation, testing, and documentation:** Project author.
 
-The most important improvement from Version 1.0
-to Version 2.0 was replacing repetitive clicking
-with a clearer relationship between observation,
-action, consequence, and the next decision.
+**AI-assisted development:** ChatGPT was used as a coding and design-support tool during the development process, including brainstorming, debugging support, code generation, documentation drafting, and iteration.
 
-The project prioritises a complete and understandable
-interaction loop over unnecessary technical complexity.
+**Art and audio assets:** Pixel-art visuals are generated through CSS and JavaScript. Music and sound effects are synthesized using the Web Audio API.
 
+**External dependencies:** None.
+
+The project was developed for educational purposes as part of SD5913 Programming for Art & Design.
 
 ---
 
-## 16. V2.1 — Expressive Pixel Interaction (Local Prototype)
+## 19. Future Improvements
 
-**Status:** Local visual prototype shown in a development screenshot on 27 October 2026; **the matching local game files are not yet confirmed as pushed to the default GitHub branch**. The documented behaviours below describe the implemented *local design iteration*, not independently verified features of the currently published Pages build.
+Potential future development includes:
 
-Following the V2.0 retest, the next iteration focuses on making each collectible produce a distinct, visible character response instead of merely incrementing the score.
+- More advanced balancing through additional playtesting.
+- Improved mobile portrait support.
+- More expressive character animations.
+- Additional classroom events and environmental interactions.
+- Expanded achievement and progression systems.
+- Improved sound transitions and accessibility settings.
+- Optional visual tutorials for first-time players.
 
-### Design changes
+---
 
-| Item | Intended and locally implemented feedback |
-| --- | --- |
-| Carrot | Pixel-art carrot without a surrounding box; moves toward the guinea pig's mouth, followed by alternating puffed cheeks and chewing |
-| Cookie | Pixel-art cookie without a surrounding box; travels toward the mouth, produces crumbs, and makes the guinea pig sway with happy closed eyes |
-| Doodle | Pixel pencil and foreground paper; pencil movement gradually reveals a small flower drawing |
-| Star | Pixel star and sparkles; guinea pig jumps to celebrate |
+## 20. Project Reflection
 
-The local prototype also introduces an independent foreground interaction layer (`#interaction-layer`) with a higher stacking order than the desk. This addresses the previous problem of food, pencil and sparkles being hidden behind the desk.
+*Classroom Daydream* demonstrates how a relatively small browser game can create an engaging interactive experience through the combination of visual design, state-based programming, and feedback.
 
-### Design rationale
+The project began as a simple interaction concept and gradually developed into a more complex game system.
 
-The **input → response → feedback** loop is now deliberately object-specific:
+The most important lesson was that meaningful interaction depends not only on functionality, but also on how clearly the system communicates changes to the player.
 
-1. **Input:** The player chooses an item during a safe teacher state.
-2. **Response:** JavaScript awards a point and triggers that item's corresponding visual sequence.
-3. **Feedback:** The item moves, the character's face/body reacts, sound plays, and the score/message updates.
-4. **Next decision:** The player checks the teacher's changing safe / warning / danger state before clicking again.
-
-### Evidence and verification
-
-The development screenshot from 27 October 2026 shows a visible tricolour guinea pig and an unboxed pixel cookie in the classroom. A still screenshot **does not establish** that all animations, mobile layouts, pause handling and win/loss states have passed an end-to-end test. Those checks are part of the release checklist.
-
-### Before publishing this version
-
-- Commit and push the **latest local** `index.html`, `style.css`, and `script.js`.
-- Take a new screenshot of the V2.1 pixel item build, and add it to `assets/`.
-- Test each item, all teacher states, pause/resume/restart, and the 60-second ending.
-- Verify the Pages deployment before calling V2.1 publicly released.
-
-The original emoji limitation in Section 12 describes the **previous published implementation**; the local V2.1 prototype replaces those emoji collectibles with programmatically generated transparent pixel sprites.
+Through iteration, the project became an exploration of timing, risk, character expression, and the relationship between user action and system response.
